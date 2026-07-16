@@ -5,6 +5,7 @@ import {
   canUndo,
   emptyHistory,
   fitScale,
+  mergeAlpha,
   pushStroke,
   redo,
   undo,
@@ -61,5 +62,57 @@ describe('fitScale', () => {
 
   it('falls back to 1 for degenerate dimensions', () => {
     expect(fitScale(0, 0, 1000, 800)).toBe(1)
+  })
+})
+
+describe('mergeAlpha', () => {
+  // One-pixel helpers: base alpha value + one RGBA correction pixel.
+  function merge(base: number, [r, g, b, a]: [number, number, number, number]): number {
+    const out = mergeAlpha(new Uint8ClampedArray([base]), new Uint8ClampedArray([r, g, b, a]))
+    return out[0]
+  }
+
+  it('forces fully-painted keep pixels opaque', () => {
+    expect(merge(0, [0, 255, 0, 255])).toBe(255)
+    expect(merge(128, [0, 255, 0, 255])).toBe(255)
+  })
+
+  it('forces fully-painted remove pixels transparent', () => {
+    expect(merge(255, [255, 0, 0, 255])).toBe(0)
+    expect(merge(128, [255, 0, 0, 255])).toBe(0)
+  })
+
+  it('leaves untouched pixels exactly at the AI alpha', () => {
+    expect(merge(0, [0, 0, 0, 0])).toBe(0)
+    expect(merge(37, [0, 0, 0, 0])).toBe(37)
+    expect(merge(255, [0, 0, 0, 0])).toBe(255)
+  })
+
+  it('blends proportionally at feathered edges', () => {
+    // 50% coverage keep over transparent -> halfway to opaque
+    expect(merge(0, [0, 255, 0, 128])).toBe(128)
+    // 50% coverage remove over opaque -> halfway to transparent
+    expect(merge(255, [255, 0, 0, 128])).toBe(127)
+  })
+
+  it('does not mutate the base array and preserves neighbours', () => {
+    const base = new Uint8ClampedArray([10, 20, 30])
+    const corrections = new Uint8ClampedArray([
+      0,
+      0,
+      0,
+      0, // pixel 0 untouched
+      0,
+      255,
+      0,
+      255, // pixel 1 keep
+      255,
+      0,
+      0,
+      255, // pixel 2 remove
+    ])
+    const out = mergeAlpha(base, corrections)
+    expect(Array.from(out)).toEqual([10, 255, 0])
+    expect(Array.from(base)).toEqual([10, 20, 30])
   })
 })
