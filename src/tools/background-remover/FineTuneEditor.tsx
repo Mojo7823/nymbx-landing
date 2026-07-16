@@ -71,6 +71,8 @@ export function FineTuneEditor({ sourceUrl, resultBlob, onApply, onCancel }: Fin
   const resultBitmapRef = useRef<ImageBitmap | null>(null)
   const currentStroke = useRef<Stroke | null>(null)
   const hoverPos = useRef<StrokePoint | null>(null)
+  const drawingPointerId = useRef<number | null>(null)
+  const applyingRef = useRef(applying)
 
   useEffect(() => {
     let cancelled = false
@@ -164,8 +166,13 @@ export function FineTuneEditor({ sourceUrl, resultBlob, onApply, onCancel }: Fin
   }, [redrawOverlay])
 
   useEffect(() => {
+    applyingRef.current = applying
+  }, [applying])
+
+  useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (!(e.ctrlKey || e.metaKey)) return
+      if (applyingRef.current) return
       const key = e.key.toLowerCase()
       if (key === 'z' && e.shiftKey) {
         e.preventDefault()
@@ -193,23 +200,34 @@ export function FineTuneEditor({ sourceUrl, resultBlob, onApply, onCancel }: Fin
 
   function handlePointerDown(e: React.PointerEvent<HTMLCanvasElement>) {
     if (!loaded || applying) return
+    // Ignore a second finger/palm touch while a stroke is already in progress,
+    // and only start strokes from the primary pointer.
+    if (currentStroke.current !== null || !e.isPrimary) return
     e.currentTarget.setPointerCapture(e.pointerId)
+    drawingPointerId.current = e.pointerId
     currentStroke.current = { mode, size: brushSize, points: [toImagePoint(e)] }
     redrawOverlay()
   }
 
   function handlePointerMove(e: React.PointerEvent<HTMLCanvasElement>) {
     if (!loaded) return
-    const point = toImagePoint(e)
-    hoverPos.current = point
-    if (currentStroke.current) currentStroke.current.points.push(point)
+    if (currentStroke.current) {
+      // Only the pointer that started the stroke may append to it.
+      if (e.pointerId !== drawingPointerId.current) return
+      currentStroke.current.points.push(toImagePoint(e))
+      redrawOverlay()
+      return
+    }
+    if (!e.isPrimary) return
+    hoverPos.current = toImagePoint(e)
     redrawOverlay()
   }
 
-  function handlePointerUp() {
+  function handlePointerUp(e: React.PointerEvent<HTMLCanvasElement>) {
     const stroke = currentStroke.current
-    if (!stroke) return
+    if (!stroke || e.pointerId !== drawingPointerId.current) return
     currentStroke.current = null
+    drawingPointerId.current = null
     setHistory((h) => pushStroke(h, stroke))
   }
 
@@ -287,27 +305,27 @@ export function FineTuneEditor({ sourceUrl, resultBlob, onApply, onCancel }: Fin
           <Button
             variant="ghost"
             size="sm"
-            disabled={!canUndo(history)}
+            disabled={!canUndo(history) || applying}
             onClick={() => setHistory(undo)}
             aria-label="Undo"
-            title="Undo (Ctrl+Z)"
+            title="Undo (Ctrl/Cmd+Z)"
           >
             <Undo2 className="size-4" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            disabled={!canRedo(history)}
+            disabled={!canRedo(history) || applying}
             onClick={() => setHistory(redo)}
             aria-label="Redo"
-            title="Redo (Ctrl+Shift+Z)"
+            title="Redo (Ctrl/Cmd+Shift+Z)"
           >
             <Redo2 className="size-4" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            disabled={!canUndo(history)}
+            disabled={!canUndo(history) || applying}
             onClick={() => setHistory(emptyHistory)}
             aria-label="Clear all strokes"
             title="Clear all strokes"
@@ -316,7 +334,11 @@ export function FineTuneEditor({ sourceUrl, resultBlob, onApply, onCancel }: Fin
           </Button>
         </div>
         <div className="ml-auto flex items-center gap-2">
-          <Button size="sm" disabled={!loaded || applying} onClick={() => void apply()}>
+          <Button
+            size="sm"
+            disabled={!loaded || applying || !canUndo(history)}
+            onClick={() => void apply()}
+          >
             <Check className="size-4" />
             {applying ? 'Applying…' : 'Apply'}
           </Button>

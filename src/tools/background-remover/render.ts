@@ -25,6 +25,9 @@ export function drawStrokes(
 ): void {
   ctx.lineCap = 'round'
   ctx.lineJoin = 'round'
+  // Browsers without canvas filter support (e.g. older Safari) silently
+  // ignore `ctx.filter`, so the blur is skipped and corrections come out
+  // hard-edged instead of feathered. Accepted graceful degradation.
   ctx.filter = featherPx > 0 ? `blur(${featherPx}px)` : 'none'
   for (const stroke of strokes) {
     const color = colors[stroke.mode]
