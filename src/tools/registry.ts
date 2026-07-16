@@ -321,7 +321,7 @@ export const tools: ToolMeta[] = [
     description: 'Change page dimensions',
     category: 'pdf-office',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 12,
     icon: Expand,
   },

@@ -22,4 +22,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'bulk-file-hasher': lazy(() => import('./bulk-file-hasher/BulkFileHasher')),
   'bulk-file-renamer': lazy(() => import('./bulk-file-renamer/BulkFileRenamer')),
   'pdf-split': lazy(() => import('./pdf-split/PdfSplit')),
+  'pdf-resize': lazy(() => import('./pdf-resize/PdfResize')),
 }

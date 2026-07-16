@@ -34,6 +34,7 @@ describe('tool registry', () => {
       'bulk-file-hasher',
       'bulk-file-renamer',
       'pdf-split',
+      'pdf-resize',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })
