@@ -12,7 +12,8 @@
     "lint": "eslint . --max-warnings 0 && prettier --check .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "gotenberg:mock": "node scripts/mock-gotenberg.mjs"
   },
   "dependencies": {
     "@codemirror/commands": "^6.10.4",

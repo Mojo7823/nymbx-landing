@@ -37,6 +37,7 @@ describe('tool registry', () => {
       'pdf-resize',
       'pdf-to-image-markdown',
       'docx-to-html-markdown',
+      'docx-pdf',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })

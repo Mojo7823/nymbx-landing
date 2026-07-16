@@ -12,6 +12,11 @@ export interface FileDropzoneProps {
   onFiles: (files: File[]) => void
   /** Extra hint under the main label, e.g. "PNG, JPEG or WebP". */
   hint?: string
+  /**
+   * Privacy microcopy under the hint. Server-assisted tools must override
+   * the default so the dropzone never claims files stay local when they don't.
+   */
+  privacyNote?: string
   className?: string
 }
 
@@ -36,6 +41,7 @@ export function FileDropzone({
   maxSize,
   onFiles,
   hint,
+  privacyNote = 'Stays on this device',
   className,
 }: FileDropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -108,9 +114,7 @@ export function FileDropzone({
           <span className="text-muted">or click to browse</span>
         </p>
         {hint && <p className="text-xs text-muted">{hint}</p>}
-        <p className="font-mono text-[10px] tracking-wide text-faint uppercase">
-          Stays on this device
-        </p>
+        <p className="font-mono text-[10px] tracking-wide text-faint uppercase">{privacyNote}</p>
         <input
           ref={inputRef}
           type="file"

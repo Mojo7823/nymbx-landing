@@ -419,11 +419,11 @@ export const tools: ToolMeta[] = [
   },
   {
     slug: 'docx-pdf',
-    name: 'DOCX ↔ PDF',
+    name: 'DOCX → PDF',
     description: 'High-fidelity conversion via our server',
     category: 'converters',
     badge: 'server-assisted',
-    status: soon,
+    status: 'available',
     phase: 15,
     icon: Repeat2,
   },

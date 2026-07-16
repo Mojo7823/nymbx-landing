@@ -2,7 +2,9 @@
 # PORT is set by Zeabur; defaults to 8080 for local runs (see Dockerfile ENV).
 
 :{$PORT:8080} {
-	root * /srv
+	# SITE_ROOT override lets the same Caddyfile serve a local `dist` when
+	# testing outside the container.
+	root * {$SITE_ROOT:/srv}
 
 	# Required for WASM libraries that use SharedArrayBuffer (e.g. multithreaded
 	# codecs). Applied to every response.
@@ -13,17 +15,27 @@
 		-Server
 	}
 
-	# Phase 15 (DOCX ↔ PDF, server-assisted) will proxy conversions to the
-	# private Gotenberg service. Keep disabled until that phase ships.
-	# reverse_proxy /api/convert/* gotenberg.zeabur.internal:3000
-
 	encode zstd gzip
 
-	# Long-cache hashed build assets; index.html stays revalidated.
-	@assets path /assets/*
-	header @assets Cache-Control "public, max-age=31536000, immutable"
+	# Phase 15 (DOCX → PDF, server-assisted): proxy conversions to the private
+	# Gotenberg service. handle_path strips the prefix, so the client's
+	# POST /api/convert/forms/libreoffice/convert reaches Gotenberg as
+	# POST /forms/libreoffice/convert. GOTENBERG_UPSTREAM is overridden to
+	# `gotenberg:3000` by deploy/docker-compose.yml for local runs.
+	handle_path /api/convert/* {
+		request_body {
+			max_size 30MB
+		}
+		reverse_proxy {$GOTENBERG_UPSTREAM:gotenberg.zeabur.internal:3000}
+	}
 
-	# SPA fallback: unknown paths serve the app shell.
-	try_files {path} /index.html
-	file_server
+	handle {
+		# Long-cache hashed build assets; index.html stays revalidated.
+		@assets path /assets/*
+		header @assets Cache-Control "public, max-age=31536000, immutable"
+
+		# SPA fallback: unknown paths serve the app shell.
+		try_files {path} /index.html
+		file_server
+	}
 }
