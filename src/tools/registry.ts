@@ -413,7 +413,7 @@ export const tools: ToolMeta[] = [
     description: 'Convert Word docs in-browser',
     category: 'converters',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 14,
     icon: FileCode,
   },

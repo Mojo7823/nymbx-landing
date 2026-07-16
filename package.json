@@ -33,6 +33,7 @@
     "hash-wasm": "^4.12.0",
     "idb": "^8.0.3",
     "lucide-react": "^1.24.0",
+    "mammoth": "^1.12.0",
     "markdown-it": "^14.3.0",
     "markdown-it-abbr": "^2.0.0",
     "markdown-it-container": "^4.0.0",
@@ -51,7 +52,9 @@
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router": "^8.2.0",
-    "shiki": "^4.3.1"
+    "shiki": "^4.3.1",
+    "turndown": "^7.2.4",
+    "turndown-plugin-gfm": "^1.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -63,6 +66,7 @@
     "@types/node": "^26.1.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "@types/turndown": "^5.0.6",
     "@vitejs/plugin-react": "^6.0.3",
     "eslint": "^10.7.0",
     "eslint-config-prettier": "^10.1.8",
