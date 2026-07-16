@@ -269,7 +269,7 @@ export const tools: ToolMeta[] = [
     description: 'Pattern-rename files, export as zip',
     category: 'files',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 10,
     icon: FileSignature,
   },

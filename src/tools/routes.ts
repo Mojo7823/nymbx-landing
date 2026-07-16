@@ -20,4 +20,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'image-resize': lazy(() => import('./image-resize/ImageResize')),
   'background-remover': lazy(() => import('./background-remover/BackgroundRemover')),
   'bulk-file-hasher': lazy(() => import('./bulk-file-hasher/BulkFileHasher')),
+  'bulk-file-renamer': lazy(() => import('./bulk-file-renamer/BulkFileRenamer')),
 }

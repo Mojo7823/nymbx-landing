@@ -32,6 +32,7 @@ describe('tool registry', () => {
       'image-resize',
       'background-remover',
       'bulk-file-hasher',
+      'bulk-file-renamer',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })
