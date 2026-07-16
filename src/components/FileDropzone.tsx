@@ -1,0 +1,158 @@
+import { useRef, useState, type DragEvent, type KeyboardEvent } from 'react'
+import { File as FileIcon, UploadCloud, X } from 'lucide-react'
+import { cx } from '../lib/cx'
+import { formatBytes } from '../lib/format'
+
+export interface FileDropzoneProps {
+  /** Same syntax as `<input accept>`: extensions and/or MIME types. */
+  accept?: string
+  multiple?: boolean
+  /** Max size per file, in bytes. */
+  maxSize?: number
+  onFiles: (files: File[]) => void
+  /** Extra hint under the main label, e.g. "PNG, JPEG or WebP". */
+  hint?: string
+  className?: string
+}
+
+function matchesAccept(file: File, accept: string): boolean {
+  const rules = accept
+    .split(',')
+    .map((r) => r.trim().toLowerCase())
+    .filter(Boolean)
+  if (rules.length === 0) return true
+  const name = file.name.toLowerCase()
+  const type = file.type.toLowerCase()
+  return rules.some((rule) => {
+    if (rule.startsWith('.')) return name.endsWith(rule)
+    if (rule.endsWith('/*')) return type.startsWith(rule.slice(0, -1))
+    return type === rule
+  })
+}
+
+export function FileDropzone({
+  accept,
+  multiple = false,
+  maxSize,
+  onFiles,
+  hint,
+  className,
+}: FileDropzoneProps) {
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [selected, setSelected] = useState<File[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const [dragActive, setDragActive] = useState(false)
+
+  function takeFiles(list: FileList | File[]) {
+    let files = Array.from(list)
+    if (!multiple) files = files.slice(0, 1)
+
+    const wrongType = accept ? files.filter((f) => !matchesAccept(f, accept)) : []
+    const tooBig = maxSize ? files.filter((f) => f.size > maxSize) : []
+    const rejected = new Set([...wrongType, ...tooBig])
+    const accepted = files.filter((f) => !rejected.has(f))
+
+    if (wrongType.length > 0) {
+      setError(`Unsupported file type: ${wrongType.map((f) => f.name).join(', ')}`)
+    } else if (tooBig.length > 0) {
+      setError(`Larger than ${formatBytes(maxSize!)}: ${tooBig.map((f) => f.name).join(', ')}`)
+    } else {
+      setError(null)
+    }
+
+    setSelected(accepted)
+    if (accepted.length > 0) onFiles(accepted)
+  }
+
+  function onDrop(e: DragEvent) {
+    e.preventDefault()
+    setDragActive(false)
+    if (e.dataTransfer.files.length > 0) takeFiles(e.dataTransfer.files)
+  }
+
+  function onKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      inputRef.current?.click()
+    }
+  }
+
+  function clear() {
+    setSelected([])
+    setError(null)
+    if (inputRef.current) inputRef.current.value = ''
+  }
+
+  return (
+    <div className={className}>
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={multiple ? 'Choose files or drag them here' : 'Choose a file or drag it here'}
+        onClick={() => inputRef.current?.click()}
+        onKeyDown={onKeyDown}
+        onDragOver={(e) => {
+          e.preventDefault()
+          setDragActive(true)
+        }}
+        onDragLeave={() => setDragActive(false)}
+        onDrop={onDrop}
+        className={cx(
+          'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed px-6 py-10 text-center transition-colors',
+          dragActive ? 'border-pine bg-mint' : 'border-line-strong bg-card hover:border-pine/60',
+        )}
+      >
+        <UploadCloud className={cx('size-8', dragActive ? 'text-pine' : 'text-faint')} />
+        <p className="text-sm font-medium text-ink">
+          {multiple ? 'Drop files here' : 'Drop a file here'}{' '}
+          <span className="text-muted">or click to browse</span>
+        </p>
+        {hint && <p className="text-xs text-muted">{hint}</p>}
+        <p className="font-mono text-[10px] tracking-wide text-faint uppercase">
+          Stays on this device
+        </p>
+        <input
+          ref={inputRef}
+          type="file"
+          accept={accept}
+          multiple={multiple}
+          className="sr-only"
+          tabIndex={-1}
+          onChange={(e) => {
+            if (e.target.files) takeFiles(e.target.files)
+          }}
+        />
+      </div>
+
+      {error && (
+        <p role="alert" className="mt-2 text-xs text-red-600 dark:text-red-400">
+          {error}
+        </p>
+      )}
+
+      {selected.length > 0 && (
+        <ul className="mt-3 space-y-1.5">
+          {selected.map((file, i) => (
+            <li
+              key={`${file.name}-${i}`}
+              className="flex items-center gap-2 rounded-md border border-line bg-card px-3 py-2 text-sm"
+            >
+              <FileIcon className="size-4 shrink-0 text-faint" />
+              <span className="min-w-0 flex-1 truncate text-ink">{file.name}</span>
+              <span className="font-mono text-xs text-muted">{formatBytes(file.size)}</span>
+            </li>
+          ))}
+          <li>
+            <button
+              type="button"
+              onClick={clear}
+              className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted hover:text-ink"
+            >
+              <X className="size-3" /> Clear selection
+            </button>
+          </li>
+        </ul>
+      )}
+    </div>
+  )
+}

@@ -1,0 +1,105 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * NYMBX design tokens — white, neutral, light-first.
+ * Palette referenced from the VitePress/Vue default theme
+ * (--vp-c-bg #ffffff, divider #e2e2e3, dark bg #1b1b1f, brand #42b883).
+ * Semantic names only; components never reference raw hex values.
+ */
+:root {
+  --c-page: #ffffff;
+  --c-card: #ffffff;
+  --c-soft: #f6f6f7;
+  --c-line: #e2e2e3;
+  --c-line-strong: #c8c8ca;
+  --c-ink: #213547;
+  --c-muted: #67676c;
+  --c-faint: #98989f;
+  --c-pine: #33a06f;
+  --c-pine-deep: #2e8f63;
+  --c-mint: #e8f7f0;
+  --c-spring: #42b883;
+  --c-amber: #a8641c;
+  --c-amber-soft: #faf1e4;
+  --c-rose: #b8442c;
+  --c-rose-soft: #fdefec;
+}
+
+.dark {
+  --c-page: #1b1b1f;
+  --c-card: #202127;
+  --c-soft: #27282f;
+  --c-line: #2e2e32;
+  --c-line-strong: #43434a;
+  --c-ink: #dfdfd6;
+  --c-muted: #98989f;
+  --c-faint: #6a6a71;
+  --c-pine: #42b883;
+  --c-pine-deep: #5fcb98;
+  --c-mint: #22342b;
+  --c-spring: #42b883;
+  --c-amber: #dba15e;
+  --c-amber-soft: #2d2519;
+  --c-rose: #e08573;
+  --c-rose-soft: #33211d;
+}
+
+@theme inline {
+  --color-page: var(--c-page);
+  --color-card: var(--c-card);
+  --color-soft: var(--c-soft);
+  --color-line: var(--c-line);
+  --color-line-strong: var(--c-line-strong);
+  --color-ink: var(--c-ink);
+  --color-muted: var(--c-muted);
+  --color-faint: var(--c-faint);
+  --color-pine: var(--c-pine);
+  --color-pine-deep: var(--c-pine-deep);
+  --color-mint: var(--c-mint);
+  --color-spring: var(--c-spring);
+  --color-amber-badge: var(--c-amber);
+  --color-amber-soft: var(--c-amber-soft);
+  --color-rose: var(--c-rose);
+  --color-rose-soft: var(--c-rose-soft);
+
+  --font-sans: 'Manrope Variable', system-ui, sans-serif;
+  --font-display: 'Manrope Variable', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', monospace;
+}
+
+@layer components {
+  .progress-indeterminate {
+    animation: nymbx-progress-slide 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes nymbx-progress-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-page font-sans text-ink antialiased;
+  }
+  ::selection {
+    background: var(--c-spring);
+    color: #ffffff;
+  }
+  :focus-visible {
+    outline: 2px solid var(--c-pine);
+    outline-offset: 2px;
+  }
+}

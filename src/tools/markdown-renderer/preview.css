@@ -1,0 +1,220 @@
+/* Rendered-markdown typography, scoped to the preview pane. */
+.md-preview {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--c-ink);
+  overflow-wrap: break-word;
+}
+
+.md-preview > :first-child {
+  margin-top: 0;
+}
+
+.md-preview h1,
+.md-preview h2,
+.md-preview h3,
+.md-preview h4,
+.md-preview h5,
+.md-preview h6 {
+  margin: 1.5em 0 0.5em;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.md-preview h1 {
+  font-size: 1.6em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--c-line);
+}
+.md-preview h2 {
+  font-size: 1.35em;
+  padding-bottom: 0.25em;
+  border-bottom: 1px solid var(--c-line);
+}
+.md-preview h3 {
+  font-size: 1.15em;
+}
+
+.md-preview p,
+.md-preview ul,
+.md-preview ol,
+.md-preview table,
+.md-preview blockquote,
+.md-preview pre {
+  margin: 0.75em 0;
+}
+
+.md-preview ul,
+.md-preview ol {
+  padding-left: 1.5em;
+}
+.md-preview ul {
+  list-style: disc;
+}
+.md-preview ol {
+  list-style: decimal;
+}
+.md-preview li + li {
+  margin-top: 0.2em;
+}
+
+.md-preview .task-list-item {
+  list-style: none;
+  margin-left: -1.25em;
+}
+.md-preview .task-list-item input[type='checkbox'] {
+  margin-right: 0.4em;
+  accent-color: var(--c-pine);
+}
+
+.md-preview a {
+  color: var(--c-pine);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.md-preview blockquote {
+  border-left: 3px solid var(--c-line-strong);
+  padding-left: 1em;
+  color: var(--c-muted);
+}
+
+.md-preview code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--c-soft);
+  border: 1px solid var(--c-line);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+
+.md-preview pre {
+  background: var(--c-soft);
+  border: 1px solid var(--c-line);
+  border-radius: 8px;
+  padding: 0.85em 1em;
+  overflow-x: auto;
+}
+.md-preview pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.85em;
+}
+
+/* shiki emits inline light-theme colors plus --shiki-dark variables. */
+.md-preview pre.shiki {
+  background: var(--c-soft) !important;
+}
+.dark .md-preview pre.shiki,
+.dark .md-preview pre.shiki span {
+  color: var(--shiki-dark) !important;
+}
+
+.md-preview table {
+  border-collapse: collapse;
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.md-preview th,
+.md-preview td {
+  border: 1px solid var(--c-line-strong);
+  padding: 0.35em 0.75em;
+  text-align: left;
+}
+.md-preview th {
+  background: var(--c-soft);
+  font-weight: 600;
+}
+
+.md-preview img {
+  max-width: 100%;
+}
+
+.md-preview hr {
+  border: none;
+  border-top: 1px solid var(--c-line);
+  margin: 1.5em 0;
+}
+
+.md-preview mark {
+  background: var(--c-amber-soft);
+  color: var(--c-amber);
+  border-radius: 3px;
+  padding: 0 0.2em;
+}
+
+.md-preview ins {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--c-pine);
+}
+
+.md-preview abbr[title] {
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+  cursor: help;
+}
+
+.md-preview dl {
+  margin: 0.75em 0;
+}
+.md-preview dt {
+  font-weight: 650;
+  margin-top: 0.75em;
+}
+.md-preview dd {
+  margin-left: 1.5em;
+}
+
+.md-preview .footnotes {
+  margin-top: 1.5em;
+  font-size: 0.85em;
+  color: var(--c-muted);
+}
+.md-preview .footnotes-sep {
+  margin: 1.5em 0 0.75em;
+}
+.md-preview .footnote-backref {
+  text-decoration: none;
+}
+
+.md-preview .warning,
+.md-preview .info,
+.md-preview .tip,
+.md-preview .note {
+  border: 1px solid var(--c-line-strong);
+  border-left: 3px solid var(--c-amber);
+  border-radius: 6px;
+  background: var(--c-soft);
+  padding: 0.6em 1em;
+  margin: 0.75em 0;
+}
+.md-preview .info,
+.md-preview .tip,
+.md-preview .note {
+  border-left-color: var(--c-pine);
+}
+
+/* Print-friendly view: only the rendered document is printed. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .md-preview,
+  .md-preview * {
+    visibility: visible;
+  }
+  .md-preview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    padding: 0;
+    border: none;
+    color: #000;
+  }
+}

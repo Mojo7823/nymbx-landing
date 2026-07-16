@@ -1,11 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    SPA page example
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/nymbx-icon.svg" />
+    <meta
+      name="description"
+      content="NYMBX Toolbox — a privacy-first collection of browser tools. Your files never leave this device."
+    />
+    <title>NYMBX Toolbox — private, in-browser tools</title>
+    <script>
+      // Applied before first paint to avoid a flash of the wrong theme.
+      // Light mode is the default; dark only when the user chose it.
+      ;(function () {
+        try {
+          if (localStorage.getItem('nymbx:theme') === 'dark') {
+            document.documentElement.classList.add('dark')
+          }
+        } catch {
+          /* storage unavailable → stay light */
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
