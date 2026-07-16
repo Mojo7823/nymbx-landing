@@ -79,7 +79,14 @@ export default function PdfResize() {
   const [dpi, setDpi] = useState(150)
   const [quality, setQuality] = useState(0.8)
   const [busy, setBusy] = useState<null | { done: number; total: number }>(null)
-  const [result, setResult] = useState<null | { blob: Blob; label: string; filename: string }>(null)
+  const [rawResult, setRawResult] = useState<null | {
+    blob: Blob
+    label: string
+    filename: string
+    /** Inputs the result was produced from — any change invalidates it. */
+    key: string
+    forPdf: LoadedPdf
+  }>(null)
 
   const workerRef = useRef<WorkerHandle<PdfResizeWorkerApi> | null>(null)
   useEffect(() => () => workerRef.current?.terminate(), [])
@@ -91,10 +98,12 @@ export default function PdfResize() {
     return workerRef.current
   }
 
-  // Any input change invalidates a previously produced result.
-  useEffect(() => {
-    setResult(null)
-  }, [operation, presetId, customW, customH, unit, mode, autoRotate, dpi, quality, pdf])
+  const settingsKey = [operation, presetId, customW, customH, unit, mode, autoRotate, dpi, quality]
+    .map(String)
+    .join('|')
+  // A result is only shown while the inputs that produced it are unchanged.
+  const result =
+    rawResult && rawResult.key === settingsKey && rawResult.forPdf === pdf ? rawResult : null
 
   async function loadFile(files: File[]) {
     const file = files[0]
@@ -141,10 +150,12 @@ export default function PdfResize() {
           autoRotate,
         })
         const blob = new Blob([data as BlobPart], { type: 'application/pdf' })
-        setResult({
+        setRawResult({
           blob,
           filename: `${baseName}-resized.pdf`,
           label: `${formatBytes(pdf.size)} → ${formatBytes(blob.size)}`,
+          key: settingsKey,
+          forPdf: pdf,
         })
       } else {
         const pages = await renderPagesToJpeg(pdf.bytes, dpi, quality, (done, total) =>
@@ -152,10 +163,12 @@ export default function PdfResize() {
         )
         const data = await getWorker().api.assembleImagePdf(pages)
         const blob = new Blob([data as BlobPart], { type: 'application/pdf' })
-        setResult({
+        setRawResult({
           blob,
           filename: `${baseName}-compressed.pdf`,
           label: `${formatBytes(pdf.size)} → ${formatBytes(blob.size)}`,
+          key: settingsKey,
+          forPdf: pdf,
         })
       }
     } catch {

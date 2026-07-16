@@ -23,4 +23,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'bulk-file-renamer': lazy(() => import('./bulk-file-renamer/BulkFileRenamer')),
   'pdf-split': lazy(() => import('./pdf-split/PdfSplit')),
   'pdf-resize': lazy(() => import('./pdf-resize/PdfResize')),
+  'pdf-to-image-markdown': lazy(() => import('./pdf-to-image-markdown/PdfToImageMarkdown')),
 }

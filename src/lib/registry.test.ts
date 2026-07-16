@@ -35,6 +35,7 @@ describe('tool registry', () => {
       'bulk-file-renamer',
       'pdf-split',
       'pdf-resize',
+      'pdf-to-image-markdown',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })

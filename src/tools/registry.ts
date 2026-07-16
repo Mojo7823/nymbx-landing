@@ -331,7 +331,7 @@ export const tools: ToolMeta[] = [
     description: 'Render pages or extract text',
     category: 'pdf-office',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 13,
     icon: FileOutput,
   },
