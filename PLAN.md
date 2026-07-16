@@ -152,6 +152,10 @@ The only server-assisted tool. **Clearly labeled in the UI.**
 - **Infra:** deploy the official `gotenberg/gotenberg` image as a second service in the same Zeabur project, **private networking only — no public domain**; the web container's Caddy adds `reverse_proxy /api/convert/* → gotenberg.zeabur.internal:3000` with a request size limit. A `docker-compose.yml` in `deploy/` mirrors the two-service setup for local development.
 - **Build:** dropzone → upload with progress → converted file download; explicit banner: "This tool uploads your file to our server for conversion; it is deleted immediately after."; client-side file size cap; both directions (DOCX→PDF via Gotenberg LibreOffice route, PDF→DOCX if quality is acceptable — otherwise ship DOCX→PDF only and say so).
 - **Verify:** conversion fidelity on a formatted document (tables, images, headers/footers); server rejects oversized files cleanly; Gotenberg unreachable → clear error, no hang; **confirm no temp files persist server-side after conversion**.
+- **⚠ Open deployment TODO (code shipped 2026-07-17; no Docker on the dev machine, so verified against a local LibreOffice-backed mock):**
+  1. Add the `gotenberg/gotenberg:8` service to the Zeabur project (private networking only, no public domain) so it resolves as `gotenberg.zeabur.internal`.
+  2. Redeploy the web service to pick up the Caddyfile with the `/api/convert/*` proxy.
+  3. Re-run the verification list above against the live site, including the no-temp-files check on real Gotenberg.
 
 ---
 
