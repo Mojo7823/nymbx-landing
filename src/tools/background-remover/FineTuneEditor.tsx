@@ -214,7 +214,10 @@ export function FineTuneEditor({ sourceUrl, resultBlob, onApply, onCancel }: Fin
     if (currentStroke.current) {
       // Only the pointer that started the stroke may append to it.
       if (e.pointerId !== drawingPointerId.current) return
-      currentStroke.current.points.push(toImagePoint(e))
+      const point = toImagePoint(e)
+      currentStroke.current.points.push(point)
+      // Keep the brush-size cursor circle following the drawing pointer.
+      hoverPos.current = point
       redrawOverlay()
       return
     }
