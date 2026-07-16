@@ -31,6 +31,7 @@ describe('tool registry', () => {
       'markdown-editor',
       'image-resize',
       'background-remover',
+      'bulk-file-hasher',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })

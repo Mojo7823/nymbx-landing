@@ -259,7 +259,7 @@ export const tools: ToolMeta[] = [
     description: 'SHA/MD5 checksums for many files',
     category: 'files',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 9,
     icon: Fingerprint,
   },
