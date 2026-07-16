@@ -74,6 +74,7 @@ export function FineTuneEditor({ sourceUrl, resultBlob, onApply, onCancel }: Fin
 
   useEffect(() => {
     let cancelled = false
+    let created: ImageBitmap[] = []
     async function load() {
       try {
         const [original, resultBitmap] = await Promise.all([
@@ -82,7 +83,11 @@ export function FineTuneEditor({ sourceUrl, resultBlob, onApply, onCancel }: Fin
             .then((b) => createImageBitmap(b)),
           createImageBitmap(resultBlob),
         ])
-        if (cancelled) return
+        created = [original, resultBitmap]
+        if (cancelled) {
+          for (const bitmap of created) bitmap.close()
+          return
+        }
         const maxWidth = wrapperRef.current?.clientWidth ?? 800
         const maxHeight = Math.round(window.innerHeight * 0.6)
         const scale = fitScale(original.width, original.height, maxWidth, maxHeight)
@@ -109,6 +114,7 @@ export function FineTuneEditor({ sourceUrl, resultBlob, onApply, onCancel }: Fin
     void load()
     return () => {
       cancelled = true
+      for (const bitmap of created) bitmap.close()
     }
   }, [sourceUrl, resultBlob])
 
@@ -250,6 +256,7 @@ export function FineTuneEditor({ sourceUrl, resultBlob, onApply, onCancel }: Fin
             <button
               key={m}
               type="button"
+              aria-pressed={mode === m}
               onClick={() => setMode(m)}
               className={cx(
                 'flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors not-first:border-l not-first:border-line',
@@ -355,6 +362,7 @@ export function FineTuneEditor({ sourceUrl, resultBlob, onApply, onCancel }: Fin
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
               onPointerLeave={handlePointerLeave}
             />
           </div>
