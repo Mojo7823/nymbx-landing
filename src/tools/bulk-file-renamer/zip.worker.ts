@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 import { expose } from 'comlink'
-import { streamZip, type ZipInput } from './zipStream'
+import { streamZip, type ZipInput } from '../../lib/zipStream'
 
 const api = {
   /** Stream `entries` into a compressed zip, reporting source bytes consumed. */

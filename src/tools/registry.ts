@@ -311,7 +311,7 @@ export const tools: ToolMeta[] = [
     description: 'Pull pages out of a PDF',
     category: 'pdf-office',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 11,
     icon: Scissors,
   },

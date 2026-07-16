@@ -33,6 +33,7 @@ describe('tool registry', () => {
       'background-remover',
       'bulk-file-hasher',
       'bulk-file-renamer',
+      'pdf-split',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })
