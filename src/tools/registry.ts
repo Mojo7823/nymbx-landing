@@ -341,7 +341,7 @@ export const tools: ToolMeta[] = [
     description: 'Combine PDFs in any order',
     category: 'pdf-office',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 16,
     icon: Combine,
   },
