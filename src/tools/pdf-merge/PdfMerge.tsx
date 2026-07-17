@@ -10,7 +10,7 @@ import { cx } from '../../lib/cx'
 import { formatBytes } from '../../lib/format'
 import { downloadBlob } from '../../lib/download'
 import { wrapWorker, type WorkerHandle } from '../../lib/worker'
-import { moveItem } from './reorder'
+import { moveItem } from '../../lib/reorder'
 import type { MergeWorkerApi } from './merge.worker'
 
 interface PdfItem {

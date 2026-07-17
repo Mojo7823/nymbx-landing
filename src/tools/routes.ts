@@ -27,4 +27,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'docx-to-html-markdown': lazy(() => import('./docx-to-html-markdown/DocxToHtmlMarkdown')),
   'docx-pdf': lazy(() => import('./docx-pdf/DocxPdf')),
   'pdf-merge': lazy(() => import('./pdf-merge/PdfMerge')),
+  'pdf-page-organizer': lazy(() => import('./pdf-page-organizer/PdfPageOrganizer')),
 }

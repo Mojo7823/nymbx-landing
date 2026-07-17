@@ -37,6 +37,7 @@ describe('tool registry', () => {
       'pdf-resize',
       'pdf-to-image-markdown',
       'pdf-merge',
+      'pdf-page-organizer',
       'docx-to-html-markdown',
       'docx-pdf',
     ])

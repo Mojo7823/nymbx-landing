@@ -351,7 +351,7 @@ export const tools: ToolMeta[] = [
     description: 'Rearrange a PDF visually',
     category: 'pdf-office',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 17,
     icon: ListOrdered,
   },
