@@ -29,4 +29,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'pdf-merge': lazy(() => import('./pdf-merge/PdfMerge')),
   'pdf-page-organizer': lazy(() => import('./pdf-page-organizer/PdfPageOrganizer')),
   'pdf-watermark': lazy(() => import('./pdf-watermark/PdfWatermark')),
+  'images-to-pdf': lazy(() => import('./images-to-pdf/ImagesToPdf')),
 }

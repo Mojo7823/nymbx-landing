@@ -371,7 +371,7 @@ export const tools: ToolMeta[] = [
     description: 'Photos into one document',
     category: 'pdf-office',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 19,
     icon: FileImage,
   },
