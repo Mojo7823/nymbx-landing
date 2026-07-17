@@ -361,7 +361,7 @@ export const tools: ToolMeta[] = [
     description: 'Stamp text or image',
     category: 'pdf-office',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 18,
     icon: Stamp,
   },

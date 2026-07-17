@@ -38,6 +38,7 @@ describe('tool registry', () => {
       'pdf-to-image-markdown',
       'pdf-merge',
       'pdf-page-organizer',
+      'pdf-watermark',
       'docx-to-html-markdown',
       'docx-pdf',
     ])

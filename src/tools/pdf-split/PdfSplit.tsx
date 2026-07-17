@@ -10,7 +10,7 @@ import { cx } from '../../lib/cx'
 import { formatBytes } from '../../lib/format'
 import { downloadBlob } from '../../lib/download'
 import { wrapWorker, type WorkerHandle } from '../../lib/worker'
-import { formatPageRanges, parsePageRanges } from './pageRanges'
+import { formatPageRanges, parsePageRanges } from '../../lib/pageRanges'
 import type { PdfWorkerApi } from './pdf.worker'
 
 interface LoadedPdf {
