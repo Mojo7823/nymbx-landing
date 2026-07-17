@@ -294,7 +294,7 @@ export default function PdfWatermark() {
 
           <div className="flex flex-col gap-6 lg:flex-row">
             {/* ── Controls ─────────────────────────────────────────────── */}
-            <div className="flex w-full flex-col gap-4 rounded-lg border border-line bg-card p-4 lg:max-w-sm">
+            <div className="flex w-full flex-col gap-4 rounded-lg border border-line bg-card p-4 lg:max-w-sm lg:self-start">
               <div role="tablist" aria-label="Watermark type" className="flex gap-1">
                 {(
                   [
