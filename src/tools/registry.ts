@@ -381,7 +381,7 @@ export const tools: ToolMeta[] = [
     description: 'Shrink heavy PDFs',
     category: 'pdf-office',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 20,
     icon: Shrink,
   },

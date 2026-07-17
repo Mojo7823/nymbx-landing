@@ -40,6 +40,7 @@ describe('tool registry', () => {
       'pdf-page-organizer',
       'pdf-watermark',
       'images-to-pdf',
+      'pdf-compress',
       'docx-to-html-markdown',
       'docx-pdf',
     ])
