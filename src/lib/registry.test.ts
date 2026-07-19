@@ -44,6 +44,7 @@ describe('tool registry', () => {
       'xlsx-csv-viewer',
       'docx-to-html-markdown',
       'docx-pdf',
+      'markdown-to-docx',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })

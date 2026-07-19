@@ -433,7 +433,7 @@ export const tools: ToolMeta[] = [
     description: 'Markdown to Word',
     category: 'converters',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 22,
     icon: FileType,
   },
