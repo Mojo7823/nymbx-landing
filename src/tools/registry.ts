@@ -465,7 +465,7 @@ export const tools: ToolMeta[] = [
     description: 'Convert tabular data',
     category: 'text-dev',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 25,
     icon: Table2,
   },
