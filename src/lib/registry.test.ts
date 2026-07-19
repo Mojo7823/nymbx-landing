@@ -41,6 +41,7 @@ describe('tool registry', () => {
       'pdf-watermark',
       'images-to-pdf',
       'pdf-compress',
+      'xlsx-csv-viewer',
       'docx-to-html-markdown',
       'docx-pdf',
     ])

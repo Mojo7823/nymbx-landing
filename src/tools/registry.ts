@@ -391,7 +391,7 @@ export const tools: ToolMeta[] = [
     description: 'Open spreadsheets read-only',
     category: 'pdf-office',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 21,
     icon: Table,
   },
