@@ -455,7 +455,7 @@ export const tools: ToolMeta[] = [
     description: 'Convert config formats',
     category: 'text-dev',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 24,
     icon: Database,
   },

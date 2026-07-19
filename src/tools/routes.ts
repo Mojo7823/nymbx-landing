@@ -34,4 +34,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'xlsx-csv-viewer': lazy(() => import('./xlsx-csv-viewer/XlsxCsvViewer')),
   'markdown-to-docx': lazy(() => import('./markdown-to-docx/MarkdownToDocx')),
   'json-formatter': lazy(() => import('./json-formatter/JsonFormatter')),
+  'yaml-json-toml': lazy(() => import('./yaml-json-toml/YamlJsonToml')),
 }
