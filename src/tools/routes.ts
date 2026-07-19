@@ -33,4 +33,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'pdf-compress': lazy(() => import('./pdf-compress/PdfCompress')),
   'xlsx-csv-viewer': lazy(() => import('./xlsx-csv-viewer/XlsxCsvViewer')),
   'markdown-to-docx': lazy(() => import('./markdown-to-docx/MarkdownToDocx')),
+  'json-formatter': lazy(() => import('./json-formatter/JsonFormatter')),
 }

@@ -445,7 +445,7 @@ export const tools: ToolMeta[] = [
     description: 'Format and validate JSON',
     category: 'text-dev',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 23,
     icon: Braces,
   },

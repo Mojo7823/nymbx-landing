@@ -45,6 +45,7 @@ describe('tool registry', () => {
       'docx-to-html-markdown',
       'docx-pdf',
       'markdown-to-docx',
+      'json-formatter',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })
