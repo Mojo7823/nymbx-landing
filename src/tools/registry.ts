@@ -475,7 +475,7 @@ export const tools: ToolMeta[] = [
     description: 'Encode text and files',
     category: 'text-dev',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 26,
     icon: Binary,
   },
