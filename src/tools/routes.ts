@@ -37,4 +37,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'yaml-json-toml': lazy(() => import('./yaml-json-toml/YamlJsonToml')),
   'csv-json': lazy(() => import('./csv-json/CsvJson')),
   base64: lazy(() => import('./base64/Base64')),
+  'url-encode': lazy(() => import('./url-encode/UrlEncode')),
 }

@@ -49,6 +49,7 @@ describe('tool registry', () => {
       'yaml-json-toml',
       'csv-json',
       'base64',
+      'url-encode',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })

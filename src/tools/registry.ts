@@ -485,7 +485,7 @@ export const tools: ToolMeta[] = [
     description: 'Break down URLs',
     category: 'text-dev',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 27,
     icon: Link2,
   },
