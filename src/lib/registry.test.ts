@@ -50,6 +50,7 @@ describe('tool registry', () => {
       'csv-json',
       'base64',
       'url-encode',
+      'regex-tester',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })

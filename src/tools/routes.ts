@@ -38,4 +38,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'csv-json': lazy(() => import('./csv-json/CsvJson')),
   base64: lazy(() => import('./base64/Base64')),
   'url-encode': lazy(() => import('./url-encode/UrlEncode')),
+  'regex-tester': lazy(() => import('./regex-tester/RegexTester')),
 }

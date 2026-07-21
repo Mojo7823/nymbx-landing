@@ -495,7 +495,7 @@ export const tools: ToolMeta[] = [
     description: 'Test patterns safely',
     category: 'text-dev',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 28,
     icon: Regex,
   },
