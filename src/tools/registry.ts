@@ -504,7 +504,7 @@ export const tools: ToolMeta[] = [
     description: 'Count words, chars, tokens',
     category: 'text-dev',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 30,
     icon: WholeWord,
   },

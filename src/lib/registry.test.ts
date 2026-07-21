@@ -51,6 +51,7 @@ describe('tool registry', () => {
       'base64',
       'url-encode',
       'regex-tester',
+      'word-counter',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })
