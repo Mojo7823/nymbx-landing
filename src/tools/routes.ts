@@ -40,4 +40,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'url-encode': lazy(() => import('./url-encode/UrlEncode')),
   'regex-tester': lazy(() => import('./regex-tester/RegexTester')),
   'word-counter': lazy(() => import('./word-counter/WordCounter')),
+  'uuid-password-generator': lazy(() => import('./uuid-password-generator/UuidPasswordGenerator')),
 }

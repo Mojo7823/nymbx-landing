@@ -514,7 +514,7 @@ export const tools: ToolMeta[] = [
     description: 'Generate secure random IDs',
     category: 'text-dev',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 31,
     icon: KeyRound,
   },

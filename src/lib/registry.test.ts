@@ -52,6 +52,7 @@ describe('tool registry', () => {
       'url-encode',
       'regex-tester',
       'word-counter',
+      'uuid-password-generator',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })
