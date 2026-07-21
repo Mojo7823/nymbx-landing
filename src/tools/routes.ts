@@ -42,4 +42,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'word-counter': lazy(() => import('./word-counter/WordCounter')),
   'uuid-password-generator': lazy(() => import('./uuid-password-generator/UuidPasswordGenerator')),
   'timestamp-converter': lazy(() => import('./timestamp-converter/TimestampConverter')),
+  'string-escape': lazy(() => import('./string-escape/StringEscape')),
 }

@@ -533,7 +533,7 @@ export const tools: ToolMeta[] = [
     description: 'Escape for JSON, HTML, shell',
     category: 'text-dev',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 34,
     icon: Quote,
   },
