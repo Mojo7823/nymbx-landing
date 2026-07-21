@@ -239,10 +239,7 @@ Phases 16–52 extend the five groups. They follow the same standard four-task t
 - **Build:** pattern + flags input, test text with live match highlighting, capture-group table (named groups), replace preview; **execution in a worker with a timeout** to survive catastrophic backtracking.
 - **Verify:** all flags behave; named + numbered groups displayed per match; a known ReDoS pattern times out with a message instead of freezing the tab; multiline anchors correct.
 
-### Phase 29 — Text case converter
-- **Libraries:** none.
-- **Build:** camelCase / PascalCase / snake_case / kebab-case / CONSTANT_CASE / Title Case / sentence case; live output for all cases at once; copy each.
-- **Verify:** acronym handling (`parseHTMLString` → `parse_html_string`); numbers in identifiers; unicode letters; idempotency.
+### Phase 29 — removed (text case converter, dropped from scope)
 
 ### Phase 30 — Word / character / token counter
 - **Libraries:** none (`Intl.Segmenter`).
