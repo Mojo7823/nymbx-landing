@@ -256,10 +256,7 @@ Phases 16–52 extend the five groups. They follow the same standard four-task t
 - **Build:** epoch (auto-detect s/ms/µs) ↔ ISO 8601 ↔ human-readable; timezone selector with search; "now" button; relative time display; batch conversion.
 - **Verify:** DST transition instants convert correctly; s vs ms auto-detection with override; leap-year and end-of-month edges; timezone list includes user's local zone as default.
 
-### Phase 33 — Cron expression parser
-- **Libraries:** `cron-parser`, `cronstrue`.
-- **Build:** paste a cron expression → plain-English explanation + next 10 run times in a chosen timezone; field-by-field breakdown; common presets.
-- **Verify:** standard 5-field and 6-field (seconds) syntax; special strings (`@daily`, `@reboot` → explain limitation); next-run times validated against known examples; invalid field → per-field error.
+### Phase 33 — removed (cron expression parser, dropped from scope)
 
 ### Phase 34 — String escape / unescape
 - **Libraries:** `he` (HTML entities).

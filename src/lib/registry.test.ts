@@ -2,16 +2,18 @@ import { describe, expect, it } from 'vitest'
 import { categories, getTool, tools } from '../tools/registry'
 
 describe('tool registry', () => {
-  it('contains all 51 tools across 7 categories', () => {
-    expect(tools).toHaveLength(51)
+  it('contains all 50 tools across 7 categories', () => {
+    expect(tools).toHaveLength(50)
     expect(categories).toHaveLength(7)
   })
 
-  it('has unique slugs and phase numbers covering 1–52 (29 was dropped)', () => {
+  it('has unique slugs and phase numbers covering 1–52 (29 and 33 were dropped)', () => {
     const slugs = new Set(tools.map((t) => t.slug))
-    expect(slugs.size).toBe(51)
+    expect(slugs.size).toBe(50)
     const phases = tools.map((t) => t.phase).sort((a, b) => a - b)
-    expect(phases).toEqual(Array.from({ length: 52 }, (_, i) => i + 1).filter((p) => p !== 29))
+    expect(phases).toEqual(
+      Array.from({ length: 52 }, (_, i) => i + 1).filter((p) => p !== 29 && p !== 33),
+    )
   })
 
   it('marks exactly one tool as server-assisted (DOCX ↔ PDF)', () => {

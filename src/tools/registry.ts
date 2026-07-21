@@ -2,7 +2,6 @@ import type { LucideIcon } from 'lucide-react'
 import {
   Binary,
   Braces,
-  CalendarClock,
   Camera,
   Clock,
   Combine,
@@ -527,16 +526,6 @@ export const tools: ToolMeta[] = [
     status: 'available',
     phase: 32,
     icon: Clock,
-  },
-  {
-    slug: 'cron-parser',
-    name: 'Cron parser',
-    description: 'Explain cron schedules',
-    category: 'text-dev',
-    badge: client,
-    status: soon,
-    phase: 33,
-    icon: CalendarClock,
   },
   {
     slug: 'string-escape',
