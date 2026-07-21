@@ -524,7 +524,7 @@ export const tools: ToolMeta[] = [
     description: 'Epoch ↔ human dates',
     category: 'text-dev',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 32,
     icon: Clock,
   },
