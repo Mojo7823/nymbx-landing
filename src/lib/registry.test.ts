@@ -57,6 +57,7 @@ describe('tool registry', () => {
       'uuid-password-generator',
       'timestamp-converter',
       'string-escape',
+      'text-hasher',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })

@@ -555,7 +555,7 @@ export const tools: ToolMeta[] = [
     description: 'Hash text, RFC-correct',
     category: 'security',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 36,
     icon: Hash,
   },
