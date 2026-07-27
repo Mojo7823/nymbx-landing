@@ -20,7 +20,7 @@ describe('formatBytes', () => {
   })
 
   it('handles invalid input', () => {
-    expect(formatBytes(-1)).toBe('—')
-    expect(formatBytes(Number.NaN)).toBe('—')
+    expect(formatBytes(-1)).toBe('–')
+    expect(formatBytes(Number.NaN)).toBe('–')
   })
 })

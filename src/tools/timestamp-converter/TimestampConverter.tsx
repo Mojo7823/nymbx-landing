@@ -83,7 +83,7 @@ export default function TimestampConverter() {
   return (
     <ToolLayout
       title="Timestamp ↔ date converter"
-      description="Convert between Unix epochs (seconds, milliseconds or microseconds — auto-detected), ISO 8601 and human-readable dates in any timezone, with relative time and batch conversion. Everything runs in your browser."
+      description="Convert between Unix epochs (seconds, milliseconds or microseconds, auto-detected), ISO 8601 and human-readable dates in any timezone, with relative time and batch conversion. Everything runs in your browser."
       badge="client-side"
     >
       <div role="tablist" aria-label="Mode" className="mb-4 flex gap-1">

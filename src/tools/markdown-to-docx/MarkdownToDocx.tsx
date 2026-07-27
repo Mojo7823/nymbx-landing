@@ -21,7 +21,7 @@ See the [changelog](https://example.com/changelog) for details.
    - CSV streaming
 3. Accessibility audit passed
 
-> "The best release so far." — a happy user
+> "The best release so far." (a happy user)
 
 ## Metrics
 
@@ -81,7 +81,7 @@ export default function MarkdownToDocx() {
         `Converted ${blocks.length} ${blocks.length === 1 ? 'block' : 'blocks'} → ${baseName}.docx`,
       )
     } catch {
-      setError('Conversion failed — please check the markdown and try again.')
+      setError('Conversion failed. Please check the markdown and try again.')
     } finally {
       setConverting(false)
     }
@@ -140,8 +140,8 @@ export default function MarkdownToDocx() {
         <span>
           Fetch web images (<code className="font-mono">http(s)://…</code>) and embed them.{' '}
           <span className="text-faint">
-            Off by default: when enabled, images are downloaded from their servers — the markdown
-            itself still never leaves this device.
+            Off by default: when enabled, images are downloaded from their servers, though the
+            markdown itself still never leaves this device.
           </span>
         </span>
       </label>

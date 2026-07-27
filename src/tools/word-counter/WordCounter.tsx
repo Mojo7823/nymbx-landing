@@ -10,7 +10,7 @@ import { countText, type TextStats } from './count'
 const WORKER_THRESHOLD = 64 * 1024
 const DEBOUNCE_MS = 150
 
-const SAMPLE = `The NYMBX Toolbox runs entirely in your browser — no uploads, no tracking.
+const SAMPLE = `The NYMBX Toolbox runs entirely in your browser: no uploads, no tracking.
 
 它也能正確計算中日韓文字：這一句的每個詞都由 Intl.Segmenter 切分，而不是用空格。
 
@@ -81,7 +81,7 @@ export default function WordCounter() {
   return (
     <ToolLayout
       title="Word & character counter"
-      description="Live counts of characters, words, sentences, lines and paragraphs — CJK-aware via Intl.Segmenter, emoji counted as single characters — plus rough token and reading-time estimates. Everything runs in your browser."
+      description="Live counts of characters, words, sentences, lines and paragraphs (CJK-aware via Intl.Segmenter, emoji counted as single characters), plus rough token and reading-time estimates. Everything runs in your browser."
       badge="client-side"
     >
       <div className="grid gap-4 lg:grid-cols-[1fr_minmax(16rem,0.6fr)]">

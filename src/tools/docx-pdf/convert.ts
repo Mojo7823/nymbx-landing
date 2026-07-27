@@ -28,7 +28,7 @@ export function errorMessage(status: number): string {
     return 'The server rejected this file as too large. The upload limit is 30 MB.'
   }
   if (status === 0 || status === 502 || status === 503 || status === 504) {
-    return 'The conversion service is unreachable right now. Your file was not converted — please try again in a minute.'
+    return 'The conversion service is unreachable right now. Your file was not converted. Please try again in a minute.'
   }
   if (status >= 400 && status < 500) {
     return 'The server could not convert this file. It may be corrupted, password-protected, or not a real Word document.'

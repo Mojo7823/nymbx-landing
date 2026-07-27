@@ -13,13 +13,13 @@ const TIMEOUT_MS = 2000
 const DEBOUNCE_MS = 250
 
 const FLAGS: [string, string][] = [
-  ['g', 'global — find every match'],
+  ['g', 'global: find every match'],
   ['i', 'ignore case'],
-  ['m', 'multiline — ^ and $ match per line'],
-  ['s', 'dotAll — . matches newlines'],
+  ['m', 'multiline: ^ and $ match per line'],
+  ['s', 'dotAll: . matches newlines'],
   ['u', 'unicode'],
   ['v', 'unicodeSets'],
-  ['y', 'sticky — matches must be adjacent'],
+  ['y', 'sticky: matches must be adjacent'],
 ]
 
 const SAMPLE = {
@@ -112,7 +112,7 @@ export default function RegexTester() {
             workerRef.current?.terminate()
             workerRef.current = null
             setError(
-              `Execution timed out after ${TIMEOUT_MS / 1000} s — the pattern likely suffers from catastrophic backtracking on this text. The page stays responsive; simplify the pattern and try again.`,
+              `Execution timed out after ${TIMEOUT_MS / 1000} s. The pattern likely suffers from catastrophic backtracking on this text. The page stays responsive; simplify the pattern and try again.`,
             )
           } else {
             setError(cause instanceof Error ? cause.message : 'Failed to run the pattern.')
@@ -281,7 +281,7 @@ export default function RegexTester() {
                         </td>
                         <td className="px-3 py-2 align-top font-mono break-all text-ink">
                           {match.groups.length === 0 ? (
-                            <span className="text-faint">—</span>
+                            <span className="text-faint">–</span>
                           ) : (
                             match.groups.map((group) => (
                               <div key={group.number}>
@@ -305,7 +305,7 @@ export default function RegexTester() {
               </div>
               {result.truncated && (
                 <p className="mt-2 text-xs text-muted">
-                  Match list capped — refine the pattern to see the rest.
+                  Match list capped. Refine the pattern to see the rest.
                 </p>
               )}
             </>
@@ -322,7 +322,7 @@ export default function RegexTester() {
             <span className="text-xs font-semibold text-muted">
               Replacement{' '}
               <span className="font-normal text-faint">
-                ($1, $&lt;name&gt;, $&amp; supported — empty deletes matches)
+                ($1, $&lt;name&gt;, $&amp; supported; empty deletes matches)
               </span>
             </span>
             <input

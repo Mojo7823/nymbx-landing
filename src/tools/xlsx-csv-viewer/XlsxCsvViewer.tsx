@@ -212,7 +212,7 @@ export default function XlsxCsvViewer() {
             <FileDropzone
               accept={ACCEPT}
               onFiles={(files) => void openFile(files)}
-              hint="XLSX, XLS, CSV or ODS — viewing only, the file is never modified"
+              hint="XLSX, XLS, CSV or ODS. Viewing only, the file is never modified"
             />
           )}
         </>

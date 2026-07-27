@@ -101,7 +101,7 @@ export default function PdfCompress() {
       const name = err instanceof Error ? err.name : ''
       setError(
         name === 'PasswordException'
-          ? 'This PDF is password-protected. Remove the password first — encrypted files are not supported.'
+          ? 'This PDF is password-protected. Remove the password first; encrypted files are not supported.'
           : 'Could not read this file as a PDF. It may be corrupted or not a PDF at all.',
       )
     } finally {
@@ -139,7 +139,7 @@ export default function PdfCompress() {
         quality,
       })
     } catch {
-      setError('Compression failed — this PDF may use features pdf.js cannot draw.')
+      setError('Compression failed. This PDF may use features pdf.js cannot draw.')
     } finally {
       setBusy(null)
     }
@@ -223,7 +223,7 @@ export default function PdfCompress() {
               <FileWarning className="mt-0.5 size-3.5 shrink-0" />
               Pages are re-rendered as flat images: text becomes non-selectable, and links,
               bookmarks and form fields are removed. Compression only helps scanned or image-heavy
-              documents — text-only PDFs usually get bigger.
+              documents; text-only PDFs usually get bigger.
             </p>
           </div>
 
@@ -265,7 +265,7 @@ export default function PdfCompress() {
                 <p className="flex items-start gap-1.5 text-xs text-amber-badge">
                   <FileWarning className="mt-0.5 size-3.5 shrink-0" />
                   The result is not smaller than the original. This PDF is probably text or vector
-                  based, so rasterizing cannot shrink it — keep the original file.
+                  based, so rasterizing cannot shrink it. Keep the original file.
                 </p>
               )}
               <div>

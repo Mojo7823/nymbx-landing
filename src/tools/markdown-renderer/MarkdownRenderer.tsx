@@ -30,7 +30,7 @@ export function greet(name: string): string {
 }
 \`\`\`
 
-> Everything is sanitized — try pasting \`<script>alert(1)</script>\`.
+> Everything is sanitized. Try pasting \`<script>alert(1)</script>\`.
 `
 
 /** Minimal standalone styles for the exported .html file (light theme). */
@@ -77,7 +77,7 @@ export default function MarkdownRenderer() {
     try {
       setSource(await navigator.clipboard.readText())
     } catch {
-      toast('Clipboard access was blocked — paste into the text box instead.', {
+      toast('Clipboard access was blocked. Paste into the text box instead.', {
         variant: 'error',
       })
     }

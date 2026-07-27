@@ -157,7 +157,7 @@ export default function JsonFormatter() {
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-ink">{bigFile.name}</p>
             <p className="font-mono text-[11px] text-muted tabular-nums">
-              {formatBytes(bigFile.size)} — too large to edit inline, actions still work
+              {formatBytes(bigFile.size)} · too large to edit inline, actions still work
             </p>
           </div>
           <Button variant="ghost" size="sm" onClick={clearAll}>
@@ -173,7 +173,7 @@ export default function JsonFormatter() {
             setResult(null)
             setTree(null)
           }}
-          placeholder='Paste JSON here, e.g. {"hello": "world"} — or open a file…'
+          placeholder='Paste JSON here, e.g. {"hello": "world"}, or open a file…'
           aria-label="JSON input"
           spellCheck={false}
           className="h-56 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none md:h-72"
@@ -219,7 +219,7 @@ export default function JsonFormatter() {
       {result?.error && excerpt && (
         <div role="alert" className="mt-4 rounded-lg border border-line bg-card p-4">
           <p className="text-sm font-medium text-red-600 dark:text-red-400">
-            {result.error.message} — line {result.error.line}, column {result.error.col}
+            {result.error.message} · line {result.error.line}, column {result.error.col}
           </p>
           <pre className="mt-2 overflow-x-auto font-mono text-xs leading-5 text-ink">
             {excerpt.line}
@@ -297,7 +297,7 @@ export default function JsonFormatter() {
             view === 'text' &&
             (output.length > DISPLAY_LIMIT ? (
               <p className="rounded-lg border border-line bg-card p-4 text-xs text-muted">
-                Output is {formatBytes(outputBytes)} — too large to display; use Download.
+                Output is {formatBytes(outputBytes)}, too large to display; use Download.
               </p>
             ) : (
               <pre className="max-h-96 overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed whitespace-pre text-ink">

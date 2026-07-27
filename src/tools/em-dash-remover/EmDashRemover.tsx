@@ -31,7 +31,7 @@ export default function EmDashRemover() {
     try {
       setInput(await navigator.clipboard.readText())
     } catch {
-      toast('Clipboard access was blocked — paste into the text box instead.', {
+      toast('Clipboard access was blocked. Paste into the text box instead.', {
         variant: 'error',
       })
     }
@@ -104,7 +104,7 @@ export default function EmDashRemover() {
               id="emdash-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Paste your text here — the result appears instantly."
+              placeholder="Paste your text here. The result appears instantly."
               aria-label="Text to process"
               autoFocus
               spellCheck={false}

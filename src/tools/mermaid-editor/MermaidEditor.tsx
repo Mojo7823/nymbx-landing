@@ -118,7 +118,7 @@ export default function MermaidEditor() {
       })
       downloadBlob(blob, 'diagram.png')
     } catch {
-      toast('PNG export failed — try the SVG export instead.', { variant: 'error' })
+      toast('PNG export failed. Try the SVG export instead.', { variant: 'error' })
     }
   }
 

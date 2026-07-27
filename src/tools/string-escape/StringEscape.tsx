@@ -8,12 +8,12 @@ import { escapeText, unescapeText, MODE_LABELS, type EscapeMode } from './escape
 
 const MODES = Object.keys(MODE_LABELS) as EscapeMode[]
 
-const SAMPLE = 'He said "hi" — it\'s $HOME, `pwd` & 5 > 3 (café)\nsecond line\ttab'
+const SAMPLE = 'He said "hi"; it\'s $HOME, `pwd` & 5 > 3 (café)\nsecond line\ttab'
 
 const MODE_HINTS: Record<EscapeMode, string> = {
   json: 'For pasting inside a JSON "…" string: quotes, backslashes and control characters become \\" \\\\ \\n …',
   html: 'For embedding in HTML: markup characters and non-ASCII become entities like &lt; &amp; &eacute;.',
-  url: 'Percent-encoding via encodeURIComponent — for a query value or path segment.',
+  url: 'Percent-encoding via encodeURIComponent, for a query value or path segment.',
   'shell-single':
     "POSIX single quoting: everything is literal; embedded ' becomes '\\''. Safest for shell arguments.",
   'shell-double':
@@ -46,7 +46,7 @@ export default function StringEscape() {
   return (
     <ToolLayout
       title="String escape / unescape"
-      description="Escape text for embedding in JSON strings, HTML, URLs, shell quotes or regex literals — or peel the escaping back off. Edit either side; the other follows. Everything runs in your browser."
+      description="Escape text for embedding in JSON strings, HTML, URLs, shell quotes or regex literals, or peel the escaping back off. Edit either side; the other follows. Everything runs in your browser."
       badge="client-side"
     >
       <div role="tablist" aria-label="Mode" className="mb-2 flex flex-wrap gap-1">
@@ -85,7 +85,7 @@ export default function StringEscape() {
             name="raw"
             value={raw}
             onChange={(event) => updateRaw(event.target.value)}
-            placeholder="Type or paste plain text — the escaped form appears on the right…"
+            placeholder="Type or paste plain text. The escaped form appears on the right…"
             spellCheck={false}
             className="h-64 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
           />
@@ -127,7 +127,7 @@ export default function StringEscape() {
       </div>
 
       <p className="mt-4 text-xs text-faint">
-        Nested escaping (e.g. JSON inside JSON) peels one layer per pass — paste the result back
+        Nested escaping (e.g. JSON inside JSON) peels one layer per pass, so paste the result back
         into the escaped side to peel the next layer.
       </p>
     </ToolLayout>

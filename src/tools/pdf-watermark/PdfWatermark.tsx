@@ -170,7 +170,7 @@ export default function PdfWatermark() {
         setError(
           err instanceof Error && err.message === 'font'
             ? 'Could not load the bundled Unicode font for this text.'
-            : 'Could not render the watermark preview — some characters may not be supported.',
+            : 'Could not render the watermark preview. Some characters may not be supported.',
         )
       } finally {
         if (seq === previewSeq.current) setPreviewing(false)
@@ -244,7 +244,7 @@ export default function PdfWatermark() {
       setError(
         err instanceof Error && err.message === 'font'
           ? 'Could not load the bundled Unicode font for this text.'
-          : 'Applying the watermark failed — this PDF may use features pdf-lib cannot modify.',
+          : 'Applying the watermark failed. This PDF may use features pdf-lib cannot modify.',
       )
     } finally {
       setApplying(false)
@@ -257,7 +257,7 @@ export default function PdfWatermark() {
   return (
     <ToolLayout
       title="PDF watermark"
-      description="Stamp text or an image across the pages of a PDF — set opacity, size, rotation and position, with a live preview. Everything stays in your browser."
+      description="Stamp text or an image across the pages of a PDF: set opacity, size, rotation and position, with a live preview. Everything stays in your browser."
       badge="client-side"
     >
       {!pdf ? (
@@ -273,7 +273,7 @@ export default function PdfWatermark() {
             <FileDropzone
               accept="application/pdf,.pdf"
               onFiles={(files) => void loadFile(files)}
-              hint="One PDF — the first page becomes a live preview"
+              hint="One PDF. The first page becomes a live preview"
             />
           )}
         </>
@@ -517,7 +517,7 @@ export default function PdfWatermark() {
             <div className="min-w-0 flex-1">
               <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted">
                 <Stamp className="size-3.5" />
-                Live preview — first page
+                Live preview · first page
                 {previewing && <span className="text-faint">(updating…)</span>}
               </p>
               {error && (

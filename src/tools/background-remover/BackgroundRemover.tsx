@@ -86,7 +86,7 @@ export default function BackgroundRemover() {
       console.error(err)
       setPhase('error')
       setError(
-        'Background removal failed. Very large images can run out of memory — try a smaller copy, or reload and use the Fast model.',
+        'Background removal failed. Very large images can run out of memory. Try a smaller copy, or reload and use the Fast model.',
       )
     } finally {
       if (runRef.current === run) setProgress(null)
@@ -113,7 +113,7 @@ export default function BackgroundRemover() {
   return (
     <ToolLayout
       title="Background remover"
-      description="Remove the background from a photo with an AI model that runs entirely in your browser — the image never leaves this device."
+      description="Remove the background from a photo with an AI model that runs entirely in your browser; the image never leaves this device."
       badge="client-side"
     >
       <div className="mb-6 flex flex-wrap items-center gap-x-6 gap-y-3 rounded-lg border border-line bg-card p-4">
@@ -146,7 +146,7 @@ export default function BackgroundRemover() {
           </div>
         </fieldset>
         <p className="text-xs text-faint">
-          First use downloads the model (~{model === 'small' ? '44' : '88'} MB) from this site — it
+          First use downloads the model (~{model === 'small' ? '44' : '88'} MB) from this site; it
           is cached for next time. Your photo is processed locally.
         </p>
       </div>
@@ -157,7 +157,7 @@ export default function BackgroundRemover() {
           onFiles={(files) => {
             if (files[0]) void process(files[0])
           }}
-          hint="PNG, JPEG or WebP — one photo at a time"
+          hint="PNG, JPEG or WebP. One photo at a time"
         />
       )}
 

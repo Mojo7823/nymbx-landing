@@ -61,7 +61,7 @@ export default function DocxPdf() {
   return (
     <ToolLayout
       title="DOCX → PDF"
-      description="High-fidelity Word-to-PDF conversion using LibreOffice on our server — the one tool here that can't run in your browser."
+      description="High-fidelity Word-to-PDF conversion using LibreOffice on our server. This is the one tool here that can't run in your browser."
       badge="server-assisted"
     >
       <div
@@ -71,7 +71,7 @@ export default function DocxPdf() {
         <CloudUpload className="mt-0.5 size-4 shrink-0" />
         <p>
           <strong className="font-semibold">This tool uploads your file to our server</strong> for
-          conversion. It is processed in memory and deleted immediately after — nothing is stored.
+          conversion. It is processed in memory and deleted immediately after, so nothing is stored.
           Every other tool in this toolbox runs entirely on your device.
         </p>
       </div>
@@ -134,7 +134,7 @@ export default function DocxPdf() {
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-ink">Converted to {pdfName(file.name)}</p>
                 <p className="font-mono text-[11px] text-muted tabular-nums">
-                  {formatBytes(stage.pdf.size)} — download started automatically
+                  {formatBytes(stage.pdf.size)} · download started automatically
                 </p>
               </div>
               <Button

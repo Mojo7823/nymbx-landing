@@ -22,7 +22,7 @@ export function CopyButton({ text, label = 'Copy', ...rest }: CopyButtonProps) {
       clearTimeout(timer.current)
       timer.current = setTimeout(() => setCopied(false), 1500)
     } catch {
-      /* clipboard unavailable (permissions) — leave the label unchanged */
+      /* clipboard unavailable (permissions); leave the label unchanged */
     }
   }
 

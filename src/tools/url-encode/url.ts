@@ -63,7 +63,7 @@ export function parseUrl(input: string): ParsedUrl {
   try {
     url = new URL(assumedProtocol ? `https://${trimmed}` : trimmed)
   } catch {
-    throw new Error('Not a valid URL — check the scheme, host and any special characters.')
+    throw new Error('Not a valid URL. Check the scheme, host and any special characters.')
   }
 
   const unicodeHostname = punycodeToUnicode(url.hostname)

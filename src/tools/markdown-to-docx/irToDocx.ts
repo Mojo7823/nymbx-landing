@@ -86,7 +86,7 @@ async function loadImages(
       continue
     }
     if (/^https?:/i.test(src) && !opts.fetchRemoteImages) {
-      warnings.push(`Web image skipped — enable "fetch web images" to include it: ${short}`)
+      warnings.push(`Web image skipped. Enable "fetch web images" to include it: ${short}`)
       continue
     }
     try {

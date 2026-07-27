@@ -225,7 +225,7 @@ export default function PdfPageOrganizer() {
       const name = err instanceof Error ? err.name : ''
       setError(
         name === 'PasswordException'
-          ? 'This PDF is password-protected. Remove the password first — encrypted files are not supported.'
+          ? 'This PDF is password-protected. Remove the password first; encrypted files are not supported.'
           : 'Could not read this file as a PDF. It may be corrupted or not a PDF at all.',
       )
     } finally {
@@ -278,7 +278,7 @@ export default function PdfPageOrganizer() {
   function deleteSelected() {
     const next = deletePages(pages, selection)
     if (!next) {
-      setError('Cannot delete every page — a PDF needs at least one.')
+      setError('Cannot delete every page. A PDF needs at least one.')
       return
     }
     setError(null)
@@ -298,7 +298,7 @@ export default function PdfPageOrganizer() {
       const base = pdf.name.replace(/\.pdf$/i, '')
       downloadBlob(new Blob([data as BlobPart], { type: 'application/pdf' }), `${base}-edited.pdf`)
     } catch {
-      setError('Saving failed — this PDF may use features pdf-lib cannot copy.')
+      setError('Saving failed. This PDF may use features pdf-lib cannot copy.')
     } finally {
       setSaving(false)
     }
@@ -326,7 +326,7 @@ export default function PdfPageOrganizer() {
             <FileDropzone
               accept="application/pdf,.pdf"
               onFiles={(files) => void loadFile(files)}
-              hint="One PDF — pages appear as a drag-to-reorder grid"
+              hint="One PDF. Pages appear as a drag-to-reorder grid"
             />
           )}
         </>
@@ -411,7 +411,7 @@ export default function PdfPageOrganizer() {
 
           <ol
             className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-2 sm:grid-cols-[repeat(auto-fill,minmax(120px,1fr))]"
-            aria-label="Pages, in output order — drag to reorder"
+            aria-label="Pages, in output order. Drag to reorder"
           >
             {pages.map((page, index) => (
               <li
@@ -465,7 +465,7 @@ export default function PdfPageOrganizer() {
             {saving && <ProgressBar className="min-w-40 flex-1" label="Building PDF" />}
             {!changed && !saving && (
               <p className="text-xs text-muted">
-                No changes yet — the output would match the original.
+                No changes yet; the output would match the original.
               </p>
             )}
           </div>

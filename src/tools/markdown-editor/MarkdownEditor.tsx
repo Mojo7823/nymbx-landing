@@ -60,7 +60,7 @@ import './editor.css'
 
 const SAMPLE = `# Markdown editor
 
-Write on the left — the toolbar wraps your **selection** in markdown.
+Write on the left. The toolbar wraps your **selection** in markdown.
 Your work autosaves to this browser and never leaves your device.
 
 ## Everything from the renderer works
@@ -294,7 +294,7 @@ export default function MarkdownEditor() {
     e.target.value = ''
     if (!file) return
     if (file.size > EMBED_MAX_BYTES) {
-      toast(`Image is ${formatBytes(file.size)} — too large to embed. Link to it by URL instead.`, {
+      toast(`Image is ${formatBytes(file.size)}, too large to embed. Link to it by URL instead.`, {
         variant: 'error',
       })
       return
@@ -304,9 +304,7 @@ export default function MarkdownEditor() {
       if (typeof reader.result !== 'string') return
       run((s) => insertImage(s, file.name, reader.result as string))
       if (file.size > EMBED_WARN_BYTES) {
-        toast(
-          `Embedded ${formatBytes(file.size)} as base64 — large embeds make the document heavy.`,
-        )
+        toast(`Embedded ${formatBytes(file.size)} as base64. Large embeds make the document heavy.`)
       }
     }
     reader.onerror = () => toast('Could not read that image file.', { variant: 'error' })
@@ -441,7 +439,7 @@ export default function MarkdownEditor() {
         {!ready
           ? 'Loading draft…'
           : savedAt
-            ? `Draft ${restored ? 'restored — ' : ''}saved ${new Date(savedAt).toLocaleTimeString()} · ${source.length.toLocaleString()} characters`
+            ? `Draft ${restored ? 'restored · ' : ''}saved ${new Date(savedAt).toLocaleTimeString()} · ${source.length.toLocaleString()} characters`
             : `No saved draft · ${source.length.toLocaleString()} characters`}
       </p>
     </ToolLayout>

@@ -108,7 +108,7 @@ const api = {
           if (!roundSmallest || blob.size < roundSmallest.size) roundSmallest = blob
           if (blob.size <= req.targetBytes) {
             fit = blob
-            lo = quality // fits — try a higher quality
+            lo = quality // fits, so try a higher quality
           } else {
             hi = quality
           }

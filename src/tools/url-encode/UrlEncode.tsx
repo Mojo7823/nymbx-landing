@@ -22,8 +22,8 @@ const SAMPLES: Record<Tab, string> = {
 
 const MODE_HINTS: Record<EncodeMode, string> = {
   component:
-    'encodeURIComponent — encodes every reserved character (/ ? & = # …). Use for a single query value or path segment.',
-  full: 'encodeURI — keeps URL structure (:// ? & =) intact and encodes only invalid characters. Use on a whole URL.',
+    'encodeURIComponent: encodes every reserved character (/ ? & = # …). Use for a single query value or path segment.',
+  full: 'encodeURI: keeps URL structure (:// ? & =) intact and encodes only invalid characters. Use on a whole URL.',
 }
 
 function Row({ label, value, mono = true }: { label: string; value: string; mono?: boolean }) {
@@ -138,7 +138,7 @@ export default function UrlEncode() {
   return (
     <ToolLayout
       title="URL encode / decode / parse"
-      description="Percent-encode or decode text — component or full-URL mode — and break any URL into protocol, host, path, query parameters and fragment. Everything runs in your browser."
+      description="Percent-encode or decode text (component or full-URL mode) and break any URL into protocol, host, path, query parameters and fragment. Everything runs in your browser."
       badge="client-side"
     >
       <div role="tablist" aria-label="Operation" className="mb-4 flex gap-1">

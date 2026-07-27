@@ -179,7 +179,7 @@ export default function PdfSplit() {
       const name = err instanceof Error ? err.name : ''
       setError(
         name === 'PasswordException'
-          ? 'This PDF is password-protected. Remove the password before splitting it — encrypted files are not supported.'
+          ? 'This PDF is password-protected. Remove the password before splitting it; encrypted files are not supported.'
           : 'Could not read this file as a PDF. It may be corrupted or not a PDF at all.',
       )
     } finally {
@@ -206,7 +206,7 @@ export default function PdfSplit() {
         `${baseName}-pages.pdf`,
       )
     } catch {
-      setError('Extracting failed — this PDF may use features pdf-lib cannot copy.')
+      setError('Extracting failed. This PDF may use features pdf-lib cannot copy.')
     } finally {
       setBusy(null)
     }
@@ -222,7 +222,7 @@ export default function PdfSplit() {
       const blob = await getWorker().api.splitAll(pdf.bytes, baseName, onProgress)
       downloadBlob(blob, `${baseName}-split.zip`)
     } catch {
-      setError('Splitting failed — this PDF may use features pdf-lib cannot copy.')
+      setError('Splitting failed. This PDF may use features pdf-lib cannot copy.')
     } finally {
       setBusy(null)
     }
@@ -247,7 +247,7 @@ export default function PdfSplit() {
             <FileDropzone
               accept="application/pdf,.pdf"
               onFiles={(files) => void loadFile(files)}
-              hint="One PDF at a time — pages render as clickable thumbnails"
+              hint="One PDF at a time. Pages render as clickable thumbnails"
             />
           )}
         </>

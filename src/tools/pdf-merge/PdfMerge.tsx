@@ -120,7 +120,7 @@ export default function PdfMerge() {
         const name = err instanceof Error ? err.name : ''
         failed.push(
           name === 'PasswordException'
-            ? `${file.name} is password-protected — remove the password first; encrypted PDFs are not supported.`
+            ? `${file.name} is password-protected. Remove the password first; encrypted PDFs are not supported.`
             : `${file.name} could not be read as a PDF.`,
         )
       }
@@ -163,7 +163,7 @@ export default function PdfMerge() {
       )
       downloadBlob(new Blob([data as BlobPart], { type: 'application/pdf' }), 'merged.pdf')
     } catch {
-      setError('Merging failed — one of these PDFs may use features pdf-lib cannot copy.')
+      setError('Merging failed. One of these PDFs may use features pdf-lib cannot copy.')
     } finally {
       setMerging(null)
     }
@@ -175,7 +175,7 @@ export default function PdfMerge() {
   return (
     <ToolLayout
       title="PDF merge"
-      description="Combine several PDFs into one. Drag the documents into the order you want — the merged file follows it exactly. Everything stays in your browser."
+      description="Combine several PDFs into one. Drag the documents into the order you want. The merged file follows it exactly. Everything stays in your browser."
       badge="client-side"
     >
       {items.length === 0 ? (
@@ -192,7 +192,7 @@ export default function PdfMerge() {
               accept="application/pdf,.pdf"
               multiple
               onFiles={(files) => void addFiles(files)}
-              hint="Two or more PDFs — you can reorder them before merging"
+              hint="Two or more PDFs. You can reorder them before merging"
             />
           )}
         </>

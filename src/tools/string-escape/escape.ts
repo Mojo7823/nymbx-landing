@@ -40,7 +40,7 @@ export function unescapeText(text: string, mode: EscapeMode): string {
         return JSON.parse(`"${text}"`) as string
       } catch {
         throw new Error(
-          'Not a valid JSON string body — check for unescaped quotes or invalid \\ sequences.',
+          'Not a valid JSON string body. Check for unescaped quotes or invalid \\ sequences.',
         )
       }
     case 'html':
@@ -65,7 +65,7 @@ export function unescapeText(text: string, mode: EscapeMode): string {
       // any single quote outside such a sequence makes the input invalid.
       const parts = body.split(`'\\''`)
       if (parts.some((part) => part.includes("'"))) {
-        throw new Error("Single quotes inside must be written as '\\'' — found a bare one.")
+        throw new Error("Single quotes inside must be written as '\\''. Found a bare one.")
       }
       return parts.join("'")
     }

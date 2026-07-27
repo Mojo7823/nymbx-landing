@@ -179,7 +179,7 @@ export default function BulkFileHasher() {
   return (
     <ToolLayout
       title="Bulk file hasher"
-      description="Compute SHA-256, SHA-1, SHA-512, MD5 and CRC32 checksums for any number of files. Files are streamed in your browser — nothing is uploaded."
+      description="Compute SHA-256, SHA-1, SHA-512, MD5 and CRC32 checksums for any number of files. Files are streamed in your browser; nothing is uploaded."
       badge="client-side"
     >
       {/* Settings */}
@@ -245,7 +245,7 @@ export default function BulkFileHasher() {
         <FileDropzone
           multiple
           onFiles={addFiles}
-          hint="Any file type, any size — large files are hashed in chunks"
+          hint="Any file type, any size. Large files are hashed in chunks"
         />
       ) : (
         <>

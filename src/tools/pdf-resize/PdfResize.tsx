@@ -118,7 +118,7 @@ export default function PdfResize() {
       const message = err instanceof Error ? err.message : ''
       setError(
         /encrypt/i.test(message)
-          ? 'This PDF is password-protected. Remove the password first — encrypted files are not supported.'
+          ? 'This PDF is password-protected. Remove the password first; encrypted files are not supported.'
           : 'Could not read this file as a PDF. It may be corrupted or not a PDF at all.',
       )
     } finally {
@@ -172,7 +172,7 @@ export default function PdfResize() {
         })
       }
     } catch {
-      setError('Processing failed — this PDF may use features that cannot be converted.')
+      setError('Processing failed. This PDF may use features that cannot be converted.')
     } finally {
       setBusy(null)
     }
@@ -183,7 +183,7 @@ export default function PdfResize() {
   return (
     <ToolLayout
       title="PDF resize"
-      description="Change a PDF's page size to a standard format or custom dimensions — scaling content to fit or cropping/padding around it — or shrink the file by re-rendering pages. All in your browser."
+      description="Change a PDF's page size to a standard format or custom dimensions, scaling content to fit or cropping/padding around it, or shrink the file by re-rendering pages. All in your browser."
       badge="client-side"
     >
       {!pdf ? (

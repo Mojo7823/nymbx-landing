@@ -204,7 +204,7 @@ export default function CsvJson() {
               onFiles={(files) => void openFile(files[0])}
               hint={
                 direction === 'csv-json'
-                  ? 'CSV or TSV — large files stream in chunks'
+                  ? 'CSV or TSV. Large files stream in chunks'
                   : 'JSON array of objects or arrays'
               }
             />

@@ -107,9 +107,7 @@ export function FineTuneEditor({ sourceUrl, resultBlob, onApply, onCancel }: Fin
       } catch (err) {
         console.error(err)
         if (!cancelled) {
-          setError(
-            'Could not open the editor for this image — it may be too large for this device.',
-          )
+          setError('Could not open the editor for this image. It may be too large for this device.')
         }
       }
     }
@@ -253,7 +251,7 @@ export function FineTuneEditor({ sourceUrl, resultBlob, onApply, onCancel }: Fin
     } catch (err) {
       console.error(err)
       setError(
-        'Applying at full resolution failed — the image may be too large for this device. Your strokes are still here; you can keep editing or cancel.',
+        'Applying at full resolution failed. The image may be too large for this device. Your strokes are still here; you can keep editing or cancel.',
       )
     } finally {
       setApplying(false)

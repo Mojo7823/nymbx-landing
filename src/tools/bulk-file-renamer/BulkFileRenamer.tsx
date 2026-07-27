@@ -235,7 +235,7 @@ export default function BulkFileRenamer() {
         <FileDropzone
           multiple
           onFiles={addFiles}
-          hint="Files are renamed in memory only — nothing on your disk changes"
+          hint="Files are renamed in memory only; nothing on your disk changes"
         />
       ) : (
         <>
@@ -321,8 +321,8 @@ export default function BulkFileRenamer() {
           <div className="mt-6 border-t border-line pt-4">
             {plan.hasBlocking && !plan.error && (
               <p role="alert" className="mb-3 text-xs text-red-600 dark:text-red-400">
-                Resolve the highlighted name conflicts before downloading — two files must not end
-                up with the same name.
+                Resolve the highlighted name conflicts before downloading; two files must not end up
+                with the same name.
               </p>
             )}
             <div className="flex flex-wrap items-center gap-3">

@@ -4,7 +4,7 @@ import { describeProgress } from './progress'
 describe('describeProgress', () => {
   it('describes model downloads with byte progress', () => {
     const p = describeProgress('fetch:/models/medium', 44 * 1024 * 1024, 88 * 1024 * 1024)
-    expect(p.label).toBe('Downloading AI model — 44 MB of 88 MB')
+    expect(p.label).toBe('Downloading AI model · 44 MB of 88 MB')
     expect(p.percent).toBeCloseTo(50)
   })
 

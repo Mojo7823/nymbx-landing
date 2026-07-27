@@ -124,7 +124,7 @@ export function stringifyAs(rawValue: unknown, target: Format): ConvertResult {
   const warnings: string[] = []
   if (target === 'toml' && stats.nulls > 0) {
     warnings.push(
-      `TOML cannot represent null — ${stats.nulls} null ${stats.nulls === 1 ? 'value was' : 'values were'} omitted.`,
+      `TOML cannot represent null: ${stats.nulls} null ${stats.nulls === 1 ? 'value was' : 'values were'} omitted.`,
     )
   }
   if (stats.bigints > 0) {

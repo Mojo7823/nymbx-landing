@@ -109,7 +109,7 @@ export default function TextHasher() {
   return (
     <ToolLayout
       title="Text hasher + HMAC"
-      description="Hash text with SHA-2, SHA-3 or BLAKE3 (plus legacy MD5/SHA-1), or authenticate it with an HMAC key. Input is always encoded as UTF-8. Everything runs in your browser — nothing is sent anywhere."
+      description="Hash text with SHA-2, SHA-3 or BLAKE3 (plus legacy MD5/SHA-1), or authenticate it with an HMAC key. Input is always encoded as UTF-8. Everything runs in your browser; nothing is sent anywhere."
       badge="client-side"
     >
       <Tabs
@@ -121,8 +121,8 @@ export default function TextHasher() {
       />
       {LEGACY_ALGORITHMS.has(algorithm) && (
         <p className="mt-2 text-xs text-amber-badge">
-          {ALGORITHM_LABELS[algorithm]} is legacy: fine for checksums, but not collision-resistant —
-          prefer SHA-256 or better for anything security-related.
+          {ALGORITHM_LABELS[algorithm]} is legacy: fine for checksums, but not collision-resistant,
+          so prefer SHA-256 or better for anything security-related.
         </p>
       )}
 
@@ -159,7 +159,7 @@ export default function TextHasher() {
             name="text"
             value={text}
             onChange={(event) => setText(event.target.value)}
-            placeholder="Type or paste text — the result updates live as you type…"
+            placeholder="Type or paste text. The result updates live as you type…"
             spellCheck={false}
             className="h-44 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
           />

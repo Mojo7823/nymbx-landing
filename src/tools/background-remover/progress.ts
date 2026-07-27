@@ -13,7 +13,7 @@ export interface ProgressInfo {
  */
 export function describeProgress(key: string, current: number, total: number): ProgressInfo {
   if (key.startsWith('fetch:')) {
-    const detail = total > 0 ? ` — ${formatBytes(current)} of ${formatBytes(total)}` : ''
+    const detail = total > 0 ? ` · ${formatBytes(current)} of ${formatBytes(total)}` : ''
     const what = key.includes('/models/') ? 'AI model' : 'runtime'
     return {
       label: `Downloading ${what}${detail}`,

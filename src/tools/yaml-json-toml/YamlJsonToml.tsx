@@ -14,7 +14,7 @@ import {
   type Format,
 } from './convert'
 
-const SAMPLE = `# Deployment config — comments are lost on conversion
+const SAMPLE = `# Deployment config (comments are lost on conversion)
 defaults: &defaults
   retries: 3
   timeout: 30
@@ -47,7 +47,7 @@ function ErrorLine({ label, error }: { label?: string; error: ConvertError }) {
       {error.line !== undefined && (
         <span className="font-mono text-xs">
           {' '}
-          — line {error.line}
+          · line {error.line}
           {error.col !== undefined && `, column ${error.col}`}
         </span>
       )}
@@ -117,7 +117,7 @@ export default function YamlJsonToml() {
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Paste JSON, YAML or TOML here — the format is detected automatically…"
+          placeholder="Paste JSON, YAML or TOML here. The format is detected automatically…"
           aria-label="Input"
           spellCheck={false}
           className="h-64 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none lg:h-96 lg:w-1/2"
@@ -210,7 +210,7 @@ export default function YamlJsonToml() {
 
       <p className="mt-3 flex items-start gap-1.5 text-xs text-muted">
         <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-        Comments and original formatting are not preserved — conversion works on the parsed data.
+        Comments and original formatting are not preserved; conversion works on the parsed data.
         YAML anchors and aliases are expanded into plain values.
       </p>
     </ToolLayout>

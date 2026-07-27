@@ -130,7 +130,7 @@ export default function PdfToImageMarkdown() {
       const name = err instanceof Error ? err.name : ''
       setError(
         name === 'PasswordException'
-          ? 'This PDF is password-protected. Remove the password first — encrypted files are not supported.'
+          ? 'This PDF is password-protected. Remove the password first; encrypted files are not supported.'
           : 'Could not read this file as a PDF. It may be corrupted or not a PDF at all.',
       )
     } finally {
@@ -171,7 +171,7 @@ export default function PdfToImageMarkdown() {
         downloadBlob(await streamZip(entries), `${baseName}-images.zip`)
       }
     } catch {
-      setError('Rendering failed — this PDF may use features pdf.js cannot draw.')
+      setError('Rendering failed. This PDF may use features pdf.js cannot draw.')
     } finally {
       setBusy(null)
     }
@@ -194,7 +194,7 @@ export default function PdfToImageMarkdown() {
         setMarkdown(pagesToMarkdown(pages))
       }
     } catch {
-      setError('Text extraction failed — this PDF may be corrupted.')
+      setError('Text extraction failed. This PDF may be corrupted.')
     } finally {
       setBusy(null)
     }
@@ -336,7 +336,7 @@ export default function PdfToImageMarkdown() {
             ) : (
               <p className="flex items-start gap-1.5 text-xs text-muted">
                 <FileWarning className="mt-0.5 size-3.5 shrink-0" />
-                Headings are inferred from font sizes — review the result. Scanned PDFs (images of
+                Headings are inferred from font sizes, so review the result. Scanned PDFs (images of
                 text) have no text layer and need OCR, which is planned as a separate tool.
               </p>
             )}
@@ -381,7 +381,7 @@ export default function PdfToImageMarkdown() {
               className="mt-4 flex items-start gap-1.5 rounded-lg border border-line bg-card p-4 text-sm text-amber-badge"
             >
               <FileWarning className="mt-0.5 size-4 shrink-0" />
-              No text layer found — this looks like a scanned PDF. Extracting its text needs OCR,
+              No text layer found. This looks like a scanned PDF. Extracting its text needs OCR,
               which this tool does not do yet; a dedicated OCR tool is planned.
             </p>
           )}

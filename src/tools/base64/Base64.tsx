@@ -21,8 +21,8 @@ type Output =
   | { kind: 'decoded-binary'; bytes: Uint8Array; mime?: string }
 
 const SAMPLES: Record<Direction, string> = {
-  encode: 'Hello 世界 🌏 — base64 keeps every byte intact.',
-  decode: encodeText('Hello 世界 🌏 — base64 keeps every byte intact.', false),
+  encode: 'Hello 世界 🌏, base64 keeps every byte intact.',
+  decode: encodeText('Hello 世界 🌏, base64 keeps every byte intact.', false),
 }
 
 /** Above this many characters, decode work moves off the main thread. */
@@ -136,7 +136,7 @@ export default function Base64() {
   return (
     <ToolLayout
       title="Base64 encode / decode"
-      description="Encode text or any file to base64 — standard or URL-safe, optionally as a data URI — and decode base64 back to text or a binary download. Everything runs in your browser."
+      description="Encode text or any file to base64 (standard or URL-safe, optionally as a data URI) and decode base64 back to text or a binary download. Everything runs in your browser."
       badge="client-side"
     >
       <div role="tablist" aria-label="Direction" className="mb-4 flex gap-1">
@@ -251,7 +251,7 @@ export default function Base64() {
               onFiles={(files) => void openFile(files[0])}
               hint={
                 direction === 'encode'
-                  ? 'Any file — large files encode in a background worker'
+                  ? 'Any file; large files encode in a background worker'
                   : 'A text file containing base64 or a data URI'
               }
             />
@@ -325,7 +325,7 @@ export default function Base64() {
 
           {output.kind === 'decoded-binary' ? (
             <p className="rounded-lg border border-line bg-card p-4 text-sm text-muted">
-              The decoded bytes are not valid UTF-8 text, so there is nothing to preview — use the
+              The decoded bytes are not valid UTF-8 text, so there is nothing to preview. Use the
               binary download above.
             </p>
           ) : (

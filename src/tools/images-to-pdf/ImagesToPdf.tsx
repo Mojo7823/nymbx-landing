@@ -87,7 +87,7 @@ export default function ImagesToPdf() {
       try {
         opened.push(await openImage(file))
       } catch {
-        failed.push(`${file.name} could not be read — PNG and JPEG images only.`)
+        failed.push(`${file.name} could not be read. PNG and JPEG images only.`)
       }
       setReading({ done: ++done, total: files.length })
     }
@@ -130,7 +130,7 @@ export default function ImagesToPdf() {
       )
       downloadBlob(new Blob([data as BlobPart], { type: 'application/pdf' }), 'images.pdf')
     } catch {
-      setError('Creating the PDF failed — one of these images may be corrupted.')
+      setError('Creating the PDF failed. One of these images may be corrupted.')
     } finally {
       setBuilding(null)
     }
@@ -142,7 +142,7 @@ export default function ImagesToPdf() {
   return (
     <ToolLayout
       title="Images → PDF"
-      description="Turn photos and screenshots into a single PDF, one image per page. Drag the images into the order you want — everything stays in your browser."
+      description="Turn photos and screenshots into a single PDF, one image per page. Drag the images into the order you want. Everything stays in your browser."
       badge="client-side"
     >
       {items.length === 0 ? (
@@ -159,7 +159,7 @@ export default function ImagesToPdf() {
               accept="image/png,image/jpeg,.png,.jpg,.jpeg"
               multiple
               onFiles={(files) => void addFiles(files)}
-              hint="PNG or JPEG — you can reorder them before creating the PDF"
+              hint="PNG or JPEG. You can reorder them before creating the PDF"
             />
           )}
         </>

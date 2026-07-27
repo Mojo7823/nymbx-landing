@@ -57,13 +57,13 @@ const factories: Record<AlgorithmId, () => Promise<IHasher>> = {
 export function parseHexKey(input: string): Uint8Array {
   const compact = input.replace(/\s+/g, '')
   if (compact === '') {
-    throw new Error('Hex key is empty — enter at least one byte, e.g. "0a1f".')
+    throw new Error('Hex key is empty. Enter at least one byte, e.g. "0a1f".')
   }
   if (/[^0-9a-fA-F]/.test(compact)) {
     throw new Error('Hex key may only contain digits 0–9 and letters a–f.')
   }
   if (compact.length % 2 !== 0) {
-    throw new Error('Hex key needs an even number of digits — each byte is two digits.')
+    throw new Error('Hex key needs an even number of digits: each byte is two digits.')
   }
   const bytes = new Uint8Array(compact.length / 2)
   for (let i = 0; i < bytes.length; i++) {

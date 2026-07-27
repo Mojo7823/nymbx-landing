@@ -144,7 +144,7 @@ export default function ImageResize() {
           status: 'ready',
         })
       } catch {
-        toast(`Could not read ${file.name} — is it a valid image?`, { variant: 'error' })
+        toast(`Could not read ${file.name}. Is it a valid image?`, { variant: 'error' })
       }
     }
     if (added.length > 0) setItems((prev) => [...prev, ...added])
@@ -194,7 +194,7 @@ export default function ImageResize() {
           })
           out = targeted
           if (!targeted.achieved) {
-            warning = `Couldn't reach ${formatBytes(targetBytes!)} — smallest possible shown`
+            warning = `Couldn't reach ${formatBytes(targetBytes!)}; smallest possible shown`
           }
         } else {
           const target = computeTarget({ width: item.width, height: item.height }, snapshot)
@@ -255,7 +255,7 @@ export default function ImageResize() {
   return (
     <ToolLayout
       title="Image resize"
-      description="Resize images by pixels, percentage or preset — single or in batch, with format conversion. Everything runs in your browser."
+      description="Resize images by pixels, percentage or preset, single or in batch, with format conversion. Everything runs in your browser."
       badge="client-side"
     >
       {/* Settings */}
@@ -465,7 +465,7 @@ export default function ImageResize() {
           accept="image/*"
           multiple
           onFiles={addFiles}
-          hint="PNG, JPEG, WebP — drop several for batch mode"
+          hint="PNG, JPEG, WebP. Drop several for batch mode"
         />
       ) : (
         <>

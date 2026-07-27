@@ -114,7 +114,7 @@ function InlineDiff({ summary }: { summary: DiffSummary }) {
         ))}
         {truncated && (
           <p className="border-t border-line px-3 pt-2 text-xs text-muted">
-            Showing the first {MAX_INLINE_ROWS.toLocaleString()} lines — use “Copy unified diff” for
+            Showing the first {MAX_INLINE_ROWS.toLocaleString()} lines. Use “Copy unified diff” for
             the complete output.
           </p>
         )}
@@ -154,7 +154,7 @@ function InputPane({ id, title, value, onChange, placeholder }: InputPaneProps) 
     try {
       onChange(await navigator.clipboard.readText())
     } catch {
-      toast('Clipboard access was blocked — paste into the text box instead.', {
+      toast('Clipboard access was blocked. Paste into the text box instead.', {
         variant: 'error',
       })
     }
@@ -395,8 +395,8 @@ export default function DiffChecker() {
           role="alert"
           className="rounded-lg border border-line bg-amber-soft px-4 py-6 text-center text-sm text-amber-badge"
         >
-          These inputs are too large or too different for {summary.granularity}-level comparison —
-          switch granularity to “Lines”.
+          These inputs are too large or too different for {summary.granularity}-level comparison.
+          Switch granularity to “Lines”.
         </p>
       ) : view === 'side-by-side' ? (
         <SideBySideDiff a={aDebounced} b={bDebounced} />

@@ -44,7 +44,7 @@ export default function DocxToHtmlMarkdown() {
       if (seq === convertSeq.current) {
         setResult(null)
         setError(
-          'Could not convert this file. It may be corrupted, password-protected, or an old binary .doc — only .docx is supported.',
+          'Could not convert this file. It may be corrupted, password-protected, or an old binary .doc. Only .docx is supported.',
         )
       }
     } finally {
@@ -156,7 +156,7 @@ export default function DocxToHtmlMarkdown() {
             </fieldset>
             <p className="text-xs text-muted">
               {imageMode === 'embed'
-                ? 'Images are inlined into the document as data URIs — output files can get large.'
+                ? 'Images are inlined into the document as data URIs, so output files can get large.'
                 : 'Downloads become a zip: the document plus an images/ folder it references.'}
             </p>
           </div>
