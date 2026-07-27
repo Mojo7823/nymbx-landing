@@ -263,10 +263,7 @@ Phases 16–52 extend the five groups. They follow the same standard four-task t
 - **Build:** modes: JSON string, HTML entities, URL, shell single/double quote, regex-literal escaping; both directions; chained view (raw ↔ escaped side by side).
 - **Verify:** every mode round-trips; HTML named + numeric entities both decode; nested escaping (JSON inside JSON) handled by running twice, not corrupted in one pass.
 
-### Phase 35 — Dummy data generator
-- **Libraries:** `@faker-js/faker` (lazy — it's large).
-- **Build:** lorem ipsum (words/sentences/paragraphs) plus structured fake data (names, emails, addresses, JSON records from a simple field schema); seedable for reproducibility; copy/download.
-- **Verify:** same seed → identical output; generated JSON is valid; locale switch works; faker loads lazily (dashboard bundle unaffected).
+### Phase 35 — removed (dummy data generator, dropped from scope)
 
 ## Group H — Security & inspection tools
 
