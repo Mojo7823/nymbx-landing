@@ -44,4 +44,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'timestamp-converter': lazy(() => import('./timestamp-converter/TimestampConverter')),
   'string-escape': lazy(() => import('./string-escape/StringEscape')),
   'text-hasher': lazy(() => import('./text-hasher/TextHasher')),
+  'jwt-decoder': lazy(() => import('./jwt-decoder/JwtDecoder')),
 }

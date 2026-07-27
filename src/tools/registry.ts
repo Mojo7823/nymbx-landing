@@ -565,7 +565,7 @@ export const tools: ToolMeta[] = [
     description: 'Inspect tokens locally, nothing sent anywhere',
     category: 'security',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 37,
     icon: KeySquare,
   },

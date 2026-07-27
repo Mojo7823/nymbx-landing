@@ -58,6 +58,7 @@ describe('tool registry', () => {
       'timestamp-converter',
       'string-escape',
       'text-hasher',
+      'jwt-decoder',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })
