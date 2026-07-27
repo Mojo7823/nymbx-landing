@@ -16,7 +16,7 @@ describe('ToolLayout', () => {
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Diff checker')
     expect(screen.getByText('Compare two texts')).toBeInTheDocument()
     expect(screen.getByLabelText('Client-side')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /all tools/i })).toHaveAttribute('href', '/')
+    expect(screen.getByRole('link', { name: /all tools/i })).toHaveAttribute('href', '/tools')
     expect(screen.getByText('tool body')).toBeInTheDocument()
     expect(document.title).toContain('Diff checker')
   })

@@ -34,6 +34,7 @@ The full roadmap lives in [PLAN.md](PLAN.md). Work proceeds one phase (= one too
 
 ## Layout conventions
 
+- `/` is the portfolio landing (`src/pages/Landing.tsx` + `src/components/landing/`); the toolbox dashboard lives at `/tools` and is lazy-loaded via `src/pages/ToolboxRoutes.tsx`
 - `src/tools/<tool-name>/` — one directory per tool (component, worker, tests)
 - `src/components/` — shared UI (ToolLayout, FileDropzone, Button, Toast, …)
 - `src/lib/` — shared utilities (download, zip, worker helper, settings store)

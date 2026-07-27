@@ -15,7 +15,7 @@ export interface ToolLayoutProps {
 export function ToolLayout({ title, description, badge, children }: ToolLayoutProps) {
   useEffect(() => {
     const previous = document.title
-    document.title = `${title} — NYMBX Toolbox`
+    document.title = `${title} · NYMBX Toolbox`
     return () => {
       document.title = previous
     }
@@ -24,7 +24,7 @@ export function ToolLayout({ title, description, badge, children }: ToolLayoutPr
   return (
     <article className="w-full px-4 py-8 sm:px-6 sm:py-10">
       <Link
-        to="/"
+        to="/tools"
         className="inline-flex items-center gap-1.5 text-xs font-medium text-muted transition-colors hover:text-pine"
       >
         <ArrowLeft className="size-3.5" />

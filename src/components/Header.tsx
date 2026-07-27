@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { Menu } from 'lucide-react'
+import { ArrowLeft, Menu } from 'lucide-react'
 import { ThemeToggle } from './ThemeToggle'
 
 export function Header({ onOpenNav }: { onOpenNav: () => void }) {
@@ -15,14 +15,21 @@ export function Header({ onOpenNav }: { onOpenNav: () => void }) {
           <Menu className="size-4" />
         </button>
 
-        <Link to="/" className="flex items-center gap-2.5">
-          <img src="/nymbx-icon.svg" alt="" className="size-7" />
-          <span className="font-display text-base font-semibold tracking-tight text-ink">
+        <Link to="/tools" className="flex items-center gap-3">
+          <img src="/nymbx-icon.svg" alt="" className="h-9 w-auto" />
+          <span className="font-display text-lg font-semibold tracking-tight text-ink">
             NYMBX <span className="font-normal text-muted">Toolbox</span>
           </span>
         </Link>
 
         <div className="ml-auto flex items-center gap-3">
+          <Link
+            to="/"
+            className="hidden items-center gap-1.5 text-xs font-medium text-muted transition-colors hover:text-pine sm:inline-flex"
+          >
+            <ArrowLeft className="size-3.5" />
+            Portfolio
+          </Link>
           <ThemeToggle />
         </div>
       </div>

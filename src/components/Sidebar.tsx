@@ -12,13 +12,13 @@ function CategoryList({ onNavigate }: { onNavigate?: () => void }) {
         return (
           <Link
             key={cat.id}
-            to={`/#${cat.id}`}
+            to={`/tools#${cat.id}`}
             onClick={onNavigate}
             className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-muted transition-colors hover:bg-mint hover:text-ink"
           >
             <Icon className="size-4 shrink-0 text-faint" />
             <span className="flex-1">{cat.name}</span>
-            <span className="font-mono text-[10px] text-faint tabular-nums">{count}</span>
+            <span className="text-[11px] text-faint tabular-nums">{count}</span>
           </Link>
         )
       })}

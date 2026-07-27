@@ -25,7 +25,7 @@ export function Dashboard() {
   }, [location.hash])
 
   useEffect(() => {
-    document.title = 'NYMBX Toolbox — private, in-browser tools'
+    document.title = 'NYMBX Toolbox · private, in-browser tools'
   }, [])
 
   const sections = useMemo(
@@ -42,7 +42,7 @@ export function Dashboard() {
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
       <section className="mb-10 max-w-2xl">
-        <p className="font-mono text-[11px] tracking-widest text-pine uppercase">
+        <p className="text-[11px] font-semibold tracking-[0.18em] text-pine uppercase">
           {tools.length} tools · zero uploads
         </p>
         <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
@@ -80,7 +80,7 @@ export function Dashboard() {
                 <header className="mb-4 flex items-baseline gap-3 border-b border-line pb-3">
                   <Icon aria-hidden className="size-4 self-center text-pine" />
                   <h2 className="font-display text-lg font-semibold text-ink">{cat.name}</h2>
-                  <span className="font-mono text-[11px] text-faint tabular-nums">
+                  <span className="text-[11px] text-faint tabular-nums">
                     {String(catTools.length).padStart(2, '0')}
                   </span>
                 </header>

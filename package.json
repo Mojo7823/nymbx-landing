@@ -25,6 +25,7 @@
     "@expo-google-fonts/noto-sans-tc": "^0.4.3",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@fontsource-variable/manrope": "^5.2.8",
+    "@fontsource-variable/outfit": "^5.3.0",
     "@imgly/background-removal": "1.4.5",
     "@imgly/background-removal-data": "1.4.5",
     "@lezer/highlight": "^1.2.3",

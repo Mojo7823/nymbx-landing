@@ -38,8 +38,10 @@ export function ToolPlaceholder({ tool }: { tool: ToolMeta }) {
           <p className="font-medium text-ink">Coming soon</p>
           <p className="mt-0.5 text-muted">
             This tool is planned as phase{' '}
-            <span className="font-mono text-xs">{String(tool.phase).padStart(2, '0')}</span> of the
-            roadmap. The layout below is a placeholder for the working tool.
+            <span className="text-xs font-semibold tabular-nums">
+              {String(tool.phase).padStart(2, '0')}
+            </span>{' '}
+            of the roadmap. The layout below is a placeholder for the working tool.
           </p>
         </div>
       </div>

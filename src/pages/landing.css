@@ -1,0 +1,334 @@
+/*
+ * Portfolio landing — slot-machine hero word and per-card SVG hover animations.
+ * Plain CSS (no @apply) so it stays readable next to the keyframes it owns.
+ * Every colour comes from the semantic tokens in index.css.
+ */
+
+/* ------------------------------------------------------------------ *
+ * Hero slot machine
+ * ------------------------------------------------------------------ */
+
+.slot {
+  display: inline-flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 100%;
+  gap: 0.08em;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  /* Buttons centre their text by default, which would float each word inside
+     the reel window. */
+  text-align: left;
+  color: var(--c-brand);
+  cursor: pointer;
+}
+
+.slot:focus-visible {
+  outline-offset: 6px;
+}
+
+/* The reel column. Width follows the current word so the hero line never
+   reserves a gap the size of the longest entry. */
+.slot__reel {
+  display: block;
+  transition: width 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Clipping window — one word tall. */
+.slot__viewport {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 1.35em;
+  overflow: hidden;
+}
+
+/* The reel. The bounce lives here: an overshooting curve makes each stop
+   settle back into place like a physical drum. */
+.slot__strip {
+  display: flex;
+  flex-direction: column;
+  /* Each word keeps its own width so it can be measured individually; longer
+     words simply overflow the window and get clipped mid-spin. */
+  align-items: flex-start;
+  transition: transform 640ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+}
+
+.slot__item {
+  flex: none;
+  height: 1.35em;
+  line-height: 1.35em;
+  white-space: nowrap;
+}
+
+/* Rail under the word, brightest while the reel is moving. */
+.slot__rail {
+  display: block;
+  height: 0.07em;
+  min-height: 3px;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--c-brand), var(--c-brand-glow));
+  opacity: 0.3;
+  transform: scaleY(1);
+  transform-origin: left center;
+  transition:
+    opacity 320ms ease,
+    transform 320ms ease;
+}
+
+.slot.is-spinning .slot__rail {
+  opacity: 1;
+  transform: scaleY(1.6);
+}
+
+.slot__hint {
+  transition: opacity 300ms ease;
+}
+
+.slot.is-active .slot__hint {
+  opacity: 0;
+}
+
+/* ------------------------------------------------------------------ *
+ * Project card artwork — shared
+ * ------------------------------------------------------------------ */
+
+.pcard__art {
+  background:
+    radial-gradient(120% 120% at 15% 0%, var(--c-art-panel-2) 0%, transparent 60%),
+    linear-gradient(140deg, var(--c-art-panel) 0%, var(--c-art-panel-2) 140%);
+}
+
+.pcard__art svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-box: fill-box;
+}
+
+/* Rotations and scales below are all about each shape's own centre unless a
+   rule says otherwise. Zero-specificity so any class below can override it. */
+:where(.pcard__art) :where(g, rect, path, circle, line) {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.art-stroke {
+  fill: none;
+  stroke: var(--c-art-dim);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.art-fill-dim {
+  fill: var(--c-art-dim);
+  opacity: 0.35;
+}
+
+.art-accent {
+  stroke: var(--c-art-accent);
+}
+
+/* A stroke that draws itself in on hover. */
+.art-draw {
+  stroke-dasharray: var(--len, 60);
+  stroke-dashoffset: var(--len, 60);
+  transition: stroke-dashoffset 620ms cubic-bezier(0.65, 0, 0.35, 1) 180ms;
+}
+
+.pcard:hover .art-draw,
+.pcard:focus-visible .art-draw,
+.pcard:focus-within .art-draw {
+  stroke-dashoffset: 0;
+}
+
+/* ------------------------------------------------------------------ *
+ * AuCRA — documents fan out, compliance shield stamps in
+ * ------------------------------------------------------------------ */
+
+.art-doc__sheet {
+  transition: transform 620ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pcard:hover .art-doc__sheet--l,
+.pcard:focus-within .art-doc__sheet--l {
+  transform: translate(-46px, 6px) rotate(-9deg);
+}
+
+.pcard:hover .art-doc__sheet--r,
+.pcard:focus-within .art-doc__sheet--r {
+  transform: translate(46px, 6px) rotate(9deg);
+}
+
+.pcard:hover .art-doc__sheet--c,
+.pcard:focus-within .art-doc__sheet--c {
+  transform: translateY(-10px);
+}
+
+.art-doc__shield {
+  opacity: 0;
+  transform: translateY(10px) scale(0.82);
+  transition:
+    opacity 380ms ease 260ms,
+    transform 520ms cubic-bezier(0.34, 1.56, 0.64, 1) 260ms;
+}
+
+.pcard:hover .art-doc__shield,
+.pcard:focus-within .art-doc__shield {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* ------------------------------------------------------------------ *
+ * CRA Assessment — radar sweep with waking contacts
+ * ------------------------------------------------------------------ */
+
+.art-radar__sweep {
+  opacity: 0.5;
+  transition: opacity 300ms ease;
+}
+
+.pcard:hover .art-radar__sweep,
+.pcard:focus-within .art-radar__sweep {
+  opacity: 1;
+  animation: radar-spin 2.6s linear infinite;
+}
+
+@keyframes radar-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.art-radar__dot {
+  fill: var(--c-art-accent);
+  opacity: 0.22;
+}
+
+.pcard:hover .art-radar__dot,
+.pcard:focus-within .art-radar__dot {
+  animation: radar-ping 2.6s ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes radar-ping {
+  0%,
+  55% {
+    opacity: 0.22;
+    transform: scale(1);
+  }
+  12% {
+    opacity: 1;
+    transform: scale(1.9);
+  }
+  30% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+}
+
+.art-radar__bar {
+  transform: scaleY(0.25);
+  transform-origin: bottom center;
+  transition: transform 560ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: var(--delay, 0s);
+}
+
+.pcard:hover .art-radar__bar,
+.pcard:focus-within .art-radar__bar {
+  transform: scaleY(1);
+}
+
+/* ------------------------------------------------------------------ *
+ * NYMBX Toolbox — tiles pop in, lock closes
+ * ------------------------------------------------------------------ */
+
+.art-tile {
+  transform: scale(1);
+  transition:
+    transform 460ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 320ms ease;
+  transition-delay: var(--delay, 0s);
+  opacity: 0.55;
+}
+
+.pcard:hover .art-tile,
+.pcard:focus-within .art-tile {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+/* Open at rest, snapping shut as the tiles finish popping. */
+.art-lock__shackle {
+  transform: translateY(-5px) scaleY(1.15);
+  transform-origin: bottom center;
+  opacity: 0.4;
+  transition:
+    transform 520ms cubic-bezier(0.34, 1.56, 0.64, 1) 300ms,
+    opacity 260ms ease 300ms;
+}
+
+.pcard:hover .art-lock__shackle,
+.pcard:focus-within .art-lock__shackle {
+  transform: translateY(0) scaleY(1);
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------ *
+ * NYMBX Planner — an appointment drops into a free slot
+ * ------------------------------------------------------------------ */
+
+.art-plan__slot {
+  transform: scaleX(0.12);
+  transform-origin: left center;
+  opacity: 0;
+  transition:
+    transform 620ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 220ms ease;
+  transition-delay: var(--delay, 0s);
+}
+
+.pcard:hover .art-plan__slot,
+.pcard:focus-within .art-plan__slot {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+.art-plan__hand {
+  transition: transform 900ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pcard:hover .art-plan__hand,
+.pcard:focus-within .art-plan__hand {
+  transform: rotate(300deg);
+}
+
+.art-plan__cursor {
+  transition: transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1) 120ms;
+}
+
+.pcard:hover .art-plan__cursor,
+.pcard:focus-within .art-plan__cursor {
+  transform: translateY(46px);
+}
+
+/* ------------------------------------------------------------------ *
+ * Motion preferences
+ * ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .slot__reel,
+  .slot__strip,
+  .slot__rail,
+  .pcard__art *,
+  .pcard__art {
+    transition-duration: 1ms !important;
+    animation: none !important;
+  }
+}

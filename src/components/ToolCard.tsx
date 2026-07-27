@@ -26,7 +26,7 @@ export function ToolCard({ tool }: { tool: ToolMeta }) {
         </span>
         <span
           aria-hidden
-          className="font-mono text-[10px] text-faint tabular-nums"
+          className="text-[10px] text-faint tabular-nums"
           title={`Phase ${tool.phase}`}
         >
           {String(tool.phase).padStart(2, '0')}
@@ -43,7 +43,7 @@ export function ToolCard({ tool }: { tool: ToolMeta }) {
       <div className="mt-auto flex flex-wrap items-center gap-1.5">
         <PrivacyBadge badge={tool.badge} />
         {!available && (
-          <span className="inline-flex items-center rounded-full border border-line px-2 py-0.5 font-mono text-[10px] tracking-wide text-faint uppercase">
+          <span className="inline-flex items-center rounded-full border border-line px-2 py-0.5 text-[10px] font-semibold tracking-[0.12em] text-faint uppercase">
             Coming soon
           </span>
         )}
