@@ -281,41 +281,152 @@
 }
 
 /* ------------------------------------------------------------------ *
- * NYMBX Planner — an appointment drops into a free slot
+ * NYMBX Planner — people fill a date grid until a shared slot is picked
  * ------------------------------------------------------------------ */
 
-.art-plan__slot {
-  transform: scaleX(0.12);
-  transform-origin: left center;
-  opacity: 0;
+.art-plan__prof {
+  opacity: 0.45;
   transition:
-    transform 620ms cubic-bezier(0.34, 1.56, 0.64, 1),
-    opacity 220ms ease;
+    opacity 300ms ease,
+    transform 460ms cubic-bezier(0.34, 1.56, 0.64, 1);
   transition-delay: var(--delay, 0s);
 }
 
-.pcard:hover .art-plan__slot,
-.pcard:focus-within .art-plan__slot {
-  transform: scaleX(1);
+.pcard:hover .art-plan__prof,
+.pcard:focus-within .art-plan__prof {
   opacity: 1;
+  transform: scale(1.12);
 }
 
-.art-plan__hand {
-  transition: transform 900ms cubic-bezier(0.34, 1.56, 0.64, 1);
+.art-plan__cell {
+  opacity: 0;
+  transform: scale(0.3);
+  transition:
+    transform 460ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 200ms ease;
+  transition-delay: var(--delay, 0s);
 }
 
-.pcard:hover .art-plan__hand,
-.pcard:focus-within .art-plan__hand {
-  transform: rotate(300deg);
+.pcard:hover .art-plan__cell,
+.pcard:focus-within .art-plan__cell {
+  opacity: var(--op, 1);
+  transform: scale(1);
 }
 
-.art-plan__cursor {
-  transition: transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1) 120ms;
+/* Check mark drawn inside the winning slot once it has landed. */
+.art-plan__check {
+  fill: none;
+  stroke: var(--c-art-panel);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  transition: stroke-dashoffset 420ms cubic-bezier(0.65, 0, 0.35, 1) 900ms;
 }
 
-.pcard:hover .art-plan__cursor,
-.pcard:focus-within .art-plan__cursor {
-  transform: translateY(46px);
+.pcard:hover .art-plan__check,
+.pcard:focus-within .art-plan__check {
+  stroke-dashoffset: 0;
+}
+
+.art-plan__halo {
+  opacity: 0;
+}
+
+.pcard:hover .art-plan__halo,
+.pcard:focus-within .art-plan__halo {
+  animation: plan-halo 2.4s ease-out 1s infinite;
+}
+
+@keyframes plan-halo {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  60%,
+  100% {
+    opacity: 0;
+    transform: scale(1.45);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Reneo Planner — wedding bands slide together, heart inks in
+ * ------------------------------------------------------------------ */
+
+.art-wed__band {
+  fill: none;
+  stroke: var(--c-art-dim);
+  stroke-width: 6;
+  transition: stroke 340ms ease;
+}
+
+.art-wed__ring--l,
+.art-wed__ring--r {
+  transition: transform 680ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pcard:hover .art-wed__ring--l,
+.pcard:focus-within .art-wed__ring--l {
+  transform: translateX(20px);
+}
+
+.pcard:hover .art-wed__ring--r,
+.pcard:focus-within .art-wed__ring--r {
+  transform: translateX(-20px);
+}
+
+/* The bands take different tones once joined, so the weave stays readable. */
+.pcard:hover .art-wed__band--l,
+.pcard:focus-within .art-wed__band--l {
+  stroke: var(--c-art-accent);
+}
+
+.pcard:hover .art-wed__band--r,
+.pcard:focus-within .art-wed__band--r {
+  stroke: var(--c-art-ink);
+}
+
+.art-wed__gem {
+  fill: var(--c-art-accent);
+  opacity: 0.55;
+  transition:
+    opacity 320ms ease 260ms,
+    transform 480ms cubic-bezier(0.34, 1.56, 0.64, 1) 260ms;
+}
+
+.pcard:hover .art-wed__gem,
+.pcard:focus-within .art-wed__gem {
+  opacity: 1;
+  transform: scale(1.25);
+}
+
+.art-wed__spark {
+  fill: var(--c-art-accent);
+  opacity: 0.25;
+}
+
+.pcard:hover .art-wed__spark,
+.pcard:focus-within .art-wed__spark {
+  animation: wed-spark 2.4s ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes wed-spark {
+  0%,
+  55% {
+    opacity: 0.25;
+    transform: scale(1) rotate(0deg);
+  }
+  14% {
+    opacity: 1;
+    transform: scale(1.7) rotate(90deg);
+  }
+  32% {
+    opacity: 0.45;
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 /* ------------------------------------------------------------------ *

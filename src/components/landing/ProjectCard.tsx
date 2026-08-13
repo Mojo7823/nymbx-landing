@@ -2,9 +2,10 @@ import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { cx } from '../../lib/cx'
 import { ProjectDialog } from './ProjectDialog'
-import { statusLabel, type Project } from './projects'
+import { STRINGS, type Lang } from './i18n'
+import type { Project, ProjectStatus } from './projects'
 
-const statusStyles: Record<Project['status'], string> = {
+const statusStyles: Record<ProjectStatus, string> = {
   live: 'border-brand/40 bg-brand-soft text-brand',
   soon: 'border-line-strong bg-soft text-muted',
 }
@@ -18,10 +19,12 @@ const cardClass =
  */
 function CardShell({
   project,
+  statusLabel,
   onOpenDetails,
   children,
 }: {
   project: Project
+  statusLabel: string
   onOpenDetails: () => void
   children: ReactNode
 }) {
@@ -39,7 +42,7 @@ function CardShell({
       )
     }
     return (
-      <div className={cardClass} aria-label={`${project.name} (${statusLabel[project.status]})`}>
+      <div className={cardClass} aria-label={`${project.name} (${statusLabel})`}>
         {children}
       </div>
     )
@@ -58,13 +61,18 @@ function CardShell({
   )
 }
 
-export function ProjectCard({ project }: { project: Project }) {
+export function ProjectCard({ project, lang }: { project: Project; lang: Lang }) {
   const Art = project.art
   const [detailsOpen, setDetailsOpen] = useState(false)
+  const statusLabel = STRINGS[lang].status[project.status]
 
   return (
     <>
-      <CardShell project={project} onOpenDetails={() => setDetailsOpen(true)}>
+      <CardShell
+        project={project}
+        statusLabel={statusLabel}
+        onOpenDetails={() => setDetailsOpen(true)}
+      >
         <div className="pcard__art aspect-16/9 w-full overflow-hidden">
           <Art />
         </div>
@@ -80,15 +88,17 @@ export function ProjectCard({ project }: { project: Project }) {
                 statusStyles[project.status],
               )}
             >
-              {statusLabel[project.status]}
+              {statusLabel}
             </span>
           </div>
 
-          <p className="text-sm font-medium text-brand-deep dark:text-brand">{project.tagline}</p>
-          <p className="text-sm leading-relaxed text-muted">{project.description}</p>
+          <p className="text-sm font-medium text-brand-deep dark:text-brand">
+            {project.tagline[lang]}
+          </p>
+          <p className="text-sm leading-relaxed text-muted">{project.description[lang]}</p>
 
           <ul className="mt-auto flex flex-wrap gap-1.5 pt-1">
-            {project.tags.map((tag) => (
+            {project.tags[lang].map((tag) => (
               <li
                 key={tag}
                 className="rounded-md border border-line bg-soft px-2 py-0.5 text-[11px] text-muted"
@@ -99,7 +109,12 @@ export function ProjectCard({ project }: { project: Project }) {
           </ul>
         </div>
       </CardShell>
-      <ProjectDialog project={project} open={detailsOpen} onClose={() => setDetailsOpen(false)} />
+      <ProjectDialog
+        project={project}
+        lang={lang}
+        open={detailsOpen}
+        onClose={() => setDetailsOpen(false)}
+      />
     </>
   )
 }

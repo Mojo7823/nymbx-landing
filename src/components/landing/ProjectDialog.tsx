@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { ArrowUpRight, X } from 'lucide-react'
+import { STRINGS, type Lang } from './i18n'
 import type { Project } from './projects'
 
 /**
@@ -8,15 +9,17 @@ import type { Project } from './projects'
  */
 export function ProjectDialog({
   project,
+  lang,
   open,
   onClose,
 }: {
   project: Project
+  lang: Lang
   open: boolean
   onClose: () => void
 }) {
   const ref = useRef<HTMLDialogElement>(null)
-  const details = project.details
+  const details = project.details?.[lang]
 
   // Keep the native dialog in sync with React state.
   useEffect(() => {
@@ -55,7 +58,7 @@ export function ProjectDialog({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close"
+            aria-label={STRINGS[lang].dialog.close}
             className="-mt-1 inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-md border border-line text-muted transition-colors hover:text-ink"
           >
             <X className="size-4" />
@@ -86,16 +89,25 @@ export function ProjectDialog({
           </ul>
         )}
 
-        {details.cta && (
-          <a
-            href={details.cta.href}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-7 inline-flex h-11 items-center gap-2 rounded-lg bg-brand px-5 text-sm font-medium text-white transition-colors hover:bg-brand-deep dark:text-brand-ink"
-          >
-            {details.cta.label}
-            <ArrowUpRight className="size-4" />
-          </a>
+        {details.ctas && (
+          <div className="mt-7 flex flex-wrap items-center gap-3">
+            {details.ctas.map((cta, index) => (
+              <a
+                key={cta.href}
+                href={cta.href}
+                target="_blank"
+                rel="noreferrer"
+                className={
+                  index === 0
+                    ? 'inline-flex h-11 items-center gap-2 rounded-lg bg-brand px-5 text-sm font-medium text-white transition-colors hover:bg-brand-deep dark:text-brand-ink'
+                    : 'inline-flex h-11 items-center gap-2 rounded-lg border border-line-strong px-5 text-sm font-medium text-ink transition-colors hover:border-brand hover:text-brand'
+                }
+              >
+                {cta.label}
+                <ArrowUpRight className="size-4" />
+              </a>
+            ))}
+          </div>
         )}
       </div>
     </dialog>

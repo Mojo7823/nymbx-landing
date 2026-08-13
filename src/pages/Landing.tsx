@@ -1,21 +1,36 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { ArrowRight, Mail, Wrench } from 'lucide-react'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { SlotWord } from '../components/landing/SlotWord'
 import { ProjectCard } from '../components/landing/ProjectCard'
+import { LanguageSelector } from '../components/landing/LanguageSelector'
+import { detectLang, htmlLang, persistLang, STRINGS, type Lang } from '../components/landing/i18n'
 import { projects } from '../components/landing/projects'
 import './landing.css'
 
 const CONTACT_EMAIL = 'admin@nymbx.dev'
 
 /** Reel order: the current collaboration first, the open invitation last. */
-const COLLABORATORS = ['Auray Technology', 'NTUST', 'TAICS', 'You?']
+const PARTNERS = ['Auray Technology', 'NTUST', 'TAICS']
 
 export function Landing() {
+  const [lang, setLang] = useState<Lang>(detectLang)
+  const t = STRINGS[lang]
+
   useEffect(() => {
-    document.title = 'NYMBX · projects, tools and compliance software'
-  }, [])
+    document.title = t.docTitle
+    document.documentElement.lang = htmlLang[lang]
+    // The rest of the app is English-only; restore on leaving the landing.
+    return () => {
+      document.documentElement.lang = 'en'
+    }
+  }, [lang, t])
+
+  const changeLang = (next: Lang) => {
+    setLang(next)
+    persistLang(next)
+  }
 
   return (
     <div className="flex min-h-dvh flex-col bg-page">
@@ -32,14 +47,15 @@ export function Landing() {
               href="#projects"
               className="rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:text-brand sm:px-3"
             >
-              Projects
+              {t.nav.projects}
             </a>
             <a
               href="#contact"
               className="rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:text-brand sm:px-3"
             >
-              Contact
+              {t.nav.contact}
             </a>
+            <LanguageSelector lang={lang} onChange={changeLang} />
             <ThemeToggle />
           </nav>
         </div>
@@ -55,18 +71,16 @@ export function Landing() {
           />
           <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
             <p className="text-[11px] font-semibold tracking-[0.18em] text-brand uppercase">
-              Product studio · Compliance &amp; privacy software
+              {t.hero.kicker}
             </p>
 
             <h1 className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 font-display text-4xl leading-[1.35] font-semibold tracking-tight text-brand-ink sm:text-5xl lg:text-6xl dark:text-ink">
               <span className="leading-[1.35]">NYMBX ✕</span>
-              <SlotWord words={COLLABORATORS} hint="hover me" />
+              <SlotWord key={lang} words={[...PARTNERS, t.hero.you]} hint={t.hero.hint} />
             </h1>
 
             <p className="mt-8 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
-              I build software for the unglamorous parts of shipping a product: EU Cyber Resilience
-              Act documentation, security assessments, and small tools that respect the people using
-              them. Currently working with Auray Technology.
+              {t.hero.paragraph}
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-3">
@@ -74,13 +88,13 @@ export function Landing() {
                 href="#projects"
                 className="inline-flex h-11 items-center gap-2 rounded-lg bg-brand px-5 text-sm font-medium text-white transition-colors hover:bg-brand-deep dark:text-brand-ink"
               >
-                View projects <ArrowRight className="size-4" />
+                {t.hero.viewProjects} <ArrowRight className="size-4" />
               </a>
               <Link
                 to="/tools"
                 className="inline-flex h-11 items-center gap-2 rounded-lg border border-line-strong px-5 text-sm font-medium text-ink transition-colors hover:border-brand hover:text-brand"
               >
-                <Wrench className="size-4" /> Open the toolbox
+                <Wrench className="size-4" /> {t.hero.openToolbox}
               </Link>
             </div>
           </div>
@@ -92,20 +106,20 @@ export function Landing() {
             <header className="mb-10 flex flex-wrap items-end justify-between gap-4">
               <div>
                 <p className="text-[11px] font-semibold tracking-[0.18em] text-brand uppercase">
-                  Current projects
+                  {t.projects.kicker}
                 </p>
                 <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-                  What I&rsquo;m building
+                  {t.projects.heading}
                 </h2>
               </div>
               <p className="text-xs text-faint tabular-nums">
-                {String(projects.length).padStart(2, '0')} projects
+                {String(projects.length).padStart(2, '0')} {t.projects.counterLabel}
               </p>
             </header>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {projects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
+                <ProjectCard key={project.id} project={project} lang={lang} />
               ))}
             </div>
           </div>
@@ -116,14 +130,13 @@ export function Landing() {
           <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
             <div className="rounded-2xl border border-line bg-[linear-gradient(140deg,var(--c-art-panel)_0%,var(--c-art-panel-2)_140%)] px-6 py-12 sm:px-12 sm:py-16">
               <p className="text-[11px] font-semibold tracking-[0.18em] text-[var(--c-art-accent)] uppercase">
-                Contact
+                {t.contact.kicker}
               </p>
               <h2 className="mt-4 max-w-xl font-display text-2xl font-semibold tracking-tight text-[var(--c-art-ink)] sm:text-3xl">
-                Contact me?
+                {t.contact.heading}
               </h2>
               <p className="mt-4 max-w-xl text-sm leading-relaxed text-[var(--c-art-dim)] sm:text-base">
-                Compliance tooling, a CRA question, or something that should exist and doesn&rsquo;t
-                yet. Send a note and I&rsquo;ll reply.
+                {t.contact.body}
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -137,7 +150,7 @@ export function Landing() {
                   to="/tools"
                   className="inline-flex h-11 items-center gap-2 rounded-lg border border-[var(--c-art-dim)] px-5 text-sm font-medium text-[var(--c-art-ink)] transition-colors hover:border-[var(--c-art-accent)] hover:text-[var(--c-art-accent)]"
                 >
-                  <Wrench className="size-4" /> Try the toolbox
+                  <Wrench className="size-4" /> {t.contact.tryToolbox}
                 </Link>
               </div>
             </div>
