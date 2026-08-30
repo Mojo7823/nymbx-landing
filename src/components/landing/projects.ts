@@ -13,6 +13,7 @@ export type Localized<T> = Record<Lang, T>
 
 export const AURAY_URL = 'https://www.auray.com.tw/en/'
 export const AUCRA_URL = 'https://home.cra.nymbx.dev'
+export const PLANNER_URL = 'https://planner.nymbx.dev'
 
 /** Long-form panel shown when a card without its own URL is clicked. */
 export interface ProjectDetails {
@@ -192,16 +193,17 @@ export const projects: Project[] = [
       zh: '找出每個人都有空的日期與時段',
     },
     description: {
-      en: 'Send one link, everyone marks the dates and times they are free, and the overlapping slot picks itself. No more scheduling by email thread.',
-      id: 'Kirim satu tautan, semua orang menandai tanggal dan jam luangnya, dan slot yang beririsan terpilih dengan sendirinya. Tidak perlu lagi menjadwalkan lewat balasan email.',
-      zh: '送出一條連結，大家標記自己有空的日期與時段，重疊的時段自然浮現，再也不用在信件往返中喬時間。',
+      en: 'The organizer proposes possible times and shares one link; everyone marks which ones they can make, and the best time ranks itself. No account needed, and no more scheduling by email thread.',
+      id: 'Penyelenggara mengusulkan pilihan waktu lalu membagikan satu tautan; semua orang menandai waktu yang bisa mereka hadiri, dan waktu terbaik terurut dengan sendirinya. Tanpa perlu akun, dan tanpa penjadwalan lewat balasan email.',
+      zh: '主辦人先提出幾個可能的時段並送出一條連結，大家標記自己能到的時段，最適合的時間就會自動排在最前面。免註冊，也不用再靠信件往返喬時間。',
     },
-    status: 'soon',
-    href: null,
+    status: 'live',
+    href: PLANNER_URL,
+    external: true,
     tags: {
-      en: ['Scheduling', 'Availability', 'In design'],
-      id: ['Penjadwalan', 'Ketersediaan', 'Tahap desain'],
-      zh: ['排程', '空檔調查', '設計中'],
+      en: ['Scheduling', 'Availability', 'No account needed'],
+      id: ['Penjadwalan', 'Ketersediaan', 'Tanpa akun'],
+      zh: ['排程', '空檔調查', '免註冊'],
     },
     art: PlannerArt,
   },
