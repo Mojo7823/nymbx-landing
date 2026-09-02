@@ -15,6 +15,11 @@
 		-Server
 	}
 
+	# The personal page is intentionally accessible only by its direct URL and
+	# must not be included in search results or followed into other pages.
+	@personal path /itsme /itsme/*
+	header @personal X-Robots-Tag "noindex, nofollow, noarchive"
+
 	encode zstd gzip
 
 	# Phase 15 (DOCX → PDF, server-assisted): proxy conversions to the private
