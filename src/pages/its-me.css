@@ -236,19 +236,27 @@ html:has(.itsme) {
  */
 .itsme__showcase {
   --me-bleed: clamp(0px, calc((100cqw - var(--me-measure)) / 2 - var(--me-gutter)), 5rem);
+  --me-sticky-top: clamp(1rem, 3vh, 2rem);
+  --me-tabs-height: 4.45rem;
   margin-top: 2.5rem;
   margin-inline: calc(-1 * var(--me-bleed));
+  scroll-margin-top: var(--me-sticky-top);
 }
 
 /* Tab strip */
 .itsme__tabs {
+  position: sticky;
+  z-index: 4;
+  top: var(--me-sticky-top);
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.35rem;
   padding: 0.35rem;
   border: 1px solid var(--me-line);
   border-radius: 0.9rem;
-  background: var(--me-surface);
+  background: color-mix(in srgb, var(--me-surface) 94%, transparent);
+  box-shadow: 0 0.75rem 2rem color-mix(in srgb, var(--me-ink) 7%, transparent);
+  backdrop-filter: blur(12px);
 }
 .itsme__tab {
   display: grid;
@@ -298,13 +306,21 @@ html:has(.itsme) {
   display: none;
 }
 
-/* Stage: media beside copy */
-.itsme__stage {
+/* Pinned media beside a naturally scrolling copy rail. */
+.itsme__showcase-body {
   display: grid;
   grid-template-columns: minmax(0, 1.75fr) minmax(19rem, 1fr);
   align-items: start;
   gap: clamp(1.75rem, 3.5vw, 3rem);
   margin-top: 1.75rem;
+}
+.itsme__media-column {
+  position: sticky;
+  z-index: 2;
+  top: calc(var(--me-sticky-top) + var(--me-tabs-height) + 1.25rem);
+  min-width: 0;
+}
+.itsme__stage-media {
   animation: itsme-stage-in 260ms ease;
 }
 @keyframes itsme-stage-in {
@@ -316,9 +332,6 @@ html:has(.itsme) {
     opacity: 1;
     transform: none;
   }
-}
-.itsme__stage-media {
-  min-width: 0;
 }
 .itsme__demo {
   position: relative;
@@ -442,6 +455,30 @@ html:has(.itsme) {
 }
 
 /* Stage copy */
+.itsme__copy-rail {
+  min-width: 0;
+  padding-bottom: clamp(26rem, 60svh, 34rem);
+}
+.itsme__stage-copy {
+  display: flex;
+  min-height: clamp(34rem, 76svh, 48rem);
+  align-items: center;
+  scroll-margin-top: calc(var(--me-sticky-top) + var(--me-tabs-height) + 1.25rem);
+  opacity: 0.38;
+  transition:
+    opacity 240ms ease,
+    transform 240ms ease;
+}
+.itsme__stage-copy + .itsme__stage-copy {
+  border-top: 1px solid var(--me-line);
+}
+.itsme__stage-copy > div {
+  width: 100%;
+}
+.itsme__stage-copy.is-active {
+  opacity: 1;
+  transform: translateX(-0.2rem);
+}
 .itsme__platform-type {
   display: flex;
   align-items: center;
@@ -546,6 +583,13 @@ html:has(.itsme) {
 .itsme__stage-nav button:hover {
   border-color: var(--me-ink);
 }
+.itsme__stage-nav button:disabled {
+  border-color: var(--me-line);
+  color: var(--me-muted);
+  background: var(--me-soft);
+  cursor: default;
+  opacity: 0.55;
+}
 .itsme__stage-nav svg {
   width: 1rem;
   height: 1rem;
@@ -556,7 +600,6 @@ html:has(.itsme) {
   font-size: 0.85rem;
   font-variant-numeric: tabular-nums;
 }
-
 /* About ------------------------------------------------------------------ */
 .itsme__about {
   border-top: 1px solid var(--me-line);
@@ -651,8 +694,8 @@ html:has(.itsme) {
   .itsme__hero {
     grid-template-columns: minmax(0, 1fr) 15rem;
   }
-  .itsme__stage {
-    grid-template-columns: 1fr;
+  .itsme__showcase-body {
+    grid-template-columns: minmax(0, 1.3fr) minmax(17rem, 1fr);
     gap: 1.5rem;
   }
   .itsme__tab {
@@ -712,6 +755,8 @@ html:has(.itsme) {
     padding: 4rem 0 3.5rem;
   }
   .itsme__showcase {
+    --me-sticky-top: 1rem;
+    --me-tabs-height: 4rem;
     margin-top: 1.75rem;
   }
   .itsme__tabs {
@@ -736,9 +781,15 @@ html:has(.itsme) {
   .itsme__tab-short {
     display: inline;
   }
-  .itsme__stage {
+  .itsme__showcase-body {
+    grid-template-columns: 1fr;
     gap: 1.25rem;
     margin-top: 1.25rem;
+  }
+  .itsme__media-column {
+    top: calc(var(--me-sticky-top) + var(--me-tabs-height) + 0.75rem);
+    background: var(--me-paper);
+    box-shadow: 0 0.75rem 1rem var(--me-paper);
   }
   /* The demo runs edge to edge: the phone's whole width is the screen. */
   .itsme__stage-media {
@@ -777,7 +828,9 @@ html:has(.itsme) {
     width: 100%;
   }
   .itsme__stage-nav {
-    margin-top: 1.5rem;
+    margin-top: 0.75rem;
+    padding: 0.25rem var(--me-gutter) 0.5rem;
+    border-top: 0;
   }
   .itsme__stage-nav button span {
     display: none;
@@ -785,6 +838,21 @@ html:has(.itsme) {
   .itsme__stage-nav button {
     min-width: 2.75rem;
     padding: 0.4rem 0.75rem;
+  }
+  .itsme__stage-copy {
+    min-height: 100svh;
+    align-items: flex-start;
+    padding: 23rem 0 5rem;
+    scroll-margin-top: var(--me-sticky-top);
+  }
+  .itsme__stage-copy:first-child {
+    padding-top: 2rem;
+  }
+  .itsme__stage-copy.is-active {
+    transform: none;
+  }
+  .itsme__copy-rail {
+    padding-bottom: 18svh;
   }
   .itsme__about {
     padding: 4rem 0;
@@ -821,5 +889,11 @@ html:has(.itsme) {
   }
   .itsme__stage {
     animation: none;
+  }
+  .itsme__stage-media {
+    animation: none;
+  }
+  .itsme__stage-copy {
+    transition: none;
   }
 }

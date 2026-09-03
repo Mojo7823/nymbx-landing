@@ -738,15 +738,58 @@ function BrandCard({ facts }: { facts: BrandFact[] }) {
 function Showcase({ copy, mediaLanguage }: { copy: Copy; mediaLanguage: 'en' | 'tw' }) {
   const [index, setIndex] = useState(0)
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const chapterRefs = useRef<(HTMLElement | null)[]>([])
   const touchStart = useRef<{ x: number; y: number } | null>(null)
   const count = SHOWCASE.length
   const item = SHOWCASE[index]
   const text = copy.showcase[item.key]
   const previous = SHOWCASE[(index + count - 1) % count]
   const next = SHOWCASE[(index + 1) % count]
-  const Icon = item.icon
 
-  const step = (delta: number) => setIndex((current) => (current + delta + count) % count)
+  const scrollToChapter = (target: number) => {
+    setIndex(target)
+    chapterRefs.current[target]?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'start',
+    })
+  }
+
+  const step = (delta: number) => {
+    const target = Math.min(count - 1, Math.max(0, index + delta))
+    if (target !== index) scrollToChapter(target)
+  }
+
+  useEffect(() => {
+    let frame = 0
+
+    const updateActiveChapter = () => {
+      frame = 0
+      const isMobile = window.innerWidth <= 700
+      const activationLine = window.innerHeight * (isMobile ? 0.58 : 0.48)
+      let active = 0
+
+      for (let i = 0; i < chapterRefs.current.length; i += 1) {
+        const chapter = chapterRefs.current[i]
+        const marker = isMobile ? chapter?.firstElementChild : chapter
+        if (marker && marker.getBoundingClientRect().top <= activationLine) active = i
+      }
+
+      setIndex((current) => (current === active ? current : active))
+    }
+
+    const requestUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateActiveChapter)
+    }
+
+    updateActiveChapter()
+    window.addEventListener('scroll', requestUpdate, { passive: true })
+    window.addEventListener('resize', requestUpdate)
+    return () => {
+      window.removeEventListener('scroll', requestUpdate)
+      window.removeEventListener('resize', requestUpdate)
+      if (frame) window.cancelAnimationFrame(frame)
+    }
+  }, [])
 
   const onTabKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     let target: number
@@ -756,7 +799,7 @@ function Showcase({ copy, mediaLanguage }: { copy: Copy; mediaLanguage: 'en' | '
     else if (event.key === 'End') target = count - 1
     else return
     event.preventDefault()
-    setIndex(target)
+    scrollToChapter(target)
     tabRefs.current[target]?.focus()
   }
 
@@ -780,7 +823,7 @@ function Showcase({ copy, mediaLanguage }: { copy: Copy; mediaLanguage: 'en' | '
   }
 
   return (
-    <div className="itsme__showcase">
+    <div id="platforms" className="itsme__showcase">
       <div
         className="itsme__tabs"
         role="tablist"
@@ -804,7 +847,7 @@ function Showcase({ copy, mediaLanguage }: { copy: Copy; mediaLanguage: 'en' | '
               aria-selected={selected}
               aria-controls={`panel-${entry.key}`}
               tabIndex={selected ? 0 : -1}
-              onClick={() => setIndex(i)}
+              onClick={() => scrollToChapter(i)}
             >
               <EntryIcon aria-hidden="true" />
               <strong>
@@ -817,78 +860,96 @@ function Showcase({ copy, mediaLanguage }: { copy: Copy; mediaLanguage: 'en' | '
         })}
       </div>
 
-      <div
-        key={item.key}
-        className="itsme__stage"
-        role="tabpanel"
-        id={`panel-${item.key}`}
-        aria-labelledby={`tab-${item.key}`}
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
-      >
-        <div className="itsme__stage-media">
-          {item.seconds ? (
-            <Demo
-              key={`${item.key}-${mediaLanguage}`}
-              src={`/itsme/aucra-${item.key}-${mediaLanguage}.mp4`}
-              poster={`/itsme/poster-${item.key}-${mediaLanguage}.jpg`}
-              title={text.title}
-              label={copy.watchDemo(item.seconds)}
-              unavailable={copy.previewUnavailable}
-            />
-          ) : (
-            <BrandCard facts={text.facts ?? []} />
-          )}
-        </div>
-        <div className="itsme__stage-copy">
-          <p className="itsme__platform-type">
-            <Icon aria-hidden="true" />
-            {text.type}
-          </p>
-          <h3>{text.title}</h3>
-          <p className="itsme__platform-description">{text.description}</p>
-          <p className="itsme__platform-detail">{text.detail}</p>
-          <ul className="itsme__highlights">
-            {text.highlights.map((highlight) => (
-              <li key={highlight}>{highlight}</li>
-            ))}
-          </ul>
-          {text.note && <p className="itsme__free">{text.note}</p>}
-          <div className="itsme__platform-actions">
-            <a
-              className={item.free ? 'itsme__button itsme__button--primary' : 'itsme__button'}
-              href={item.href}
-              target="_blank"
-              rel="noreferrer"
+      <div className="itsme__showcase-body" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+        <div className="itsme__media-column">
+          <div key={item.key} className="itsme__stage-media" aria-live="polite">
+            {item.seconds ? (
+              <Demo
+                key={`${item.key}-${mediaLanguage}`}
+                src={`/itsme/aucra-${item.key}-${mediaLanguage}.mp4`}
+                poster={`/itsme/poster-${item.key}-${mediaLanguage}.jpg`}
+                title={text.title}
+                label={copy.watchDemo(item.seconds)}
+                unavailable={copy.previewUnavailable}
+              />
+            ) : (
+              <BrandCard facts={text.facts ?? []} />
+            )}
+          </div>
+
+          <div className="itsme__stage-nav">
+            <button
+              type="button"
+              onClick={() => step(-1)}
+              disabled={index === 0}
+              aria-label={`${copy.previous}: ${copy.showcase[previous.key].tab}`}
             >
-              {text.cta}
-              <ArrowUpRight aria-hidden="true" />
-            </a>
-            <span className="itsme__host">{new URL(item.href).host}</span>
+              <ArrowLeft aria-hidden="true" />
+              <span>{copy.previous}</span>
+            </button>
+            <span className="itsme__stage-count" aria-hidden="true">
+              {index + 1} / {count}
+            </span>
+            <button
+              type="button"
+              onClick={() => step(1)}
+              disabled={index === count - 1}
+              aria-label={`${copy.next}: ${copy.showcase[next.key].tab}`}
+            >
+              <span>{copy.next}</span>
+              <ArrowRight aria-hidden="true" />
+            </button>
           </div>
         </div>
-      </div>
 
-      <div className="itsme__stage-nav">
-        <button
-          type="button"
-          onClick={() => step(-1)}
-          aria-label={`${copy.previous}: ${copy.showcase[previous.key].tab}`}
-        >
-          <ArrowLeft aria-hidden="true" />
-          <span>{copy.showcase[previous.key].tab}</span>
-        </button>
-        <span className="itsme__stage-count" aria-hidden="true">
-          {index + 1} / {count}
-        </span>
-        <button
-          type="button"
-          onClick={() => step(1)}
-          aria-label={`${copy.next}: ${copy.showcase[next.key].tab}`}
-        >
-          <span>{copy.showcase[next.key].tab}</span>
-          <ArrowRight aria-hidden="true" />
-        </button>
+        <div className="itsme__copy-rail">
+          {SHOWCASE.map((entry, i) => {
+            const entryText = copy.showcase[entry.key]
+            const EntryIcon = entry.icon
+            return (
+              <article
+                key={entry.key}
+                ref={(element) => {
+                  chapterRefs.current[i] = element
+                }}
+                className={`itsme__stage-copy${i === index ? ' is-active' : ''}`}
+                role="tabpanel"
+                id={`panel-${entry.key}`}
+                aria-labelledby={`tab-${entry.key}`}
+              >
+                <div>
+                  <p className="itsme__platform-type">
+                    <EntryIcon aria-hidden="true" />
+                    {entryText.type}
+                  </p>
+                  <h3>{entryText.title}</h3>
+                  <p className="itsme__platform-description">{entryText.description}</p>
+                  <p className="itsme__platform-detail">{entryText.detail}</p>
+                  <ul className="itsme__highlights">
+                    {entryText.highlights.map((highlight) => (
+                      <li key={highlight}>{highlight}</li>
+                    ))}
+                  </ul>
+                  {entryText.note && <p className="itsme__free">{entryText.note}</p>}
+                  <div className="itsme__platform-actions">
+                    <a
+                      className={
+                        entry.free ? 'itsme__button itsme__button--primary' : 'itsme__button'
+                      }
+                      href={entry.href}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {entryText.cta}
+                      <ArrowUpRight aria-hidden="true" />
+                    </a>
+                    <span className="itsme__host">{new URL(entry.href).host}</span>
+                  </div>
+                </div>
+              </article>
+            )
+          })}
+        </div>
       </div>
     </div>
   )
@@ -936,7 +997,7 @@ export default function ItsMe() {
             <h1 id="itsme-heading">{copy.hero}</h1>
             <p className="itsme__lead">{copy.intro}</p>
             <div className="itsme__actions">
-              <a className="itsme__button itsme__button--primary" href="#work">
+              <a className="itsme__button itsme__button--primary" href="#platforms">
                 {copy.seePlatforms}
                 <ArrowDown aria-hidden="true" />
               </a>
