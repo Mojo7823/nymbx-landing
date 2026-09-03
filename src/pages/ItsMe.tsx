@@ -1,15 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import type { ComponentType, KeyboardEvent, SVGProps, TouchEvent } from 'react'
-import {
-  ArrowDown,
-  ArrowLeft,
-  ArrowRight,
-  ArrowUpRight,
-  ChartNoAxesCombined,
-  Compass,
-  Mail,
-  Play,
-} from 'lucide-react'
+import type { ComponentType, KeyboardEvent, RefObject, SVGProps, TouchEvent } from 'react'
+import { ArrowDown, ArrowUpRight, ChartNoAxesCombined, Compass, Mail, Play } from 'lucide-react'
 import { ThemeToggle } from '../components/ThemeToggle'
 import './its-me.css'
 
@@ -134,8 +125,6 @@ interface Copy {
   emailMe: string
   workTitle: string
   workLead: string
-  previous: string
-  next: string
   watchDemo: (seconds: number) => string
   previewUnavailable: string
   showcase: Record<ShowcaseKey, ShowcaseCopy>
@@ -163,8 +152,6 @@ const COPY: Record<Language, Copy> = {
     workTitle: 'Selected work',
     workLead:
       'Auray Technology, where I work as a CRA consultant, and the three AuCRA platforms I build there: a readiness check, risk documentation, and vulnerability handling after release.',
-    previous: 'Previous',
-    next: 'Next',
     watchDemo: (seconds) => `Watch the demo (${seconds} s)`,
     previewUnavailable: 'Your browser does not support this video preview.',
     showcase: {
@@ -317,8 +304,6 @@ const COPY: Record<Language, Copy> = {
     workTitle: 'Karya pilihan',
     workLead:
       'Auray Technology, tempat saya bekerja sebagai konsultan CRA, dan tiga platform AuCRA yang saya bangun di sana: pemeriksaan kesiapan, dokumentasi risiko, dan penanganan kerentanan setelah produk dirilis.',
-    previous: 'Sebelumnya',
-    next: 'Berikutnya',
     watchDemo: (seconds) => `Putar demo (${seconds} detik)`,
     previewUnavailable: 'Peramban Anda tidak mendukung pratinjau video ini.',
     showcase: {
@@ -470,8 +455,6 @@ const COPY: Record<Language, Copy> = {
     workTitle: '精選作品',
     workLead:
       '我任職於耀睿科技，擔任 CRA 顧問；以下是我在那裡打造的三個 AuCRA 平台：準備度檢視、風險文件，以及產品上市後的漏洞處理。',
-    previous: '上一個',
-    next: '下一個',
     watchDemo: (seconds) => `播放示範影片（${seconds} 秒）`,
     previewUnavailable: '您的瀏覽器不支援此影片預覽。',
     showcase: {
@@ -731,65 +714,170 @@ function BrandCard({ facts }: { facts: BrandFact[] }) {
 }
 
 /**
+ * Soft lock for the showcase on wheel-driven devices (mouse and trackpad).
+ * Scrolling into the stage lands it exactly on its pinned spot and holds it
+ * there so a single notch never scrolls it away. Only a deliberate push in one
+ * direction (a few notches, or a firm trackpad drag) releases it, and then the
+ * page goes straight to the neighbouring section rather than creeping. The
+ * copy never switches tabs from scrolling: tabs change by tap, key, or swipe.
+ * Touch devices skip this and get the stylesheet's proximity snap instead.
+ */
+const LOCK_RELEASE_DISTANCE = 300
+const LOCK_RELEASE_NOTCHES = 3
+const LOCK_NOTCH_MIN = 40
+const LOCK_NOTCH_GAP_MS = 60
+const LOCK_CHARGE_RESET_MS = 650
+const LOCK_SETTLE_MS = 450
+const LOCK_LEAVE_MS = 1000
+const GATE_TOLERANCE = 1.5
+
+function wheelDistance(event: WheelEvent) {
+  if (event.deltaMode === WheelEvent.DOM_DELTA_LINE) return event.deltaY * 40
+  if (event.deltaMode === WheelEvent.DOM_DELTA_PAGE) return event.deltaY * window.innerHeight
+  return event.deltaY
+}
+
+function useSoftLock(ref: RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const stage = ref.current
+    if (!stage) return
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+
+    let charge = 0
+    let notches = 0
+    let lastInputAt = 0
+    let lastNotchAt = 0
+    /** Wheel input is swallowed until this time, right after landing or leaving. */
+    let holdUntil = 0
+    let relax: ReturnType<typeof setTimeout> | undefined
+
+    const setPull = (value: number) => {
+      stage.style.setProperty('--me-pull', reduceMotion.matches ? '0' : value.toFixed(3))
+    }
+    const resetCharge = () => {
+      clearTimeout(relax)
+      charge = 0
+      notches = 0
+      setPull(0)
+    }
+    const leave = (direction: number) => {
+      const section = stage.closest('section') ?? stage
+      const target = direction > 0 ? section.nextElementSibling : section.previousElementSibling
+      if (target) target.scrollIntoView({ block: 'start' })
+      else window.scrollBy({ top: direction * window.innerHeight * 0.9 })
+    }
+
+    const onWheel = (event: WheelEvent) => {
+      if (event.defaultPrevented || event.ctrlKey) return
+      if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return
+      const now = performance.now()
+      if (now < holdUntil) {
+        event.preventDefault()
+        return
+      }
+      const distance = wheelDistance(event)
+      const direction = Math.sign(distance)
+      if (!direction) return
+
+      const rect = stage.getBoundingClientRect()
+      const gateTop = parseFloat(getComputedStyle(stage).scrollMarginTop) || 0
+      const viewport = window.innerHeight
+      const fits = rect.height <= viewport - gateTop + GATE_TOLERANCE
+      /** Scroll needed to pin the stage's top under the gate. */
+      const toTop = rect.top - gateTop
+      /** Scroll needed to pin the stage's bottom to the viewport (same gate when it fits). */
+      const toBottom = fits ? toTop : rect.bottom - viewport
+
+      const held =
+        direction > 0 ? Math.abs(toBottom) <= GATE_TOLERANCE : Math.abs(toTop) <= GATE_TOLERANCE
+      if (held) {
+        event.preventDefault()
+        if (Math.sign(charge) !== direction || now - lastInputAt > LOCK_CHARGE_RESET_MS) {
+          resetCharge()
+        }
+        lastInputAt = now
+        charge += distance
+        if (Math.abs(distance) >= LOCK_NOTCH_MIN && now - lastNotchAt >= LOCK_NOTCH_GAP_MS) {
+          notches += 1
+          lastNotchAt = now
+        }
+        if (Math.abs(charge) >= LOCK_RELEASE_DISTANCE || notches >= LOCK_RELEASE_NOTCHES) {
+          resetCharge()
+          holdUntil = now + LOCK_LEAVE_MS
+          leave(direction)
+          return
+        }
+        setPull(direction * Math.min(1, Math.abs(charge) / LOCK_RELEASE_DISTANCE))
+        // Let go of the nudge once the reader stops pushing.
+        clearTimeout(relax)
+        relax = setTimeout(resetCharge, LOCK_CHARGE_RESET_MS)
+        return
+      }
+
+      // Not resting on a gate: if this scroll would carry past the next one,
+      // land on it instead of scrolling through.
+      const gate =
+        direction > 0
+          ? toTop > GATE_TOLERANCE
+            ? toTop
+            : toBottom > GATE_TOLERANCE
+              ? toBottom
+              : 0
+          : toBottom < -GATE_TOLERANCE
+            ? toBottom
+            : toTop < -GATE_TOLERANCE
+              ? toTop
+              : 0
+      if (gate && Math.abs(distance) >= Math.abs(gate)) {
+        event.preventDefault()
+        window.scrollBy({ top: gate, behavior: 'instant' })
+        resetCharge()
+        lastInputAt = now
+        holdUntil = now + LOCK_SETTLE_MS
+      }
+    }
+
+    window.addEventListener('wheel', onWheel, { passive: false })
+    return () => {
+      window.removeEventListener('wheel', onWheel)
+      clearTimeout(relax)
+      stage.style.removeProperty('--me-pull')
+    }
+  }, [ref])
+}
+
+/**
  * Tabbed showcase: the tab strip picks a company or platform, the stage shows
  * its demo (or the company card) beside the copy. Arrow keys move between
  * tabs, and a horizontal swipe on the stage does the same on a phone.
  */
 function Showcase({ copy, mediaLanguage }: { copy: Copy; mediaLanguage: 'en' | 'tw' }) {
   const [index, setIndex] = useState(0)
+  const stageRef = useRef<HTMLDivElement>(null)
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
-  const chapterRefs = useRef<(HTMLElement | null)[]>([])
   const touchStart = useRef<{ x: number; y: number } | null>(null)
   const count = SHOWCASE.length
   const item = SHOWCASE[index]
   const text = copy.showcase[item.key]
-  const previous = SHOWCASE[(index + count - 1) % count]
-  const next = SHOWCASE[(index + 1) % count]
+  const Icon = item.icon
+  useSoftLock(stageRef)
 
-  const scrollToChapter = (target: number) => {
+  const select = (target: number) => {
     setIndex(target)
-    chapterRefs.current[target]?.scrollIntoView({
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-      block: 'start',
-    })
+    const stage = stageRef.current
+    if (!stage) return
+    // Bring the stage back to its pinned spot if the reader has drifted from
+    // it (on a phone, down into the copy) so the new tab shows from the top.
+    const gateTop = parseFloat(getComputedStyle(stage).scrollMarginTop) || 0
+    if (Math.abs(stage.getBoundingClientRect().top - gateTop) > 4) {
+      stage.scrollIntoView({ block: 'start' })
+    }
   }
 
   const step = (delta: number) => {
     const target = Math.min(count - 1, Math.max(0, index + delta))
-    if (target !== index) scrollToChapter(target)
+    if (target !== index) select(target)
   }
-
-  useEffect(() => {
-    let frame = 0
-
-    const updateActiveChapter = () => {
-      frame = 0
-      const isMobile = window.innerWidth <= 700
-      const activationLine = window.innerHeight * (isMobile ? 0.58 : 0.48)
-      let active = 0
-
-      for (let i = 0; i < chapterRefs.current.length; i += 1) {
-        const chapter = chapterRefs.current[i]
-        const marker = isMobile ? chapter?.firstElementChild : chapter
-        if (marker && marker.getBoundingClientRect().top <= activationLine) active = i
-      }
-
-      setIndex((current) => (current === active ? current : active))
-    }
-
-    const requestUpdate = () => {
-      if (!frame) frame = window.requestAnimationFrame(updateActiveChapter)
-    }
-
-    updateActiveChapter()
-    window.addEventListener('scroll', requestUpdate, { passive: true })
-    window.addEventListener('resize', requestUpdate)
-    return () => {
-      window.removeEventListener('scroll', requestUpdate)
-      window.removeEventListener('resize', requestUpdate)
-      if (frame) window.cancelAnimationFrame(frame)
-    }
-  }, [])
 
   const onTabKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     let target: number
@@ -799,7 +887,7 @@ function Showcase({ copy, mediaLanguage }: { copy: Copy; mediaLanguage: 'en' | '
     else if (event.key === 'End') target = count - 1
     else return
     event.preventDefault()
-    scrollToChapter(target)
+    select(target)
     tabRefs.current[target]?.focus()
   }
 
@@ -823,7 +911,7 @@ function Showcase({ copy, mediaLanguage }: { copy: Copy; mediaLanguage: 'en' | '
   }
 
   return (
-    <div id="platforms" className="itsme__showcase">
+    <div id="platforms" className="itsme__showcase" ref={stageRef}>
       <div
         className="itsme__tabs"
         role="tablist"
@@ -847,7 +935,7 @@ function Showcase({ copy, mediaLanguage }: { copy: Copy; mediaLanguage: 'en' | '
               aria-selected={selected}
               aria-controls={`panel-${entry.key}`}
               tabIndex={selected ? 0 : -1}
-              onClick={() => scrollToChapter(i)}
+              onClick={() => select(i)}
             >
               <EntryIcon aria-hidden="true" />
               <strong>
@@ -876,80 +964,41 @@ function Showcase({ copy, mediaLanguage }: { copy: Copy; mediaLanguage: 'en' | '
               <BrandCard facts={text.facts ?? []} />
             )}
           </div>
+        </div>
 
-          <div className="itsme__stage-nav">
-            <button
-              type="button"
-              onClick={() => step(-1)}
-              disabled={index === 0}
-              aria-label={`${copy.previous}: ${copy.showcase[previous.key].tab}`}
+        <article
+          key={item.key}
+          className="itsme__stage-copy"
+          role="tabpanel"
+          id={`panel-${item.key}`}
+          aria-labelledby={`tab-${item.key}`}
+        >
+          <p className="itsme__platform-type">
+            <Icon aria-hidden="true" />
+            {text.type}
+          </p>
+          <h3>{text.title}</h3>
+          <p className="itsme__platform-description">{text.description}</p>
+          <p className="itsme__platform-detail">{text.detail}</p>
+          <ul className="itsme__highlights">
+            {text.highlights.map((highlight) => (
+              <li key={highlight}>{highlight}</li>
+            ))}
+          </ul>
+          {text.note && <p className="itsme__free">{text.note}</p>}
+          <div className="itsme__platform-actions">
+            <a
+              className={item.free ? 'itsme__button itsme__button--primary' : 'itsme__button'}
+              href={item.href}
+              target="_blank"
+              rel="noreferrer"
             >
-              <ArrowLeft aria-hidden="true" />
-              <span>{copy.previous}</span>
-            </button>
-            <span className="itsme__stage-count" aria-hidden="true">
-              {index + 1} / {count}
-            </span>
-            <button
-              type="button"
-              onClick={() => step(1)}
-              disabled={index === count - 1}
-              aria-label={`${copy.next}: ${copy.showcase[next.key].tab}`}
-            >
-              <span>{copy.next}</span>
-              <ArrowRight aria-hidden="true" />
-            </button>
+              {text.cta}
+              <ArrowUpRight aria-hidden="true" />
+            </a>
+            <span className="itsme__host">{new URL(item.href).host}</span>
           </div>
-        </div>
-
-        <div className="itsme__copy-rail">
-          {SHOWCASE.map((entry, i) => {
-            const entryText = copy.showcase[entry.key]
-            const EntryIcon = entry.icon
-            return (
-              <article
-                key={entry.key}
-                ref={(element) => {
-                  chapterRefs.current[i] = element
-                }}
-                className={`itsme__stage-copy${i === index ? ' is-active' : ''}`}
-                role="tabpanel"
-                id={`panel-${entry.key}`}
-                aria-labelledby={`tab-${entry.key}`}
-              >
-                <div>
-                  <p className="itsme__platform-type">
-                    <EntryIcon aria-hidden="true" />
-                    {entryText.type}
-                  </p>
-                  <h3>{entryText.title}</h3>
-                  <p className="itsme__platform-description">{entryText.description}</p>
-                  <p className="itsme__platform-detail">{entryText.detail}</p>
-                  <ul className="itsme__highlights">
-                    {entryText.highlights.map((highlight) => (
-                      <li key={highlight}>{highlight}</li>
-                    ))}
-                  </ul>
-                  {entryText.note && <p className="itsme__free">{entryText.note}</p>}
-                  <div className="itsme__platform-actions">
-                    <a
-                      className={
-                        entry.free ? 'itsme__button itsme__button--primary' : 'itsme__button'
-                      }
-                      href={entry.href}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {entryText.cta}
-                      <ArrowUpRight aria-hidden="true" />
-                    </a>
-                    <span className="itsme__host">{new URL(entry.href).host}</span>
-                  </div>
-                </div>
-              </article>
-            )
-          })}
-        </div>
+        </article>
       </div>
     </div>
   )

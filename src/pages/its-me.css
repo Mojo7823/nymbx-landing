@@ -43,6 +43,16 @@
 html:has(.itsme) {
   scroll-behavior: smooth;
 }
+/*
+ * Touch devices get the stage's soft lock natively: a flick that stops near
+ * the stage settles onto it, a firmer one carries on. Wheel and trackpad
+ * scrolling get the same feel from the page's own handler instead.
+ */
+@media (pointer: coarse) {
+  html:has(.itsme) {
+    scroll-snap-type: y proximity;
+  }
+}
 
 /* Page furniture ------------------------------------------------------- */
 .itsme__controls {
@@ -238,9 +248,15 @@ html:has(.itsme) {
   --me-bleed: clamp(0px, calc((100cqw - var(--me-measure)) / 2 - var(--me-gutter)), 5rem);
   --me-sticky-top: clamp(1rem, 3vh, 2rem);
   --me-tabs-height: 4.45rem;
+  /* -1..1: how hard the reader is pushing against the soft lock. */
+  --me-pull: 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: calc(100svh - 2 * var(--me-sticky-top));
   margin-top: 2.5rem;
   margin-inline: calc(-1 * var(--me-bleed));
   scroll-margin-top: var(--me-sticky-top);
+  scroll-snap-align: start;
 }
 
 /* Tab strip */
@@ -306,13 +322,21 @@ html:has(.itsme) {
   display: none;
 }
 
-/* Pinned media beside a naturally scrolling copy rail. */
+/* Media beside the active tab's copy. */
 .itsme__showcase-body {
   display: grid;
   grid-template-columns: minmax(0, 1.75fr) minmax(19rem, 1fr);
-  align-items: start;
+  align-items: center;
+  align-self: center;
   gap: clamp(1.75rem, 3.5vw, 3rem);
   margin-top: 1.75rem;
+}
+/* A small give while the lock holds, so the page feels caught, not frozen. */
+@media (pointer: fine) {
+  .itsme__showcase-body {
+    transform: translateY(calc(var(--me-pull) * -0.6rem));
+    transition: transform 140ms ease;
+  }
 }
 .itsme__media-column {
   position: sticky;
@@ -455,29 +479,9 @@ html:has(.itsme) {
 }
 
 /* Stage copy */
-.itsme__copy-rail {
-  min-width: 0;
-  padding-bottom: clamp(26rem, 60svh, 34rem);
-}
 .itsme__stage-copy {
-  display: flex;
-  min-height: clamp(34rem, 76svh, 48rem);
-  align-items: center;
-  scroll-margin-top: calc(var(--me-sticky-top) + var(--me-tabs-height) + 1.25rem);
-  opacity: 0.38;
-  transition:
-    opacity 240ms ease,
-    transform 240ms ease;
-}
-.itsme__stage-copy + .itsme__stage-copy {
-  border-top: 1px solid var(--me-line);
-}
-.itsme__stage-copy > div {
-  width: 100%;
-}
-.itsme__stage-copy.is-active {
-  opacity: 1;
-  transform: translateX(-0.2rem);
+  min-width: 0;
+  animation: itsme-stage-in 260ms ease;
 }
 .itsme__platform-type {
   display: flex;
@@ -554,52 +558,6 @@ html:has(.itsme) {
   font-size: 0.85rem;
 }
 
-/* Previous / next */
-.itsme__stage-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 1.75rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--me-line);
-}
-.itsme__stage-nav button {
-  display: inline-flex;
-  min-height: 2.6rem;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.9rem;
-  border: 1px solid var(--me-line);
-  border-radius: 999px;
-  color: var(--me-ink);
-  background: var(--me-surface);
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.875rem;
-  font-weight: 600;
-  transition: border-color 150ms ease;
-}
-.itsme__stage-nav button:hover {
-  border-color: var(--me-ink);
-}
-.itsme__stage-nav button:disabled {
-  border-color: var(--me-line);
-  color: var(--me-muted);
-  background: var(--me-soft);
-  cursor: default;
-  opacity: 0.55;
-}
-.itsme__stage-nav svg {
-  width: 1rem;
-  height: 1rem;
-  flex: 0 0 auto;
-}
-.itsme__stage-count {
-  color: var(--me-muted);
-  font-size: 0.85rem;
-  font-variant-numeric: tabular-nums;
-}
 /* About ------------------------------------------------------------------ */
 .itsme__about {
   border-top: 1px solid var(--me-line);
@@ -757,6 +715,7 @@ html:has(.itsme) {
   .itsme__showcase {
     --me-sticky-top: 1rem;
     --me-tabs-height: 4rem;
+    min-height: 0;
     margin-top: 1.75rem;
   }
   .itsme__tabs {
@@ -783,6 +742,8 @@ html:has(.itsme) {
   }
   .itsme__showcase-body {
     grid-template-columns: 1fr;
+    align-items: start;
+    align-self: start;
     gap: 1.25rem;
     margin-top: 1.25rem;
   }
@@ -827,32 +788,8 @@ html:has(.itsme) {
   .itsme__platform-actions .itsme__button {
     width: 100%;
   }
-  .itsme__stage-nav {
-    margin-top: 0.75rem;
-    padding: 0.25rem var(--me-gutter) 0.5rem;
-    border-top: 0;
-  }
-  .itsme__stage-nav button span {
-    display: none;
-  }
-  .itsme__stage-nav button {
-    min-width: 2.75rem;
-    padding: 0.4rem 0.75rem;
-  }
   .itsme__stage-copy {
-    min-height: 100svh;
-    align-items: flex-start;
-    padding: 23rem 0 5rem;
-    scroll-margin-top: var(--me-sticky-top);
-  }
-  .itsme__stage-copy:first-child {
-    padding-top: 2rem;
-  }
-  .itsme__stage-copy.is-active {
-    transform: none;
-  }
-  .itsme__copy-rail {
-    padding-bottom: 18svh;
+    padding: 0.25rem 0 0.5rem;
   }
   .itsme__about {
     padding: 4rem 0;
@@ -884,7 +821,7 @@ html:has(.itsme) {
   .itsme__button,
   .itsme__tab,
   .itsme__demo-play-icon,
-  .itsme__stage-nav button {
+  .itsme__showcase-body {
     transition: none;
   }
   .itsme__stage {
@@ -894,6 +831,6 @@ html:has(.itsme) {
     animation: none;
   }
   .itsme__stage-copy {
-    transition: none;
+    animation: none;
   }
 }
