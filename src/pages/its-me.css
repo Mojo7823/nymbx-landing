@@ -1,6 +1,8 @@
 /*
  * Personal page. Outfit only (loaded globally), navy ink on pale paper, blue
  * for actions, and Auray's yellow reserved for the one "free to use" note.
+ * Laid out phone-first: one column, a full-bleed demo, and thumb-sized tabs;
+ * wider screens get the two-column hero and the video-beside-copy stage.
  */
 .itsme {
   --me-paper: #f8fafc;
@@ -16,6 +18,9 @@
   --me-yellow: #f9bf3d;
   --me-yellow-soft: #fff6dc;
   --me-measure: 72rem;
+  --me-measure-wide: 82rem;
+  --me-gutter: 1.25rem;
+  container-type: inline-size;
   min-height: 100dvh;
   color: var(--me-ink);
   background: var(--me-paper);
@@ -35,13 +40,16 @@
   --me-on-blue: #0d1725;
   --me-yellow-soft: #33290f;
 }
+html:has(.itsme) {
+  scroll-behavior: smooth;
+}
 
 /* Page furniture ------------------------------------------------------- */
 .itsme__controls {
   position: absolute;
   z-index: 10;
   top: 1.25rem;
-  right: max(1.25rem, calc((100% - var(--me-measure)) / 2));
+  right: max(var(--me-gutter), calc((100% - var(--me-measure)) / 2));
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -82,7 +90,7 @@
 .itsme__work,
 .itsme__about,
 .itsme__contact {
-  width: min(100% - 2.5rem, var(--me-measure));
+  width: min(100% - 2 * var(--me-gutter), var(--me-measure));
   margin-inline: auto;
 }
 .itsme :focus-visible {
@@ -106,6 +114,7 @@
   display: inline-flex;
   min-height: 2.75rem;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   padding: 0.55rem 1.15rem;
   border: 1px solid var(--me-line-strong);
@@ -136,24 +145,6 @@
 .itsme__button--primary:hover {
   border-color: var(--me-blue-deep);
   background: var(--me-blue-deep);
-}
-.itsme__text-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  color: var(--me-blue);
-  font-size: 0.925rem;
-  font-weight: 600;
-  text-decoration: none;
-  white-space: nowrap;
-}
-.itsme__text-link:hover {
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-}
-.itsme__text-link svg {
-  width: 1rem;
-  height: 1rem;
 }
 
 /* Hero ------------------------------------------------------------------ */
@@ -196,6 +187,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 50% 40%;
 }
 .itsme__portrait-frame svg {
   fill: color-mix(in srgb, var(--me-line) 55%, var(--me-soft));
@@ -234,49 +226,106 @@
 /* Selected work ---------------------------------------------------------- */
 .itsme__work {
   padding: 5.5rem 0 4.5rem;
+  scroll-margin-top: 1rem;
 }
-.itsme__auray {
+/*
+ * The showcase may grow past the reading measure so the demo gets more room
+ * on wide screens. The bleed is whatever margin the page has to spare (up to
+ * 5rem a side), measured against the page container rather than the viewport
+ * so a scrollbar never pushes it into horizontal overflow.
+ */
+.itsme__showcase {
+  --me-bleed: clamp(0px, calc((100cqw - var(--me-measure)) / 2 - var(--me-gutter)), 5rem);
+  margin-top: 2.5rem;
+  margin-inline: calc(-1 * var(--me-bleed));
+}
+
+/* Tab strip */
+.itsme__tabs {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 1.5rem;
-  margin-top: 2.75rem;
-  padding: 1.25rem 0;
-  border-top: 1px solid var(--me-line);
-}
-.itsme__auray-logo {
-  display: grid;
-  place-items: center;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  background: #fff;
-}
-.dark .itsme__auray-logo {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.35rem;
+  padding: 0.35rem;
   border: 1px solid var(--me-line);
+  border-radius: 0.9rem;
+  background: var(--me-surface);
 }
-.itsme__auray-logo img {
-  display: block;
-  width: 6.75rem;
-  height: auto;
-}
-.itsme__auray > p {
-  font-size: 0.95rem;
-  line-height: 1.55;
-}
-.itsme__platform {
+.itsme__tab {
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(19rem, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  gap: clamp(2rem, 4vw, 4rem);
-  padding: 3.25rem 0;
-  border-top: 1px solid var(--me-line);
+  column-gap: 0.75rem;
+  min-height: 3.75rem;
+  padding: 0.6rem 0.9rem;
+  border: 0;
+  border-radius: 0.6rem;
+  color: var(--me-muted);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+.itsme__tab:hover {
+  background: color-mix(in srgb, var(--me-soft) 60%, transparent);
+}
+.itsme__tab[aria-selected='true'] {
+  color: var(--me-blue);
+  background: var(--me-soft);
+  box-shadow: inset 0 0 0 1px var(--me-line);
+}
+.itsme__tab > svg {
+  grid-row: span 2;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.itsme__tab strong {
+  display: block;
+  color: var(--me-ink);
+  font-size: 0.925rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.itsme__tab-tag {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.775rem;
+  line-height: 1.3;
+}
+.itsme__tab-short {
+  display: none;
+}
+
+/* Stage: media beside copy */
+.itsme__stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(19rem, 1fr);
+  align-items: start;
+  gap: clamp(1.75rem, 3.5vw, 3rem);
+  margin-top: 1.75rem;
+  animation: itsme-stage-in 260ms ease;
+}
+@keyframes itsme-stage-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.itsme__stage-media {
+  min-width: 0;
 }
 .itsme__demo {
   position: relative;
   overflow: hidden;
   aspect-ratio: 16 / 9;
   border: 1px solid var(--me-line);
-  border-radius: 0.75rem;
+  border-radius: 0.9rem;
   background: #fff;
 }
 .itsme__demo video {
@@ -286,6 +335,7 @@
   background: #fff;
 }
 .itsme__demo-poster {
+  position: relative;
   display: block;
   width: 100%;
   height: 100%;
@@ -302,27 +352,96 @@
 }
 .itsme__demo-play {
   position: absolute;
-  right: 1rem;
-  bottom: 1rem;
-  display: inline-flex;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 0.95rem 0.55rem 0.75rem;
-  border-radius: 999px;
+  justify-content: center;
+  gap: 0.85rem;
   color: #fff;
-  background: rgba(21, 38, 63, 0.9);
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: background-color 150ms ease;
 }
-.itsme__demo-play svg {
-  width: 0.9rem;
-  height: 0.9rem;
+.itsme__demo-play-icon {
+  display: grid;
+  place-items: center;
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 999px;
+  background: rgba(21, 38, 63, 0.88);
+  box-shadow: 0 10px 28px rgba(13, 23, 37, 0.3);
+  transition:
+    background-color 150ms ease,
+    transform 150ms ease;
+}
+.itsme__demo-play-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-left: 0.2rem;
   fill: currentColor;
 }
-.itsme__demo-poster:hover .itsme__demo-play {
-  background: #2458a6;
+.itsme__demo-play-label {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(21, 38, 63, 0.82);
+  font-size: 0.85rem;
+  font-weight: 600;
 }
+.itsme__demo-poster:hover .itsme__demo-play-icon {
+  background: #2458a6;
+  transform: scale(1.06);
+}
+
+/* Company card in the media slot */
+.itsme__brand {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 2rem;
+  aspect-ratio: 16 / 9;
+  padding: 2rem;
+  border: 1px solid var(--me-line);
+  border-left: 4px solid var(--me-yellow);
+  border-radius: 0.9rem;
+  background: var(--me-surface);
+}
+.itsme__brand-logo {
+  width: clamp(11rem, 28%, 15rem);
+  height: auto;
+}
+.itsme__brand-logo--dark {
+  display: none;
+}
+.dark .itsme__brand-logo--light {
+  display: none;
+}
+.dark .itsme__brand-logo--dark {
+  display: block;
+}
+.itsme__brand ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  width: 100%;
+  max-width: 34rem;
+  list-style: none;
+  text-align: center;
+}
+.itsme__brand li strong {
+  display: block;
+  font-size: clamp(1.35rem, 2vw, 1.7rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.itsme__brand li span {
+  display: block;
+  margin-top: 0.3rem;
+  color: var(--me-muted);
+  font-size: 0.775rem;
+  line-height: 1.35;
+}
+
+/* Stage copy */
 .itsme__platform-type {
   display: flex;
   align-items: center;
@@ -334,14 +453,15 @@
 .itsme__platform-type svg {
   width: 1rem;
   height: 1rem;
+  flex: 0 0 auto;
 }
-.itsme__platform-copy h3 {
+.itsme__stage-copy h3 {
   margin-top: 0.6rem;
   font-size: clamp(1.5rem, 2.2vw, 1.9rem);
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
-.itsme__platform-copy h3 + p {
+.itsme__platform-description {
   margin-top: 1rem;
   line-height: 1.65;
 }
@@ -350,6 +470,31 @@
   color: var(--me-muted);
   font-size: 0.925rem;
   line-height: 1.6;
+}
+.itsme__highlights {
+  margin-top: 1.25rem;
+  padding: 0;
+  list-style: none;
+}
+.itsme__highlights li {
+  position: relative;
+  padding: 0.55rem 0 0.55rem 1.1rem;
+  border-top: 1px solid var(--me-line);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+.itsme__highlights li:last-child {
+  border-bottom: 1px solid var(--me-line);
+}
+.itsme__highlights li::before {
+  content: '';
+  position: absolute;
+  top: 1.05rem;
+  left: 0;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--me-blue);
 }
 .itsme__free {
   margin-top: 1.25rem;
@@ -370,6 +515,46 @@
 .itsme__host {
   color: var(--me-muted);
   font-size: 0.85rem;
+}
+
+/* Previous / next */
+.itsme__stage-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--me-line);
+}
+.itsme__stage-nav button {
+  display: inline-flex;
+  min-height: 2.6rem;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--me-line);
+  border-radius: 999px;
+  color: var(--me-ink);
+  background: var(--me-surface);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: border-color 150ms ease;
+}
+.itsme__stage-nav button:hover {
+  border-color: var(--me-ink);
+}
+.itsme__stage-nav svg {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+}
+.itsme__stage-count {
+  color: var(--me-muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
 }
 
 /* About ------------------------------------------------------------------ */
@@ -455,7 +640,7 @@
   display: flex;
   justify-content: space-between;
   gap: 2rem;
-  padding: 1.4rem max(1.25rem, calc((100% - var(--me-measure)) / 2));
+  padding: 1.4rem max(var(--me-gutter), calc((100% - var(--me-measure)) / 2));
   border-top: 1px solid var(--me-line);
   color: var(--me-muted);
   font-size: 0.85rem;
@@ -466,15 +651,30 @@
   .itsme__hero {
     grid-template-columns: minmax(0, 1fr) 15rem;
   }
-  .itsme__platform {
+  .itsme__stage {
     grid-template-columns: 1fr;
-    gap: 1.75rem;
+    gap: 1.5rem;
+  }
+  .itsme__tab {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    row-gap: 0.4rem;
+    padding: 0.7rem 0.5rem;
+    text-align: center;
+  }
+  .itsme__tab > svg {
+    grid-row: auto;
+  }
+  .itsme__tab-tag {
+    display: none;
   }
 }
 @media (max-width: 700px) {
+  .itsme {
+    --me-gutter: 1rem;
+  }
   .itsme__controls {
     top: 0.85rem;
-    right: 1rem;
   }
   .itsme__language-long {
     display: none;
@@ -486,12 +686,6 @@
     min-width: 2.4rem;
     padding-inline: 0.5rem;
   }
-  .itsme__hero,
-  .itsme__work,
-  .itsme__about,
-  .itsme__contact {
-    width: min(100% - 2rem, var(--me-measure));
-  }
   .itsme__hero {
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -500,9 +694,12 @@
   .itsme__hero h1 {
     font-size: clamp(2.25rem, 10vw, 3rem);
   }
+  .itsme__actions .itsme__button {
+    flex: 1 1 auto;
+  }
   .itsme__portrait {
     display: grid;
-    grid-template-columns: 6.5rem minmax(0, 1fr);
+    grid-template-columns: 7rem minmax(0, 1fr);
     align-items: end;
     gap: 1rem;
     order: -1;
@@ -514,19 +711,80 @@
   .itsme__work {
     padding: 4rem 0 3.5rem;
   }
-  .itsme__auray {
-    grid-template-columns: 1fr;
-    justify-items: start;
-    gap: 1rem;
+  .itsme__showcase {
+    margin-top: 1.75rem;
   }
-  .itsme__platform {
-    padding: 2.5rem 0;
+  .itsme__tabs {
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 0.75rem;
   }
-  .itsme__demo-play {
-    right: 0.75rem;
-    bottom: 0.75rem;
-    padding: 0.45rem 0.8rem 0.45rem 0.65rem;
+  .itsme__tab {
+    min-height: 3.5rem;
+    padding: 0.55rem 0.25rem;
+  }
+  .itsme__tab > svg {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+  .itsme__tab strong {
     font-size: 0.8rem;
+  }
+  .itsme__tab-long {
+    display: none;
+  }
+  .itsme__tab-short {
+    display: inline;
+  }
+  .itsme__stage {
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+  /* The demo runs edge to edge: the phone's whole width is the screen. */
+  .itsme__stage-media {
+    margin-inline: calc(-1 * var(--me-gutter));
+  }
+  .itsme__demo,
+  .itsme__brand {
+    border-radius: 0;
+    border-right: 0;
+    border-left: 0;
+  }
+  .itsme__brand {
+    aspect-ratio: auto;
+    gap: 1.5rem;
+    padding: 2rem 1.25rem;
+    border-left: 0;
+    border-top: 3px solid var(--me-yellow);
+  }
+  .itsme__brand-logo {
+    width: 10rem;
+  }
+  .itsme__brand ul {
+    gap: 0.75rem;
+  }
+  .itsme__demo-play-icon {
+    width: 3.75rem;
+    height: 3.75rem;
+  }
+  .itsme__demo-play-label {
+    font-size: 0.8rem;
+  }
+  .itsme__platform-actions {
+    justify-content: center;
+  }
+  .itsme__platform-actions .itsme__button {
+    width: 100%;
+  }
+  .itsme__stage-nav {
+    margin-top: 1.5rem;
+  }
+  .itsme__stage-nav button span {
+    display: none;
+  }
+  .itsme__stage-nav button {
+    min-width: 2.75rem;
+    padding: 0.4rem 0.75rem;
   }
   .itsme__about {
     padding: 4rem 0;
@@ -552,8 +810,16 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  html:has(.itsme) {
+    scroll-behavior: auto;
+  }
   .itsme__button,
-  .itsme__demo-play {
+  .itsme__tab,
+  .itsme__demo-play-icon,
+  .itsme__stage-nav button {
     transition: none;
+  }
+  .itsme__stage {
+    animation: none;
   }
 }
