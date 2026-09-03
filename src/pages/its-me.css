@@ -622,7 +622,7 @@ html:has(.itsme) {
 .itsme__contact {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
+  align-items: center;
   gap: 3rem;
   border-top: 1px solid var(--me-line);
   padding: 5.5rem 0;

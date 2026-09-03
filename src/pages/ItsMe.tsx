@@ -25,7 +25,7 @@ type IconComponent = ComponentType<{ 'aria-hidden'?: boolean | 'true' }>
 const PORTRAIT_SRC = '/itsme/portrait.jpg'
 
 const AURAY_URL = 'https://www.auray.com.tw/en/about/company/'
-const EMAIL = 'admin@nymbx.dev'
+const EMAIL = 'bagus.atmaja@auray.com.tw'
 const SWIPE_THRESHOLD = 56
 
 const LANGUAGES: { code: Language; label: string; short: string }[] = [
@@ -162,7 +162,7 @@ const COPY: Record<Language, Copy> = {
     emailMe: 'Email me',
     workTitle: 'Selected work',
     workLead:
-      'The company I build with, and three platforms that take a manufacturer through the Cyber Resilience Act: a first readiness check, the risk documentation, and vulnerability handling after release.',
+      'Auray Technology, where I work as a CRA consultant, and the three AuCRA platforms I build there: a readiness check, risk documentation, and vulnerability handling after release.',
     previous: 'Previous',
     next: 'Next',
     watchDemo: (seconds) => `Watch the demo (${seconds} s)`,
@@ -172,7 +172,7 @@ const COPY: Record<Language, Copy> = {
         tab: 'Auray Technology',
         tabShort: 'Auray',
         tag: 'The company',
-        type: 'Where the platforms are built',
+        type: 'Where I work',
         title: 'Auray Technology',
         description:
           'Asia’s first OTIC & Security Laboratory: an accredited testing and certification lab in Taoyuan, Taiwan, covering O-RAN, 5G, and product cybersecurity.',
@@ -245,8 +245,8 @@ const COPY: Record<Language, Copy> = {
     },
     aboutTitle: 'About me',
     summary: [
-      'I am a PhD student in Electrical Engineering at the National Taiwan University of Science and Technology (NTUST). My research focuses on cybersecurity assessment, machine learning and AI integration, and the development of cybersecurity standards and regulations.',
-      'Across collaborations in Indonesia and Taiwan, I have developed DCS/SCADA study modules, aligned cybersecurity work with current regulation, tested real devices, produced standardized compliance reports, and built a patented system for generating Security Target documentation based on EUCC and ENISA requirements.',
+      'I am a PhD student in Electrical Engineering at NTUST, researching cybersecurity assessment, AI integration, and the standards and regulations behind them.',
+      'Through industry work in Indonesia and Taiwan I have tested real devices against EUCC and ENISA requirements, produced standardized compliance reports, and built a patented system that generates Security Target documentation.',
     ],
     educationLabel: 'Education',
     experienceLabel: 'Applied research',
@@ -316,7 +316,7 @@ const COPY: Record<Language, Copy> = {
     emailMe: 'Hubungi saya',
     workTitle: 'Karya pilihan',
     workLead:
-      'Perusahaan tempat saya berkarya, dan tiga platform yang memandu produsen melewati Cyber Resilience Act: pemeriksaan kesiapan awal, dokumentasi risiko, dan penanganan kerentanan setelah produk dirilis.',
+      'Auray Technology, tempat saya bekerja sebagai konsultan CRA, dan tiga platform AuCRA yang saya bangun di sana: pemeriksaan kesiapan, dokumentasi risiko, dan penanganan kerentanan setelah produk dirilis.',
     previous: 'Sebelumnya',
     next: 'Berikutnya',
     watchDemo: (seconds) => `Putar demo (${seconds} detik)`,
@@ -326,7 +326,7 @@ const COPY: Record<Language, Copy> = {
         tab: 'Auray Technology',
         tabShort: 'Auray',
         tag: 'Perusahaan',
-        type: 'Tempat platform ini dibangun',
+        type: 'Tempat saya bekerja',
         title: 'Auray Technology',
         description:
           'Laboratorium OTIC & Security pertama di Asia: laboratorium pengujian dan sertifikasi terakreditasi di Taoyuan, Taiwan, yang mencakup O-RAN, 5G, dan keamanan siber produk.',
@@ -399,8 +399,8 @@ const COPY: Record<Language, Copy> = {
     },
     aboutTitle: 'Tentang saya',
     summary: [
-      'Saya adalah mahasiswa PhD Teknik Elektro di National Taiwan University of Science and Technology (NTUST). Riset saya berfokus pada asesmen keamanan siber, integrasi machine learning dan AI, serta pengembangan standar dan regulasi keamanan siber.',
-      'Melalui kolaborasi industri di Indonesia dan Taiwan, saya mengembangkan modul pembelajaran DCS/SCADA, menyelaraskan keamanan siber dengan regulasi, menguji perangkat nyata, menyusun laporan kepatuhan terstandar, dan membangun sistem berpaten untuk menghasilkan dokumentasi Security Target berdasarkan EUCC dan ENISA.',
+      'Saya mahasiswa PhD Teknik Elektro di NTUST, meneliti asesmen keamanan siber, integrasi AI, serta standar dan regulasi di baliknya.',
+      'Melalui kerja industri di Indonesia dan Taiwan, saya menguji perangkat nyata terhadap persyaratan EUCC dan ENISA, menyusun laporan kepatuhan terstandar, dan membangun sistem berpaten yang menghasilkan dokumentasi Security Target.',
     ],
     educationLabel: 'Pendidikan',
     experienceLabel: 'Riset terapan',
@@ -469,7 +469,7 @@ const COPY: Record<Language, Copy> = {
     emailMe: '與我聯絡',
     workTitle: '精選作品',
     workLead:
-      '我所服務的公司，以及三個陪伴製造商走完《網路韌性法》歷程的平台：從初步準備度檢視、風險文件，到產品上市後的漏洞處理。',
+      '我任職於耀睿科技，擔任 CRA 顧問；以下是我在那裡打造的三個 AuCRA 平台：準備度檢視、風險文件，以及產品上市後的漏洞處理。',
     previous: '上一個',
     next: '下一個',
     watchDemo: (seconds) => `播放示範影片（${seconds} 秒）`,
@@ -479,7 +479,7 @@ const COPY: Record<Language, Copy> = {
         tab: '耀睿科技',
         tabShort: '耀睿',
         tag: '公司',
-        type: '平台的誕生地',
+        type: '我任職的公司',
         title: '耀睿科技 Auray Technology',
         description:
           '亞洲第一家 OTIC & Security 實驗室，位於台灣桃園，是涵蓋 O-RAN、5G 與產品資安的認證測試實驗室。',
@@ -550,8 +550,8 @@ const COPY: Record<Language, Copy> = {
     },
     aboutTitle: '關於我',
     summary: [
-      '我是國立臺灣科技大學電機工程博士研究生。研究聚焦於資安評估、機器學習與人工智慧整合，以及資安標準與法規的發展。',
-      '在印尼與台灣的產學合作中，我曾開發 DCS／SCADA 教學模組、整合現行資安法規、測試實體設備、製作標準化合規報告，並開發且取得一套依 EUCC／ENISA 自動產生 Security Target 文件的系統專利。',
+      '我是臺科大電機工程博士生，研究資安評估、AI 整合，以及其背後的標準與法規。',
+      '在印尼與台灣的產業合作中，我依 EUCC 與 ENISA 要求測試實體設備、撰寫標準化合規報告，並開發出一套自動產生 Security Target 文件的專利系統。',
     ],
     educationLabel: '學歷',
     experienceLabel: '應用研究',
@@ -634,7 +634,7 @@ function initialLanguage(): Language {
   } catch {
     /* unavailable */
   }
-  return 'en'
+  return 'zh-TW'
 }
 
 /** The photo, or a quiet placeholder until the file is in place. */
