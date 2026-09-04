@@ -42,10 +42,7 @@ export function Dashboard() {
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
       <section className="mb-10 max-w-2xl">
-        <p className="text-[11px] font-semibold tracking-[0.18em] text-pine uppercase">
-          {tools.length} tools · zero uploads
-        </p>
-        <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+        <h1 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
           Every tool. One tab.
           <br />
           Nothing leaves your device.

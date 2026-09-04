@@ -477,7 +477,7 @@ export default function HexViewer() {
             ) : (
               <div
                 ref={scrollRef}
-                className="h-[28rem] max-h-[62vh] overflow-auto bg-page"
+                className="max-h-[min(28rem,62vh)] overflow-auto bg-page"
                 onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}
               >
                 <div

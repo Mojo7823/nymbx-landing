@@ -35,23 +35,27 @@ export function Landing() {
   return (
     <div className="flex min-h-dvh flex-col bg-page">
       <header className="sticky top-0 z-40 bg-page/70 backdrop-blur-md">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-3 px-5 sm:px-8">
-          <a href="#top" className="flex items-center gap-3">
-            <img src="/nymbx-icon-blue.svg" alt="" className="h-10 w-auto" />
-            <span className="font-display text-xl font-semibold tracking-tight text-ink">
+        <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-3 px-4 sm:px-8">
+          {/* The wordmark is hidden on phones: with both nav links, the
+              language selector and the theme toggle it does not fit beside
+              the icon under ~420px and was drawing over "Projects". The hero
+              directly below carries the name at full size. */}
+          <a href="#top" className="flex shrink-0 items-center gap-3" aria-label="NYMBX">
+            <img src="/nymbx-icon-blue.svg" alt="" className="h-9 w-auto sm:h-10" />
+            <span className="hidden font-display text-xl font-semibold tracking-tight text-ink sm:inline">
               NYMBX
             </span>
           </a>
-          <nav className="ml-auto flex items-center gap-1 sm:gap-2">
+          <nav className="ml-auto flex items-center gap-0.5 sm:gap-2">
             <a
               href="#projects"
-              className="rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:text-brand sm:px-3"
+              className="rounded-md px-2 py-1.5 text-sm text-muted transition-colors hover:text-brand sm:px-3"
             >
               {t.nav.projects}
             </a>
             <a
               href="#contact"
-              className="rounded-md px-2.5 py-1.5 text-sm text-muted transition-colors hover:text-brand sm:px-3"
+              className="rounded-md px-2 py-1.5 text-sm text-muted transition-colors hover:text-brand sm:px-3"
             >
               {t.nav.contact}
             </a>
