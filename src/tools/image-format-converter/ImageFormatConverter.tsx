@@ -94,6 +94,9 @@ export default function ImageFormatConverter() {
   const [items, setItems] = useState<Item[]>([])
   const [busy, setBusy] = useState(false)
   const [globalError, setGlobalError] = useState<string | null>(null)
+  // Bumped on Clear so the dropzone remounts with an empty input: otherwise
+  // re-picking the same file fires no change event and silently does nothing.
+  const [session, setSession] = useState(0)
   const workerRef = useRef<WorkerHandle<ConvertWorkerApi> | null>(null)
   const stopRef = useRef(false)
 
@@ -152,6 +155,7 @@ export default function ImageFormatConverter() {
     })
     setGlobalError(null)
     setBusy(false)
+    setSession((s) => s + 1)
   }
 
   function patchItem(id: number, patch: Partial<Item>) {
@@ -308,6 +312,7 @@ export default function ImageFormatConverter() {
       </div>
 
       <FileDropzone
+        key={session}
         accept="image/*"
         multiple
         onFiles={(files) => void addFiles(files)}
