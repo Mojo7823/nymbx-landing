@@ -6,4 +6,5 @@ coverage
 *.tsbuildinfo
 public/models
 public/fonts
+public/zxing
 .visual-checks

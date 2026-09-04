@@ -2,7 +2,7 @@
 // public/models/ so the background-remover tool never touches a third-party
 // CDN (privacy invariant). Runs via the predev/prebuild hooks; the copy is
 // skipped when the target already matches the installed package version.
-import { cpSync, existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -29,7 +29,31 @@ if (existsSync(stamp) && readFileSync(stamp, 'utf8') === version) {
   console.log('copy-model-assets: done')
 }
 
-// Self-host Noto Sans TC for the PDF watermark tool's CJK text embedding
+// Self-host the zxing-wasm reader binary for the QR reader tool so decoding
+// never touches the default jsDelivr CDN (privacy invariant). Same
+// skip-if-current logic, stamped by package version.
+const zxingSource = join(root, 'node_modules', 'zxing-wasm', 'dist', 'reader', 'zxing_reader.wasm')
+const zxingTargetDir = join(root, 'public', 'zxing')
+const zxingTarget = join(zxingTargetDir, 'zxing_reader.wasm')
+const zxingStamp = join(zxingTargetDir, '.version')
+
+if (!existsSync(zxingSource)) {
+  console.error('copy-model-assets: zxing-wasm reader binary is not installed')
+  process.exit(1)
+}
+const { version: zxingVersion } = JSON.parse(
+  readFileSync(join(root, 'node_modules', 'zxing-wasm', 'package.json')),
+)
+
+if (existsSync(zxingStamp) && readFileSync(zxingStamp, 'utf8') === zxingVersion) {
+  console.log(`copy-model-assets: public/zxing already at ${zxingVersion}, skipping`)
+} else {
+  console.log(`copy-model-assets: copying zxing reader ${zxingVersion} → public/zxing …`)
+  mkdirSync(zxingTargetDir, { recursive: true })
+  cpSync(zxingSource, zxingTarget)
+  writeFileSync(zxingStamp, zxingVersion)
+  console.log('copy-model-assets: done')
+}
 // (fetched lazily, from our origin only). Same skip-if-current logic.
 const fontSource = join(
   root,

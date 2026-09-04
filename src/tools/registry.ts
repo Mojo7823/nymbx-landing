@@ -594,7 +594,7 @@ export const tools: ToolMeta[] = [
     description: 'Create and scan QR codes',
     category: 'security',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 41,
     icon: QrCode,
   },

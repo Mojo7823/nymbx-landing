@@ -62,6 +62,7 @@ describe('tool registry', () => {
       'certificate-decoder',
       'hex-viewer',
       'password-strength',
+      'qr-generator-reader',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })
