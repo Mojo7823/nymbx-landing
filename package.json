@@ -78,6 +78,7 @@
     "reflect-metadata": "^0.2.2",
     "shiki": "^4.3.1",
     "smol-toml": "^1.7.0",
+    "svgo": "^4.1.0",
     "turndown": "^7.2.4",
     "turndown-plugin-gfm": "^1.0.2",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",

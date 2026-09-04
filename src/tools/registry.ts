@@ -225,7 +225,7 @@ export const tools: ToolMeta[] = [
     description: 'Minify SVG safely',
     category: 'image',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 46,
     icon: Shapes,
   },

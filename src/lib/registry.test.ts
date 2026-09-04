@@ -37,6 +37,7 @@ describe('tool registry', () => {
       'image-compressor',
       'crop-rotate-flip',
       'exif-viewer',
+      'svg-optimizer',
       'bulk-file-hasher',
       'bulk-file-renamer',
       'pdf-split',
