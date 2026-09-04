@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Download, Paintbrush, RotateCcw } from 'lucide-react'
+import { Download, Paintbrush, RotateCcw, X } from 'lucide-react'
 import { removeBackground, type Config } from '@imgly/background-removal'
 import { ToolLayout } from '../../components/ToolLayout'
 import { FileDropzone } from '../../components/FileDropzone'
@@ -9,6 +9,13 @@ import { cx } from '../../lib/cx'
 import { formatBytes } from '../../lib/format'
 import { downloadBlob } from '../../lib/download'
 import { describeProgress, type ProgressInfo } from './progress'
+import {
+  prefetchLabel,
+  prefetchModel,
+  PrefetchCancelled,
+  PrefetchError,
+  type PrefetchProgress,
+} from './modelPrefetch'
 import { checkerboard } from './checkerboard'
 import { FineTuneEditor } from './FineTuneEditor'
 
@@ -39,6 +46,7 @@ export default function BackgroundRemover() {
   const [result, setResult] = useState<{ blob: Blob; url: string; name: string } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const runRef = useRef(0)
+  const abortRef = useRef<AbortController | null>(null)
 
   useEffect(
     () => () => {
@@ -51,6 +59,10 @@ export default function BackgroundRemover() {
 
   async function process(file: File) {
     const run = (runRef.current = nextRun++)
+    // Abort any previous run's prefetch before starting a new one.
+    abortRef.current?.abort()
+    const aborter = new AbortController()
+    abortRef.current = aborter
     setPhase('working')
     setError(null)
     setResult((prev) => {
@@ -63,11 +75,47 @@ export default function BackgroundRemover() {
     })
     setProgress({ label: 'Preparing…', percent: 0 })
 
+    // The library fetches ~4 MB model shards in parallel and only reports
+    // progress per *completed* shard with no timeout, so on a slow connection
+    // the bar used to sit at e.g. "106 KB of 84.1 MB 0%" indefinitely.
+    // Prefetch the model shards here instead — streaming progress, per-chunk
+    // stall timeouts with retries, and a working Cancel button. The shards
+    // are content-hashed and served immutable, so the library's own fetch
+    // right after resolves from the browser HTTP cache near-instantly.
+    const publicPath = `${window.location.origin}/models/`
+    let lastTick = performance.now()
+    let lastLoaded = 0
+    let lastSpeed: number | undefined
+    const onPrefetch = ({ loaded, total }: PrefetchProgress) => {
+      if (runRef.current !== run) return
+      const now = performance.now()
+      const dt = (now - lastTick) / 1000
+      if (dt > 0.5) {
+        lastSpeed = Math.max(0, (loaded - lastLoaded) / dt)
+        lastTick = now
+        lastLoaded = loaded
+      }
+      const ratio = total > 0 ? Math.min(1, Math.max(0, loaded / total)) : 0
+      setProgress({ label: prefetchLabel({ loaded, total }, lastSpeed), percent: ratio * 80 })
+    }
+
     const onProgress = (key: string, current: number, total: number) => {
-      if (runRef.current === run) setProgress(describeProgress(key, current, total))
+      if (runRef.current !== run) return
+      if (key.startsWith('fetch:')) {
+        // Model shards were prefetched above; the runtime follows from the
+        // same cache. Keep the bar monotonic instead of jumping backwards.
+        setProgress({ label: 'Starting analysis…', percent: 82 })
+      } else {
+        setProgress(describeProgress(key, current, total))
+      }
     }
 
     try {
+      await prefetchModel(publicPath, model, onPrefetch, aborter.signal)
+      if (runRef.current !== run) return
+      // Compiling the model for inference takes a while with no progress
+      // callbacks — say so instead of sitting at "84.1 of 84.1 MB".
+      setProgress({ label: 'Loading AI model…', percent: 82 })
       const blob = await removeBackground(file, buildConfig(model, onProgress))
       if (runRef.current !== run) return
       const stem = file.name.replace(/\.[^.]+$/, '')
@@ -75,18 +123,39 @@ export default function BackgroundRemover() {
       setPhase('done')
     } catch (err) {
       if (runRef.current !== run) return
+      if (
+        err instanceof PrefetchCancelled ||
+        (err instanceof DOMException && err.name === 'AbortError')
+      ) {
+        reset()
+        return
+      }
       console.error(err)
       setPhase('error')
       setError(
-        'Background removal failed. Very large images can run out of memory. Try a smaller copy, or reload and use the Fast model.',
+        err instanceof PrefetchError
+          ? err.message
+          : 'Background removal failed. Very large images can run out of memory. Try a smaller copy, or reload and use the Fast model.',
       )
     } finally {
-      if (runRef.current === run) setProgress(null)
+      if (runRef.current === run) {
+        setProgress(null)
+        if (abortRef.current === aborter) abortRef.current = null
+      }
     }
+  }
+
+  function cancel() {
+    abortRef.current?.abort()
+    // The in-flight run checks runRef and drops its result; reset now so the
+    // UI responds immediately even if the library phase cannot be aborted.
+    reset()
   }
 
   function reset() {
     runRef.current = 0
+    abortRef.current?.abort()
+    abortRef.current = null
     setPhase('idle')
     setError(null)
     setProgress(null)
@@ -168,6 +237,12 @@ export default function BackgroundRemover() {
             value={progress?.percent ?? undefined}
             label={progress?.label ?? 'Working…'}
           />
+          <div className="mx-auto mt-4 max-w-md text-center">
+            <Button variant="ghost" size="sm" onClick={cancel}>
+              <X className="size-3.5" />
+              Cancel
+            </Button>
+          </div>
         </div>
       )}
 

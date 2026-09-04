@@ -39,6 +39,16 @@
 		@assets path /assets/*
 		header @assets Cache-Control "public, max-age=31536000, immutable"
 
+		# Background-removal model shards are content-hashed and immutable, so
+		# repeat visits (and the library fetch after our prefetch) resolve from
+		# the browser cache with no revalidation. resources.json is versioned
+		# separately and must always revalidate.
+		@model_chunks {
+			path /models/*
+			not path /models/resources.json /models/.version
+		}
+		header @model_chunks Cache-Control "public, max-age=31536000, immutable"
+
 		# SPA fallback: unknown paths serve the app shell.
 		try_files {path} /index.html
 		file_server
