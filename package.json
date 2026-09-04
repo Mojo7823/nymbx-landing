@@ -31,6 +31,9 @@
     "@lezer/highlight": "^1.2.3",
     "@pdf-lib/fontkit": "^1.1.1",
     "@peculiar/x509": "^2.0.0",
+    "@zxcvbn-ts/core": "^4.2.0",
+    "@zxcvbn-ts/language-common": "^4.1.3",
+    "@zxcvbn-ts/language-en": "^4.1.1",
     "comlink": "^4.4.2",
     "diff": "^9.0.0",
     "docx": "^9.7.1",
@@ -99,5 +102,8 @@
     "typescript-eslint": "^8.64.0",
     "vite": "^8.1.4",
     "vitest": "^4.1.10"
+  },
+  "allowScripts": {
+    "protobufjs@7.6.5": true
   }
 }

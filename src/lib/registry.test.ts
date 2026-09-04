@@ -61,6 +61,7 @@ describe('tool registry', () => {
       'jwt-decoder',
       'certificate-decoder',
       'hex-viewer',
+      'password-strength',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })

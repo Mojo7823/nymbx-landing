@@ -584,7 +584,7 @@ export const tools: ToolMeta[] = [
     description: 'Offline zxcvbn analysis',
     category: 'security',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 40,
     icon: ShieldCheck,
   },
