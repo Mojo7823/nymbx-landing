@@ -8,7 +8,7 @@ import { ProgressBar } from '../../components/ProgressBar'
 import { cx } from '../../lib/cx'
 import { formatBytes } from '../../lib/format'
 import { downloadBlob } from '../../lib/download'
-import { wrapWorker, type WorkerHandle } from '../../lib/worker'
+import { createProgressGuard, wrapWorker, type WorkerHandle } from '../../lib/worker'
 import { moveItem } from '../../lib/reorder'
 import type { PageMode } from './pageLayout'
 import type { BuildWorkerApi } from './build.worker'
@@ -118,20 +118,22 @@ export default function ImagesToPdf() {
     if (items.length === 0 || building) return
     setError(null)
     setBuilding({ done: 0, total: items.length })
+    // Guarded: a late Comlink tick must not resurrect the bar after cleanup.
+    const guard = createProgressGuard((done: number, total: number) => setBuilding({ done, total }))
     try {
       workerRef.current ??= wrapWorker<BuildWorkerApi>(
         new Worker(new URL('./build.worker.ts', import.meta.url), { type: 'module' }),
       )
-      const onProgress = proxy((done: number, total: number) => setBuilding({ done, total }))
       const data = await workerRef.current.api.build(
         items.map((i) => i.file),
         pageMode,
-        onProgress,
+        proxy(guard.onProgress),
       )
       downloadBlob(new Blob([data as BlobPart], { type: 'application/pdf' }), 'images.pdf')
     } catch {
       setError('Creating the PDF failed. One of these images may be corrupted.')
     } finally {
+      guard.settle()
       setBuilding(null)
     }
   }

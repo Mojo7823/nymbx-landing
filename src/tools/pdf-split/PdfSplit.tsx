@@ -9,7 +9,7 @@ import { ProgressBar } from '../../components/ProgressBar'
 import { cx } from '../../lib/cx'
 import { formatBytes } from '../../lib/format'
 import { downloadBlob } from '../../lib/download'
-import { wrapWorker, type WorkerHandle } from '../../lib/worker'
+import { createProgressGuard, wrapWorker, type WorkerHandle } from '../../lib/worker'
 import { formatPageRanges, parsePageRanges } from '../../lib/pageRanges'
 import type { PdfWorkerApi } from './pdf.worker'
 
@@ -215,15 +215,17 @@ export default function PdfSplit() {
   async function splitAll() {
     if (!pdf) return
     setBusy({ label: 'Splitting', done: 0, total: pdf.pageCount })
+    // Guarded: a late Comlink tick must not resurrect the bar after cleanup.
+    const guard = createProgressGuard((done: number, total: number) =>
+      setBusy({ label: 'Splitting', done, total }),
+    )
     try {
-      const onProgress = proxy((done: number, total: number) =>
-        setBusy({ label: 'Splitting', done, total }),
-      )
-      const blob = await getWorker().api.splitAll(pdf.bytes, baseName, onProgress)
+      const blob = await getWorker().api.splitAll(pdf.bytes, baseName, proxy(guard.onProgress))
       downloadBlob(blob, `${baseName}-split.zip`)
     } catch {
       setError('Splitting failed. This PDF may use features pdf-lib cannot copy.')
     } finally {
+      guard.settle()
       setBusy(null)
     }
   }

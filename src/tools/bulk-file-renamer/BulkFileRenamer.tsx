@@ -8,7 +8,7 @@ import { ProgressBar } from '../../components/ProgressBar'
 import { cx } from '../../lib/cx'
 import { formatBytes } from '../../lib/format'
 import { downloadBlob } from '../../lib/download'
-import { wrapWorker, type WorkerHandle } from '../../lib/worker'
+import { createProgressGuard, wrapWorker, type WorkerHandle } from '../../lib/worker'
 import {
   buildRenamePlan,
   defaultOptions,
@@ -74,15 +74,18 @@ export default function BulkFileRenamer() {
   async function downloadRenamedZip() {
     if (!canDownload) return
     setZipProgress(0)
+    // Guarded: a Comlink progress tick can arrive after the build resolved
+    // and would otherwise resurrect the bar after cleanup (see worker.ts).
+    const guard = createProgressGuard((bytesDone: number) => setZipProgress(bytesDone))
     try {
       workerRef.current ??= wrapWorker<ZipWorkerApi>(
         new Worker(new URL('./zip.worker.ts', import.meta.url), { type: 'module' }),
       )
       const entries = items.map((item, i) => ({ name: plan.rows[i].newName, blob: item.file }))
-      const onProgress = proxy((bytesDone: number) => setZipProgress(bytesDone))
-      const blob = await workerRef.current.api.buildZip(entries, onProgress)
+      const blob = await workerRef.current.api.buildZip(entries, proxy(guard.onProgress))
       downloadBlob(blob, 'renamed-files.zip')
     } finally {
+      guard.settle()
       setZipProgress(null)
     }
   }

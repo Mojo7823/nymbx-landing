@@ -9,7 +9,7 @@ import { ProgressBar } from '../../components/ProgressBar'
 import { cx } from '../../lib/cx'
 import { formatBytes } from '../../lib/format'
 import { downloadBlob } from '../../lib/download'
-import { wrapWorker, type WorkerHandle } from '../../lib/worker'
+import { createProgressGuard, wrapWorker, type WorkerHandle } from '../../lib/worker'
 import type { AlgorithmId } from './hashEngine'
 import {
   algorithmLabels,
@@ -107,11 +107,17 @@ export default function BulkFileHasher() {
           setItems((prev) =>
             prev.map((i) => (i.id === item.id ? { ...i, status: 'hashing', bytesDone: 0 } : i)),
           )
+          // Guarded: a late Comlink tick must not touch state after this
+          // file finished (see createProgressGuard in lib/worker.ts).
+          const guard = createProgressGuard((bytesDone: number) => {
+            setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, bytesDone } : i)))
+          })
           try {
-            const onProgress = proxy((bytesDone: number) => {
-              setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, bytesDone } : i)))
-            })
-            const hashes = await getWorker().api.hashFile(item.file, missing, onProgress)
+            const hashes = await getWorker().api.hashFile(
+              item.file,
+              missing,
+              proxy(guard.onProgress),
+            )
             computed.set(item.id, { ...computed.get(item.id), ...hashes })
             setItems((prev) =>
               prev.map((i) =>
@@ -125,6 +131,8 @@ export default function BulkFileHasher() {
             setItems((prev) =>
               prev.map((i) => (i.id === item.id ? { ...i, status: 'error', error: message } : i)),
             )
+          } finally {
+            guard.settle()
           }
         }
       } finally {

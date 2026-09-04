@@ -20,7 +20,7 @@ import { ProgressBar } from '../../components/ProgressBar'
 import { ToolLayout } from '../../components/ToolLayout'
 import { cx } from '../../lib/cx'
 import { formatBytes } from '../../lib/format'
-import { wrapWorker, type WorkerHandle } from '../../lib/worker'
+import { createProgressGuard, wrapWorker, type WorkerHandle } from '../../lib/worker'
 import { detectFile } from './detect'
 import {
   byteToAscii,
@@ -255,17 +255,15 @@ export default function HexViewer() {
     setSearching(true)
     setSearchProgress(0)
 
+    // Guarded as well as run-checked: a late Comlink tick from this run
+    // must not resurrect progress the finally below just cleared.
+    const guard = createProgressGuard((scanned: number, total: number) => {
+      if (run === searchRunRef.current && total > 0) {
+        setSearchProgress((scanned / total) * 100)
+      }
+    })
     try {
-      const result = await searchWorker().find(
-        file,
-        needle,
-        startOffset,
-        proxy((scanned: number, total: number) => {
-          if (run === searchRunRef.current && total > 0) {
-            setSearchProgress((scanned / total) * 100)
-          }
-        }),
-      )
+      const result = await searchWorker().find(file, needle, startOffset, proxy(guard.onProgress))
       if (run !== searchRunRef.current) return
       if (!result) {
         setSearchMessage('No matching byte sequence was found.')
@@ -278,6 +276,7 @@ export default function HexViewer() {
     } catch {
       if (run === searchRunRef.current) setSearchError('Byte search could not be completed.')
     } finally {
+      guard.settle()
       if (run === searchRunRef.current) {
         setSearching(false)
         setSearchProgress(0)

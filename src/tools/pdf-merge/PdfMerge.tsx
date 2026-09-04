@@ -9,7 +9,7 @@ import { ProgressBar } from '../../components/ProgressBar'
 import { cx } from '../../lib/cx'
 import { formatBytes } from '../../lib/format'
 import { downloadBlob } from '../../lib/download'
-import { wrapWorker, type WorkerHandle } from '../../lib/worker'
+import { createProgressGuard, wrapWorker, type WorkerHandle } from '../../lib/worker'
 import { moveItem } from '../../lib/reorder'
 import type { MergeWorkerApi } from './merge.worker'
 
@@ -152,19 +152,21 @@ export default function PdfMerge() {
     if (items.length < 2 || merging) return
     setError(null)
     setMerging({ done: 0, total: items.length })
+    // Guarded: a late Comlink tick must not resurrect the bar after cleanup.
+    const guard = createProgressGuard((done: number, total: number) => setMerging({ done, total }))
     try {
       workerRef.current ??= wrapWorker<MergeWorkerApi>(
         new Worker(new URL('./merge.worker.ts', import.meta.url), { type: 'module' }),
       )
-      const onProgress = proxy((done: number, total: number) => setMerging({ done, total }))
       const data = await workerRef.current.api.merge(
         items.map((i) => i.bytes),
-        onProgress,
+        proxy(guard.onProgress),
       )
       downloadBlob(new Blob([data as BlobPart], { type: 'application/pdf' }), 'merged.pdf')
     } catch {
       setError('Merging failed. One of these PDFs may use features pdf-lib cannot copy.')
     } finally {
+      guard.settle()
       setMerging(null)
     }
   }

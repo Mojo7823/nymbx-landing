@@ -9,7 +9,7 @@ import { ToolLayout } from '../../components/ToolLayout'
 import { cx } from '../../lib/cx'
 import { downloadBlob } from '../../lib/download'
 import { formatBytes } from '../../lib/format'
-import { wrapWorker, type WorkerHandle } from '../../lib/worker'
+import { createProgressGuard, wrapWorker, type WorkerHandle } from '../../lib/worker'
 import type { Base64WorkerApi } from './base64.worker'
 import { decodeBase64, encodeText, parseBase64Input, toDataUri } from './codec'
 
@@ -83,10 +83,13 @@ export default function Base64() {
     setError(null)
     setBusy(true)
     setProgress(0)
+    // Guarded: a late Comlink tick must not rewrite progress after this
+    // run finished (see createProgressGuard in lib/worker.ts).
+    const guard = createProgressGuard((bytesDone: number) => setProgress(bytesDone))
     try {
       if (direction === 'encode') {
         const useUrlSafe = urlSafe && !dataUri
-        const encoded = await worker().encodeFile(file, useUrlSafe, proxy(setProgress))
+        const encoded = await worker().encodeFile(file, useUrlSafe, proxy(guard.onProgress))
         setOutput({
           kind: 'encoded',
           value: dataUri ? toDataUri(encoded, file.type || 'application/octet-stream') : encoded,
@@ -102,6 +105,7 @@ export default function Base64() {
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Conversion failed.')
     } finally {
+      guard.settle()
       setBusy(false)
     }
   }
