@@ -537,17 +537,6 @@ export const tools: ToolMeta[] = [
     phase: 34,
     icon: Quote,
   },
-  {
-    slug: 'dummy-data-generator',
-    name: 'Dummy data generator',
-    description: 'Seeded fake data',
-    category: 'text-dev',
-    badge: client,
-    status: soon,
-    phase: 35,
-    icon: Sparkles,
-  },
-
   // ── Security & Inspection ─────────────────────────────────────────────
   {
     slug: 'text-hasher',
@@ -575,7 +564,7 @@ export const tools: ToolMeta[] = [
     description: 'Read X.509/CSR fields from PEM',
     category: 'security',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 38,
     icon: FileBadge,
   },

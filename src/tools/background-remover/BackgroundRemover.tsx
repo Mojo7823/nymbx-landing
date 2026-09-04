@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Download, Paintbrush, RotateCcw } from 'lucide-react'
-import { preload, removeBackground, type Config } from '@imgly/background-removal'
+import { removeBackground, type Config } from '@imgly/background-removal'
 import { ToolLayout } from '../../components/ToolLayout'
 import { FileDropzone } from '../../components/FileDropzone'
 import { Button } from '../../components/Button'
@@ -32,21 +32,13 @@ function buildConfig(model: Model, onProgress: Config['progress']): Config {
 let nextRun = 1
 
 export default function BackgroundRemover() {
-  const [model, setModel] = useState<Model>('medium')
+  const [model, setModel] = useState<Model>('small')
   const [phase, setPhase] = useState<Phase>('idle')
   const [progress, setProgress] = useState<ProgressInfo | null>(null)
   const [source, setSource] = useState<{ file: File; url: string } | null>(null)
   const [result, setResult] = useState<{ blob: Blob; url: string; name: string } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const runRef = useRef(0)
-
-  // Start fetching the model as soon as the tool is opened — by the time an
-  // image is dropped, the download is usually done (browser-cached afterwards).
-  useEffect(() => {
-    preload(buildConfig(model, undefined)).catch(() => {
-      // Preload is best-effort; real errors surface when processing.
-    })
-  }, [model])
 
   useEffect(
     () => () => {
@@ -69,7 +61,7 @@ export default function BackgroundRemover() {
       if (prev) URL.revokeObjectURL(prev.url)
       return { file, url: URL.createObjectURL(file) }
     })
-    setProgress({ label: 'Preparing…', percent: null })
+    setProgress({ label: 'Preparing…', percent: 0 })
 
     const onProgress = (key: string, current: number, total: number) => {
       if (runRef.current === run) setProgress(describeProgress(key, current, total))
@@ -146,8 +138,9 @@ export default function BackgroundRemover() {
           </div>
         </fieldset>
         <p className="text-xs text-faint">
-          First use downloads the model (~{model === 'small' ? '44' : '88'} MB) from this site; it
-          is cached for next time. Your photo is processed locally.
+          First use downloads only the selected model (~{model === 'small' ? '44' : '88'} MB) and
+          the required AI runtime from this site; both are cached for next time. Your photo is
+          processed locally.
         </p>
       </div>
 

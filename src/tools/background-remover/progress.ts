@@ -14,14 +14,22 @@ export interface ProgressInfo {
 export function describeProgress(key: string, current: number, total: number): ProgressInfo {
   if (key.startsWith('fetch:')) {
     const detail = total > 0 ? ` · ${formatBytes(current)} of ${formatBytes(total)}` : ''
-    const what = key.includes('/models/') ? 'AI model' : 'runtime'
+    const isModel = key.includes('/models/')
+    const what = isModel ? 'AI model' : 'AI runtime'
+    const ratio = total > 0 ? Math.min(1, Math.max(0, current / total)) : null
     return {
       label: `Downloading ${what}${detail}`,
-      percent: total > 0 ? (current / total) * 100 : null,
+      // A removal run fetches the model first and the one compatible WASM runtime
+      // second. Give each a fixed slice so the overall bar never jumps backwards
+      // when IMG.LY starts reporting a new resource from zero.
+      percent: ratio === null ? null : isModel ? ratio * 82 : 82 + ratio * 12,
     }
   }
   if (key.startsWith('compute:')) {
-    return { label: 'Analyzing image…', percent: null }
+    return {
+      label: current >= total && total > 0 ? 'Finishing image…' : 'Analyzing image…',
+      percent: current >= total && total > 0 ? 99 : 95,
+    }
   }
-  return { label: 'Preparing…', percent: null }
+  return { label: 'Preparing…', percent: 0 }
 }
