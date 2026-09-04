@@ -245,7 +245,7 @@ export const tools: ToolMeta[] = [
     description: 'Dominant colors from any image',
     category: 'image',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 48,
     icon: Palette,
   },

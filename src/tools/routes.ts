@@ -25,6 +25,7 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'exif-viewer': lazy(() => import('./exif-viewer/ExifViewer')),
   'svg-optimizer': lazy(() => import('./svg-optimizer/SvgOptimizer')),
   'favicon-generator': lazy(() => import('./favicon-generator/FaviconGenerator')),
+  'color-palette-extractor': lazy(() => import('./color-palette-extractor/ColorPaletteExtractor')),
   'bulk-file-hasher': lazy(() => import('./bulk-file-hasher/BulkFileHasher')),
   'bulk-file-renamer': lazy(() => import('./bulk-file-renamer/BulkFileRenamer')),
   'pdf-split': lazy(() => import('./pdf-split/PdfSplit')),

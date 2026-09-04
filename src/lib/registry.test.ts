@@ -39,6 +39,7 @@ describe('tool registry', () => {
       'exif-viewer',
       'svg-optimizer',
       'favicon-generator',
+      'color-palette-extractor',
       'bulk-file-hasher',
       'bulk-file-renamer',
       'pdf-split',
