@@ -28,6 +28,7 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'color-palette-extractor': lazy(() => import('./color-palette-extractor/ColorPaletteExtractor')),
   'bulk-file-hasher': lazy(() => import('./bulk-file-hasher/BulkFileHasher')),
   'bulk-file-renamer': lazy(() => import('./bulk-file-renamer/BulkFileRenamer')),
+  'zip-unzip': lazy(() => import('./zip-unzip/ZipUnzip')),
   'pdf-split': lazy(() => import('./pdf-split/PdfSplit')),
   'pdf-resize': lazy(() => import('./pdf-resize/PdfResize')),
   'pdf-to-image-markdown': lazy(() => import('./pdf-to-image-markdown/PdfToImageMarkdown')),

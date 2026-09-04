@@ -1,7 +1,8 @@
 import { useRef, useState, type DragEvent, type KeyboardEvent } from 'react'
-import { File as FileIcon, UploadCloud, X } from 'lucide-react'
+import { File as FileIcon, FolderInput, UploadCloud, X } from 'lucide-react'
 import { cx } from '../lib/cx'
 import { formatBytes } from '../lib/format'
+import { collectDroppedPaths, inputFilePath, type DroppedPath } from '../lib/dropFiles'
 
 export interface FileDropzoneProps {
   /** Same syntax as `<input accept>`: extensions and/or MIME types. */
@@ -9,7 +10,19 @@ export interface FileDropzoneProps {
   multiple?: boolean
   /** Max size per file, in bytes. */
   maxSize?: number
-  onFiles: (files: File[]) => void
+  onFiles?: (files: File[]) => void
+  /**
+   * Path-aware callback. When `folders` is enabled, dropped/picked folders
+   * arrive here with paths relative to the drop (e.g. `photos/a.jpg`);
+   * plain files report `file.name`. Also called for plain picks when set.
+   */
+  onPaths?: (files: DroppedPath[]) => void
+  /**
+   * Opt in to folder drops and a folder picker. Reported via `onPaths`
+   * (and `onFiles` for compatibility). Off by default — existing tools
+   * behave exactly as before.
+   */
+  folders?: boolean
   /** Extra hint under the main label, e.g. "PNG, JPEG or WebP". */
   hint?: string
   /**
@@ -40,39 +53,66 @@ export function FileDropzone({
   multiple = false,
   maxSize,
   onFiles,
+  onPaths,
+  folders = false,
   hint,
   privacyNote = 'Stays on this device',
   className,
 }: FileDropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const dirInputRef = useRef<HTMLInputElement>(null)
   const [selected, setSelected] = useState<File[]>([])
   const [error, setError] = useState<string | null>(null)
   const [dragActive, setDragActive] = useState(false)
 
-  function takeFiles(list: FileList | File[]) {
-    let files = Array.from(list)
-    if (!multiple) files = files.slice(0, 1)
+  function takePaths(dropped: DroppedPath[]) {
+    const items = multiple ? dropped : dropped.slice(0, 1)
 
-    const wrongType = accept ? files.filter((f) => !matchesAccept(f, accept)) : []
-    const tooBig = maxSize ? files.filter((f) => f.size > maxSize) : []
+    const wrongType = accept ? items.filter(({ file }) => !matchesAccept(file, accept)) : []
+    const tooBig = maxSize ? items.filter(({ file }) => file.size > maxSize) : []
     const rejected = new Set([...wrongType, ...tooBig])
-    const accepted = files.filter((f) => !rejected.has(f))
+    const accepted = items.filter((item) => !rejected.has(item))
 
     if (wrongType.length > 0) {
-      setError(`Unsupported file type: ${wrongType.map((f) => f.name).join(', ')}`)
+      setError(`Unsupported file type: ${wrongType.map(({ file }) => file.name).join(', ')}`)
     } else if (tooBig.length > 0) {
-      setError(`Larger than ${formatBytes(maxSize!)}: ${tooBig.map((f) => f.name).join(', ')}`)
+      setError(
+        `Larger than ${formatBytes(maxSize!)}: ${tooBig.map(({ file }) => file.name).join(', ')}`,
+      )
     } else {
       setError(null)
     }
 
-    setSelected(accepted)
-    if (accepted.length > 0) onFiles(accepted)
+    setSelected(accepted.map(({ file }) => file))
+    if (accepted.length > 0) {
+      onFiles?.(accepted.map(({ file }) => file))
+      onPaths?.(accepted)
+    }
+  }
+
+  function takeFiles(list: FileList | File[]) {
+    takePaths(Array.from(list).map((file) => ({ file, path: file.name })))
   }
 
   function onDrop(e: DragEvent) {
     e.preventDefault()
     setDragActive(false)
+    if (folders) {
+      const items = e.dataTransfer.items
+      if (items && items.length > 0) {
+        void collectDroppedPaths(e.dataTransfer)
+          .then((paths) => {
+            if (paths) takePaths(paths)
+            else if (e.dataTransfer.files.length > 0) takeFiles(e.dataTransfer.files)
+          })
+          // A traversal failure must not swallow the drop — the flattened
+          // file list is still available.
+          .catch(() => {
+            if (e.dataTransfer.files.length > 0) takeFiles(e.dataTransfer.files)
+          })
+        return
+      }
+    }
     if (e.dataTransfer.files.length > 0) takeFiles(e.dataTransfer.files)
   }
 
@@ -87,6 +127,7 @@ export function FileDropzone({
     setSelected([])
     setError(null)
     if (inputRef.current) inputRef.current.value = ''
+    if (dirInputRef.current) dirInputRef.current.value = ''
   }
 
   return (
@@ -127,6 +168,39 @@ export function FileDropzone({
           }}
         />
       </div>
+
+      {folders && (
+        <div className="mt-2 flex justify-center">
+          <button
+            type="button"
+            onClick={() => dirInputRef.current?.click()}
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-muted transition-colors hover:bg-soft hover:text-ink"
+          >
+            <FolderInput className="size-3.5" />
+            Or choose a whole folder
+          </button>
+          <input
+            ref={(el) => {
+              dirInputRef.current = el
+              // React has no webkitdirectory prop — set the attribute directly.
+              el?.setAttribute('webkitdirectory', '')
+              el?.setAttribute('directory', '')
+            }}
+            type="file"
+            accept={accept}
+            className="sr-only"
+            tabIndex={-1}
+            onChange={(e) => {
+              if (e.target.files) {
+                takePaths(
+                  Array.from(e.target.files).map((file) => ({ file, path: inputFilePath(file) })),
+                )
+              }
+              e.target.value = ''
+            }}
+          />
+        </div>
+      )}
 
       {error && (
         <p role="alert" className="mt-2 text-xs text-red-600 dark:text-red-400">

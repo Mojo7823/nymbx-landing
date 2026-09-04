@@ -9,6 +9,14 @@ export interface ZipInput {
 /** Read files in 8 MiB slices so multi-GB batches never load fully into memory. */
 export const ZIP_CHUNK_SIZE = 8 * 1024 * 1024
 
+export type ZipLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+/** Clamp an arbitrary number to a valid fflate compression level (default 6). */
+export function clampZipLevel(level: number): ZipLevel {
+  if (!Number.isFinite(level)) return 6
+  return Math.min(9, Math.max(0, Math.floor(level))) as ZipLevel
+}
+
 /**
  * Build a compressed zip by streaming each blob through fflate in chunks.
  * Only the compressed output accumulates in memory; sources are read one
@@ -18,8 +26,10 @@ export async function streamZip(
   entries: ZipInput[],
   onProgress?: (bytesDone: number) => void,
   chunkSize = ZIP_CHUNK_SIZE,
+  level: number = 6,
 ): Promise<Blob> {
   const parts: Uint8Array[] = []
+  const deflateLevel = clampZipLevel(level)
 
   const finished = new Promise<void>((resolve, reject) => {
     const zip = new Zip((err, chunk, final) => {
@@ -35,7 +45,7 @@ export async function streamZip(
       try {
         let bytesDone = 0
         for (const { name, blob } of entries) {
-          const file = new ZipDeflate(name, { level: 6 })
+          const file = new ZipDeflate(name, { level: deflateLevel })
           zip.add(file)
           if (blob.size === 0) {
             file.push(new Uint8Array(0), true)

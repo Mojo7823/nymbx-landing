@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { unzipSync } from 'fflate'
-import { streamZip } from './zipStream'
+import { clampZipLevel, streamZip } from './zipStream'
 
 async function blobBytes(blob: Blob): Promise<Uint8Array> {
   return new Uint8Array(await blob.arrayBuffer())
@@ -43,5 +43,43 @@ describe('streamZip', () => {
     const out = await streamZip([{ name: '空 ファイル ✓.txt', blob: new Blob([]) }])
     const entries = unzipSync(await blobBytes(out))
     expect(entries['空 ファイル ✓.txt']).toEqual(new Uint8Array(0))
+  })
+
+  it('stores without compressing at level 0 and round-trips byte-identically', async () => {
+    const repetitive = new Uint8Array(50_000).fill(65)
+    const stored = await streamZip(
+      [{ name: 'big.txt', blob: new Blob([repetitive]) }],
+      undefined,
+      8 * 1024 * 1024,
+      0,
+    )
+    // Stored output carries the full payload plus zip container overhead.
+    expect(stored.size).toBeGreaterThan(repetitive.length)
+    const entries = unzipSync(await blobBytes(stored))
+    expect(entries['big.txt']).toEqual(repetitive)
+  })
+
+  it('compresses better at level 9 than at level 0', async () => {
+    const text = new TextEncoder().encode('the quick brown fox jumps over '.repeat(4000))
+    const blob = new Blob([text])
+    const [lo, hi] = await Promise.all([
+      streamZip([{ name: 't.txt', blob }], undefined, 8 * 1024 * 1024, 0),
+      streamZip([{ name: 't.txt', blob }], undefined, 8 * 1024 * 1024, 9),
+    ])
+    expect(hi.size).toBeLessThan(lo.size / 10)
+  })
+
+  it('clamps out-of-range levels instead of throwing', async () => {
+    expect(clampZipLevel(99)).toBe(9)
+    expect(clampZipLevel(-3)).toBe(0)
+    expect(clampZipLevel(Number.NaN)).toBe(6)
+    const out = await streamZip(
+      [{ name: 'a.txt', blob: new Blob(['hi']) }],
+      undefined,
+      8 * 1024 * 1024,
+      99,
+    )
+    const entries = unzipSync(await blobBytes(out))
+    expect(new TextDecoder().decode(entries['a.txt'])).toBe('hi')
   })
 })

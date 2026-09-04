@@ -277,7 +277,7 @@ export const tools: ToolMeta[] = [
     description: 'Create and extract archives',
     category: 'files',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 49,
     icon: FolderArchive,
   },

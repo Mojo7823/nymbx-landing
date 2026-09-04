@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FileDropzone } from './FileDropzone'
 
@@ -51,5 +51,71 @@ describe('FileDropzone', () => {
     zone.dispatchEvent(event)
 
     expect(onFiles).toHaveBeenCalledOnce()
+  })
+
+  it('reports plain drops through onPaths when folders are enabled', async () => {
+    const onPaths = vi.fn()
+    render(<FileDropzone multiple folders onFiles={() => {}} onPaths={onPaths} />)
+    const zone = screen.getByRole('button', { name: /choose files/i })
+
+    const file = makeFile('dropped.txt', 10)
+    const dataTransfer = { files: [file], items: [], types: ['Files'] }
+    const event = new Event('drop', { bubbles: true }) as Event & { dataTransfer: unknown }
+    event.dataTransfer = dataTransfer
+    zone.dispatchEvent(event)
+
+    await waitFor(() => expect(onPaths).toHaveBeenCalledOnce())
+    expect(onPaths.mock.calls[0]![0]).toEqual([{ file, path: 'dropped.txt' }])
+  })
+
+  it('traverses dropped folders and reports relative paths', async () => {
+    const onPaths = vi.fn()
+    render(<FileDropzone multiple folders onFiles={() => {}} onPaths={onPaths} />)
+    const zone = screen.getByRole('button', { name: /choose files/i })
+
+    const inner = new File(['x'], 'a.jpg')
+    let served = false
+    const dirEntry = {
+      isFile: false,
+      isDirectory: true,
+      name: 'photos',
+      createReader: () => ({
+        readEntries: (success: (entries: unknown[]) => void) => {
+          // Like the real API, the second read comes back empty.
+          const batch = served ? [] : [fileEntry]
+          served = true
+          success(batch)
+        },
+      }),
+    }
+    const fileEntry = {
+      isFile: true,
+      isDirectory: false,
+      name: 'a.jpg',
+      file: (ok: (f: File) => void) => ok(inner),
+    }
+    const dataTransfer = {
+      files: [],
+      items: [{ kind: 'file', webkitGetAsEntry: () => dirEntry }],
+      types: ['Files'],
+    }
+    const event = new Event('drop', { bubbles: true }) as Event & { dataTransfer: unknown }
+    event.dataTransfer = dataTransfer
+    zone.dispatchEvent(event)
+
+    await waitFor(() => expect(onPaths).toHaveBeenCalledOnce())
+    expect(onPaths.mock.calls[0]![0]).toEqual([{ file: inner, path: 'photos/a.jpg' }])
+  })
+
+  it('offers a folder picker with webkitdirectory only when folders are enabled', () => {
+    const plain = render(<FileDropzone onFiles={() => {}} />)
+    expect(plain.container.querySelectorAll('input[type="file"]')).toHaveLength(1)
+    plain.unmount()
+
+    const { container } = render(<FileDropzone folders onFiles={() => {}} />)
+    const inputs = container.querySelectorAll('input[type="file"]')
+    expect(inputs).toHaveLength(2)
+    expect(inputs[1]!.hasAttribute('webkitdirectory')).toBe(true)
+    expect(screen.getByRole('button', { name: /choose a whole folder/i })).toBeInTheDocument()
   })
 })

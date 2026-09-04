@@ -42,6 +42,7 @@ describe('tool registry', () => {
       'color-palette-extractor',
       'bulk-file-hasher',
       'bulk-file-renamer',
+      'zip-unzip',
       'pdf-split',
       'pdf-resize',
       'pdf-to-image-markdown',
