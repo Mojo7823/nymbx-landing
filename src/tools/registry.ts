@@ -195,7 +195,7 @@ export const tools: ToolMeta[] = [
     description: 'Shrink photos with quality preview',
     category: 'image',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 43,
     icon: ImageDown,
   },

@@ -34,6 +34,7 @@ describe('tool registry', () => {
       'image-resize',
       'background-remover',
       'image-format-converter',
+      'image-compressor',
       'bulk-file-hasher',
       'bulk-file-renamer',
       'pdf-split',
