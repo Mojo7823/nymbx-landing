@@ -38,6 +38,7 @@ describe('tool registry', () => {
       'crop-rotate-flip',
       'exif-viewer',
       'svg-optimizer',
+      'favicon-generator',
       'bulk-file-hasher',
       'bulk-file-renamer',
       'pdf-split',

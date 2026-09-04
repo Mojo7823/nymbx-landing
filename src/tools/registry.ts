@@ -235,7 +235,7 @@ export const tools: ToolMeta[] = [
     description: 'One image → full favicon set',
     category: 'image',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 47,
     icon: Sparkles,
   },
