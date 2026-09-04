@@ -33,6 +33,7 @@ describe('tool registry', () => {
       'markdown-editor',
       'image-resize',
       'background-remover',
+      'image-format-converter',
       'bulk-file-hasher',
       'bulk-file-renamer',
       'pdf-split',

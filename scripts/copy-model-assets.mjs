@@ -54,6 +54,7 @@ if (existsSync(zxingStamp) && readFileSync(zxingStamp, 'utf8') === zxingVersion)
   writeFileSync(zxingStamp, zxingVersion)
   console.log('copy-model-assets: done')
 }
+// Self-host Noto Sans TC for the PDF watermark tool's CJK text embedding
 // (fetched lazily, from our origin only). Same skip-if-current logic.
 const fontSource = join(
   root,

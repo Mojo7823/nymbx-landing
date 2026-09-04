@@ -185,7 +185,7 @@ export const tools: ToolMeta[] = [
     description: 'Convert PNG, JPEG, WebP and AVIF',
     category: 'image',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 42,
     icon: Repeat,
   },
