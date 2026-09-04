@@ -215,7 +215,7 @@ export const tools: ToolMeta[] = [
     description: 'View and remove photo metadata and GPS',
     category: 'image',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 45,
     icon: Camera,
   },
