@@ -21,6 +21,7 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'background-remover': lazy(() => import('./background-remover/BackgroundRemover')),
   'image-format-converter': lazy(() => import('./image-format-converter/ImageFormatConverter')),
   'image-compressor': lazy(() => import('./image-compressor/ImageCompressor')),
+  'crop-rotate-flip': lazy(() => import('./crop-rotate-flip/CropRotateFlip')),
   'bulk-file-hasher': lazy(() => import('./bulk-file-hasher/BulkFileHasher')),
   'bulk-file-renamer': lazy(() => import('./bulk-file-renamer/BulkFileRenamer')),
   'pdf-split': lazy(() => import('./pdf-split/PdfSplit')),

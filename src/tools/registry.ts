@@ -205,7 +205,7 @@ export const tools: ToolMeta[] = [
     description: 'Precise cropping with presets',
     category: 'image',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 44,
     icon: Crop,
   },
