@@ -104,6 +104,7 @@ The capstone of the markdown group — reuses Phases 4–5 components.
 - **Libraries:** `@imgly/background-removal` (lazy; self-host model assets under `public/models/` via `publicPath`).
 - **Build:** dropzone → progress UI for model download (first use, ~40–80 MB, with clear messaging) → processed result over a checkerboard; download PNG; model preloading after first visit; WebGPU with CPU fallback.
 - **Verify:** portrait, product-on-white, and complex-edge (hair/fur) images; model download progress reports correctly; works with COOP/COEP headers active; **network log shows model downloads only from our origin, never image uploads**; graceful failure message on very low-memory devices.
+- **Download robustness fix (2026-09-04):** the library fetches ~4 MB model shards in parallel and reports progress per *completed* shard with no timeout, so slow/stalling connections froze the UI at e.g. "106 KB of 84.1 MB 0%" forever with no way to cancel. The tool now prefetches model shards sequentially with streaming byte-level progress, download speed, a 30 s per-chunk stall timeout with 3 retries, a clear error instead of a hang, and a Cancel button; shards are content-hashed and served immutable (`deploy/Caddyfile`) so the library's own fetch resolves from browser cache. See `src/tools/background-remover/modelPrefetch.ts`.
 
 ---
 
@@ -152,7 +153,7 @@ The only server-assisted tool. **Clearly labeled in the UI.**
 - **Infra:** deploy the official `gotenberg/gotenberg` image as a second service in the same Zeabur project, **private networking only — no public domain**; the web container's Caddy adds `reverse_proxy /api/convert/* → gotenberg.zeabur.internal:3000` with a request size limit. A `docker-compose.yml` in `deploy/` mirrors the two-service setup for local development.
 - **Build:** dropzone → upload with progress → converted file download; explicit banner: "This tool uploads your file to our server for conversion; it is deleted immediately after."; client-side file size cap; both directions (DOCX→PDF via Gotenberg LibreOffice route, PDF→DOCX if quality is acceptable — otherwise ship DOCX→PDF only and say so).
 - **Verify:** conversion fidelity on a formatted document (tables, images, headers/footers); server rejects oversized files cleanly; Gotenberg unreachable → clear error, no hang; **confirm no temp files persist server-side after conversion**.
-- **⚠ Open deployment TODO (code shipped 2026-07-17; no Docker on the dev machine, so verified against a local LibreOffice-backed mock):**
+- **⚠ Open deployment TODO (code verified locally 2026-09-04 against real `gotenberg/gotenberg:8` via `deploy/docker-compose.yml`: formatted DOCX→valid PDF through the Caddy proxy, 413 on oversize, 502 with clean client message when Gotenberg is down, COOP/COEP headers + SPA fallback OK, no user bytes left in container /tmp):**
   1. Add the `gotenberg/gotenberg:8` service to the Zeabur project (private networking only, no public domain) so it resolves as `gotenberg.zeabur.internal`.
   2. Redeploy the web service to pick up the Caddyfile with the `/api/convert/*` proxy.
   3. Re-run the verification list above against the live site, including the no-temp-files check on real Gotenberg.
