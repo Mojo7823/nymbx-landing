@@ -60,6 +60,7 @@ describe('tool registry', () => {
       'text-hasher',
       'jwt-decoder',
       'certificate-decoder',
+      'hex-viewer',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })

@@ -46,4 +46,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'text-hasher': lazy(() => import('./text-hasher/TextHasher')),
   'jwt-decoder': lazy(() => import('./jwt-decoder/JwtDecoder')),
   'certificate-decoder': lazy(() => import('./certificate-decoder/CertificateDecoder')),
+  'hex-viewer': lazy(() => import('./hex-viewer/HexViewer')),
 }

@@ -574,7 +574,7 @@ export const tools: ToolMeta[] = [
     description: "Inspect any file's raw bytes, detect real type",
     category: 'security',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 39,
     icon: FileDigit,
   },
