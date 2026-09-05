@@ -399,6 +399,7 @@ Promoted from the Backlog's Tier 1. Each is a small phase built on dependencies 
 - **Libraries:** the existing `hash-wasm` worker.
 - **Build:** the hasher accepts a manifest (`SHA256SUMS`, `*.sha256`, `*.md5`, `*.sha1`, BSD `SHA256 (file) = …` style) alongside the files → algorithm auto-selected → per-file PASS / FAIL / MISSING / EXTRA table, summary counters, exportable report.
 - **Verify:** GNU and BSD manifest formats; paths with subdirectories and spaces; binary-mode `*` marker; files named in the manifest but not dropped → MISSING; dropped files absent from the manifest → EXTRA; a single flipped byte → FAIL with both digests shown.
+- **Implementation notes (2026-09-05):** parses GNU text/binary lines including the backslash-escaped name form, BSD `--tag` and OpenSSL `SHA2-256(file)= …` styles, comments/blank lines/CRLF; algorithm from tag → manifest file name → digest length, with SHA-384 and BLAKE2b-512 (`b2sum`) added to the engine (+10.8 kB worker); unsupported tags (SHA3, BLAKE3…) are listed as UNSUPPORTED. Matching is layered — exact path relative to the manifest's folder, then separators, case, and unique basename, each labelled in the row — and checksum files dropped alongside the payload are auto-adopted (canonical names win) and never counted EXTRA. Reports export as `sha256sum -c`-style TXT, CSV and JSON. Handout: `docs/handouts/phase-59-hasher-manifest-verification.md`.
 
 ### Phase 60 — XLSX / CSV viewer: export (extension of Phase 21)
 - **Libraries:** SheetJS (already loaded by the viewer).

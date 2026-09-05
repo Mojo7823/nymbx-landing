@@ -1,0 +1,2 @@
+# Checksum-manifest fixtures must keep their exact bytes (one is deliberately CRLF).
+src/tools/bulk-file-hasher/fixtures/** -text

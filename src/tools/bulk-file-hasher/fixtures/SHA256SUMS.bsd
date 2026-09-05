@@ -1,0 +1,3 @@
+SHA256 (README.md) = 68476d7ac5e15037e9b569eef7501c51af43743643b9c5cb3bf9ada09eb47a67
+SHA256 (bin/tool.wasm) = 9c85297a013e201c14581fa9f2808053dc845fe2c22ad5a7f2cdfcf3ccd1297f
+SHA256 (docs/sub dir/data with spaces.csv) = 2d3ce09d6999f6ab525adeb53136ca0e1f784bc68261651312163bbbf3f1d7ad

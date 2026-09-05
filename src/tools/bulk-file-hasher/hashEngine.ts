@@ -1,13 +1,15 @@
 import {
+  createBLAKE2b,
   createCRC32,
   createMD5,
   createSHA1,
   createSHA256,
+  createSHA384,
   createSHA512,
   type IHasher,
 } from 'hash-wasm'
 
-export type AlgorithmId = 'sha256' | 'sha1' | 'sha512' | 'md5' | 'crc32'
+export type AlgorithmId = 'sha256' | 'sha1' | 'sha512' | 'sha384' | 'md5' | 'blake2b' | 'crc32'
 
 /** Read files in 8 MiB slices so multi-GB inputs never load fully into memory. */
 export const CHUNK_SIZE = 8 * 1024 * 1024
@@ -16,7 +18,10 @@ const factories: Record<AlgorithmId, () => Promise<IHasher>> = {
   sha256: createSHA256,
   sha1: createSHA1,
   sha512: createSHA512,
+  sha384: createSHA384,
   md5: createMD5,
+  // b2sum's default: BLAKE2b-512.
+  blake2b: () => createBLAKE2b(512),
   crc32: createCRC32,
 }
 
