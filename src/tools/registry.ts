@@ -456,7 +456,7 @@ export const tools: ToolMeta[] = [
     description: 'Clean Markdown from any HTML',
     category: 'converters',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 53,
     icon: Code,
   },

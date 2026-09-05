@@ -147,6 +147,7 @@ The capstone of the markdown group — reuses Phases 4–5 components.
 - **Libraries:** `mammoth`, `turndown` (HTML → MD).
 - **Build:** dropzone → converted output with preview; download `.html` or `.md`; embedded images extracted as base64 or separate files in a zip; conversion warnings from mammoth surfaced to the user.
 - **Verify:** headings/lists/tables/bold/italic map correctly; document with images; document with footnotes (graceful degradation); corrupt file shows a clean error.
+- **Change (2026-09-05, Phase 53 refactor):** the turndown setup and table fix-ups moved to the shared `src/lib/htmlToMarkdown.ts`. Two output changes: strikethrough is now `~~text~~` (the GFM plugin's single tilde is not rendered by markdown-it, which this tool's preview uses) and a literal `<` in text is escaped as `\<` so it is not read as HTML downstream.
 
 ### Phase 15 — DOCX ↔ PDF (server-assisted)
 The only server-assisted tool. **Clearly labeled in the UI.**
@@ -360,8 +361,9 @@ Promoted from the Backlog's Tier 1. Each is a small phase built on dependencies 
 
 ### Phase 53 — HTML → Markdown
 - **Libraries:** `turndown` + `turndown-plugin-gfm` (installed for Phase 14), `DOMPurify`.
-- **Build:** paste HTML or drop an `.html`/`.htm` file → Markdown with live preview (reuse the Phase 4 renderer); options: bullet marker, fenced code style, keep/strip images, keep/strip links; input is sanitized through DOMPurify before conversion; copy / download `.md`.
-- **Verify:** tables, nested lists, code blocks with language classes and inline formatting map correctly; `<script>` and event-handler attributes never survive into the output; a 5 MB page converts without freezing the UI (worker); relative URLs kept verbatim; malformed HTML → best-effort output, never a crash; no network activity.
+- **Build:** paste HTML or drop an `.html`/`.htm` file → Markdown with live preview (reuse the Phase 4 renderer); options: heading style, bullet marker, fence, emphasis delimiter, images keep/alt/drop, links keep/text, skip page chrome (nav/header/footer/aside), optional base URL to resolve relative links; input is sanitized through DOMPurify (`RETURN_DOM`) before conversion; the turndown configuration and table fix-ups are shared with Phase 14 via `src/lib/htmlToMarkdown.ts`; copy / download `.md`.
+- **Implementation notes (2026-09-05):** extra turndown rules for `lang-*` code classes and bare `<pre>`; preview images are replaced by text chips so rendering never fetches a third-party URL; the first yield of each run waits for a painted frame so the one unavoidable synchronous step (DOMPurify parsing a 5 MB document, ~1 s) never lands ahead of the click that started it.
+- **Verify:** tables, nested lists, code blocks with language classes and inline formatting map correctly; `<script>` and event-handler attributes never survive into the output; a 5 MB page converts without freezing the UI (turndown needs `DOMParser`, which Web Workers lack, so conversion runs on the main thread in batches of top-level blocks that yield to the event loop, with progress and Cancel); relative URLs kept verbatim unless a base URL is given; malformed HTML → best-effort output, never a crash; no network activity.
 
 ### Phase 54 — Screenshot redaction
 - **Libraries:** canvas only (`pica` for export scaling if needed).

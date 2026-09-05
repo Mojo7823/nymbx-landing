@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify'
+import { createTurndown, prepareTablesForMarkdown } from '../../lib/htmlToMarkdown'
 
 export type ImageMode = 'embed' | 'separate'
 
@@ -32,34 +33,6 @@ const EXT_BY_TYPE: Record<string, string> = {
 }
 
 /**
- * mammoth emits Word tables as plain <td> rows with a <p> per cell, which
- * turndown-plugin-gfm keeps as raw HTML (it needs a <th> header row) and
- * whose block children would break pipe rows. Flatten cell paragraphs to
- * <br>-separated inline content and promote the first row to <th> — only
- * for the markdown pipeline; the HTML output stays faithful to mammoth's.
- */
-function prepareTablesForMarkdown(html: string): string {
-  const doc = new DOMParser().parseFromString(html, 'text/html')
-  for (const cell of doc.querySelectorAll('td, th')) {
-    const children = Array.from(cell.children)
-    if (children.length > 0 && children.every((c) => c.tagName === 'P')) {
-      cell.innerHTML = children.map((c) => c.innerHTML).join('<br>')
-    }
-  }
-  for (const table of doc.querySelectorAll('table')) {
-    if (table.querySelector('th')) continue
-    const firstRow = table.rows[0]
-    if (!firstRow) continue
-    for (const td of Array.from(firstRow.cells)) {
-      const th = doc.createElement('th')
-      th.innerHTML = td.innerHTML
-      td.replaceWith(th)
-    }
-  }
-  return doc.body.innerHTML
-}
-
-/**
  * Convert a `.docx` to sanitized HTML plus GFM markdown using mammoth and
  * turndown. `embed` inlines images as base64 data URIs; `separate` collects
  * them as files referenced by relative `images/…` paths (for a zip export).
@@ -69,11 +42,7 @@ export async function convertDocx(
   buffer: ArrayBuffer,
   imageMode: ImageMode,
 ): Promise<DocxConversion> {
-  const [{ default: mammoth }, { default: TurndownService }, { gfm }] = await Promise.all([
-    import('mammoth'),
-    import('turndown'),
-    import('turndown-plugin-gfm'),
-  ])
+  const { default: mammoth } = await import('mammoth')
 
   const images: DocxImage[] = []
   const convertImage =
@@ -96,19 +65,9 @@ export async function convertDocx(
 
   const html = DOMPurify.sanitize(result.value)
 
-  const turndown = new TurndownService({
-    headingStyle: 'atx',
-    codeBlockStyle: 'fenced',
-    bulletListMarker: '-',
-    hr: '---',
-  })
-  turndown.use(gfm)
-  // GFM table cells are single-line; a literal <br> is the standard way to
-  // keep an in-cell line break instead of turndown's "  \n" (breaks the row).
-  turndown.addRule('cellLineBreak', {
-    filter: (node) => node.nodeName === 'BR' && node.parentElement?.closest('td, th') != null,
-    replacement: () => '<br>',
-  })
+  // Double tildes: the single-tilde form the GFM plugin emits is not rendered
+  // as strikethrough by markdown-it, which this tool's own preview uses.
+  const turndown = await createTurndown({ strikethrough: 'double' })
   const markdown = turndown.turndown(prepareTablesForMarkdown(html))
 
   const warnings = [...new Set(result.messages.map((m) => m.message))]

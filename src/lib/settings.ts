@@ -8,6 +8,20 @@ export interface SettingsSchema {
   theme: 'light' | 'dark'
   /** OCR tool: selected language pack ids, e.g. `['eng', 'chi_tra']`. */
   ocrLanguages: string[]
+  /**
+   * HTML → Markdown tool: the conversion options row. Preferences only —
+   * the HTML input and the Markdown output are never stored.
+   */
+  htmlToMarkdownOptions: {
+    headingStyle: 'atx' | 'setext'
+    bulletListMarker: '-' | '*' | '+'
+    fence: '```' | '~~~'
+    emDelimiter: '_' | '*'
+    images: 'keep' | 'alt' | 'drop'
+    links: 'keep' | 'text'
+    skipChrome: boolean
+    baseUrl: string
+  }
   // Future tools extend this interface with their preference keys.
   [key: string]: unknown
 }

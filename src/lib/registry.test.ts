@@ -59,6 +59,7 @@ describe('tool registry', () => {
       'docx-to-html-markdown',
       'docx-pdf',
       'markdown-to-docx',
+      'html-to-markdown',
       'json-formatter',
       'yaml-json-toml',
       'csv-json',

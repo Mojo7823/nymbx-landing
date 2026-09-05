@@ -43,6 +43,7 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'pdf-sign-annotate': lazy(() => import('./pdf-sign-annotate/PdfSignAnnotate')),
   'xlsx-csv-viewer': lazy(() => import('./xlsx-csv-viewer/XlsxCsvViewer')),
   'markdown-to-docx': lazy(() => import('./markdown-to-docx/MarkdownToDocx')),
+  'html-to-markdown': lazy(() => import('./html-to-markdown/HtmlToMarkdown')),
   'json-formatter': lazy(() => import('./json-formatter/JsonFormatter')),
   'yaml-json-toml': lazy(() => import('./yaml-json-toml/YamlJsonToml')),
   'csv-json': lazy(() => import('./csv-json/CsvJson')),
