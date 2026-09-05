@@ -639,7 +639,7 @@ export const tools: ToolMeta[] = [
     description: 'Inspect and validate CycloneDX / SPDX',
     category: 'security',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 55,
     icon: PackageSearch,
   },

@@ -77,6 +77,7 @@ describe('tool registry', () => {
       'hex-viewer',
       'password-strength',
       'qr-generator-reader',
+      'sbom-viewer',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })

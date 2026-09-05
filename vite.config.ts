@@ -22,6 +22,11 @@ const convertProxy = {
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // Module workers (`new Worker(url, { type: 'module' })`) — the only kind this
+  // app creates. The default 'iife' worker format cannot code-split, which
+  // would inline the SBOM viewer's ~690 KB of bundled JSON schemas into its
+  // worker chunk; 'es' keeps each dynamic import a separate, cacheable chunk.
+  worker: { format: 'es' },
   server: { headers: isolationHeaders, proxy: convertProxy },
   preview: { headers: isolationHeaders, proxy: convertProxy },
   test: {

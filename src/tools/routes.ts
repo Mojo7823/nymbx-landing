@@ -61,4 +61,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'hex-viewer': lazy(() => import('./hex-viewer/HexViewer')),
   'password-strength': lazy(() => import('./password-strength/PasswordStrength')),
   'qr-generator-reader': lazy(() => import('./qr-generator-reader/QrGeneratorReader')),
+  'sbom-viewer': lazy(() => import('./sbom-viewer/SbomViewer')),
 }

@@ -6,3 +6,4 @@ home
 vendor
 branding
 *.md
+src/tools/sbom-viewer/schemas
