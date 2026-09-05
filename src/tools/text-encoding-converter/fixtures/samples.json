@@ -1,0 +1,213 @@
+{
+ "generated": "2026-09-05 — samples: Python 3.14 codecs (WHATWG-compatible for these characters, verified by decoding with Node 24 TextDecoder). mojibake: garbled text produced by Node 24 TextDecoder (ICU); engines differ on Big5 ETEN-area pairs and Shift_JIS error recovery, so the non-lossy cases were chosen such that Chromium 151 produces the identical garble (verified with Playwright).",
+ "samples": [
+  {
+   "label": "big5",
+   "pythonCodec": "big5",
+   "text": "繁體中文測試：台灣的夜市非常熱鬧，小吃種類繁多，像是蚵仔煎、珍珠奶茶與鹹酥雞。\n這是第二行，用來檢查換行與標點符號的處理是否正確。\n資料在瀏覽器內處理，不會上傳到任何伺服器。\n",
+   "base64": "wWPF6aSkpOW0+rjVoUeleMZXqrqpXaWrq0SxYLz2vnihQaRwplm62MP+wWOmaKFBubOsT7NIpUq3zqFCrMOvXaWkr/m7UMTQtnDC+6FDCrNvrE+yxKRHpuahQaXOqNPAy6xktKum5rtQvNDCSbLFuLmqurNCsnqsT6dfpb+9VKFDCrjqrsamYsJzxP2+uaS6s0KyeqFBpKO3fKRXtseo7KX0pvOm+KpBvrmhQwo=",
+   "reversible": true
+  },
+  {
+   "label": "gbk",
+   "pythonCodec": "gbk",
+   "text": "简体中文测试：北京的秋天非常美丽，天气凉爽，适合到公园散步、看红叶。\n这是第二行，用来检查换行与标点符号的处理是否正确。\n数据在浏览器内处理，不会上传到任何服务器。\n",
+   "base64": "vPLM5dbQzsSy4srUo7qxsb6ptcTH78zst8ezo8PAwPajrMzsxvjBucuso6zKyrrPtb25q9SwyaKyvaGiv7S67NK2oaMK1eLKx7Xatv7Q0KOs08PAtLzssum7u9DQ0+ux6rXjt/u6xbXEtKbA7crHt/HV/ci3oaMKyv2+3dTa5K/AwMb3xNq0psDto6yyu7vhyc+0q7W9yM66zrf+zvHG96GjCg==",
+   "reversible": true
+  },
+  {
+   "label": "gb18030",
+   "pythonCodec": "gb18030",
+   "text": "简体中文测试：北京的秋天非常美丽，天气凉爽，适合到公园散步、看红叶。\n这是第二行，用来检查换行与标点符号的处理是否正确。\n数据在浏览器内处理，不会上传到任何服务器。\n",
+   "base64": "vPLM5dbQzsSy4srUo7qxsb6ptcTH78zst8ezo8PAwPajrMzsxvjBucuso6zKyrrPtb25q9SwyaKyvaGiv7S67NK2oaMK1eLKx7Xatv7Q0KOs08PAtLzssum7u9DQ0+ux6rXjt/u6xbXEtKbA7crHt/HV/ci3oaMKyv2+3dTa5K/AwMb3xNq0psDto6yyu7vhyc+0q7W9yM66zrf+zvHG96GjCg==",
+   "reversible": true
+  },
+  {
+   "label": "gb18030",
+   "pythonCodec": "gb18030",
+   "text": "GB18030 四字节测试：𠀀 ẅ ǖ\n",
+   "base64": "R0IxODAzMCDLxNfWvdqy4srUo7qVMoI2IIE1+zcgqLUK",
+   "reversible": false
+  },
+  {
+   "label": "shift_jis",
+   "pythonCodec": "cp932",
+   "text": "日本語のテスト：東京は世界で最も人口の多い都市の一つです。桜の季節にはたくさんの観光客が訪れます。\nこれは二行目で、改行と句読点の処理を確認するためのものです。\nデータはブラウザ内で処理され、サーバーには送信されません。\n",
+   "base64": "k/qWe4zqgsyDZYNYg2eBRpOMi56CzZCiikWCxY3FguCQbIz7gsyRvYKik3OOc4LMiOqCwoLFgreBQo33gsyLR5DfgsmCzYK9gq2Cs4LxgsyKz4z1i3GCqpZLguqC3IK3gUIKgrGC6oLNk/GNc5bagsWBQYn8jXOCxovlk8eTX4LMj4iXnYLwim2URoK3gumCvYLfgsyC4ILMgsWCt4FCCoNmgVuDXoLNg3WDiYNFg1WT4ILFj4iXnYKzguqBQYNUgVuDb4FbgsmCzZGXkE2Cs4LqgtyCuYLxgUIK",
+   "reversible": true
+  },
+  {
+   "label": "euc-jp",
+   "pythonCodec": "euc_jp",
+   "text": "日本語のテスト：東京は世界で最も人口の多い都市の一つです。桜の季節にはたくさんの観光客が訪れます。\nこれは二行目で、改行と句読点の処理を確認するためのものです。\nデータはブラウザ内で処理され、サーバーには送信されません。\n",
+   "base64": "xvzL3LjspM6lxqW5pcihp8Xstf6kz8Cks6akx7rHpOK/zbj9pM7Cv6SkxdS71KTOsOykxKTHpLmho7r5pM61qMDhpMukz6S/pK+ktaTzpM600bj3tdKkrMuspOyk3qS5oaMKpLOk7KTPxvO51MzcpMehorL+udSkyLbnxsnFwKTOvejN/aTys87Hp6S5pOukv6ThpM6k4qTOpMekuaGjCqXHobylv6TPpdal6aWmpbbG4qTHvejN/aS1pOyhoqW1obyl0KG8pMukz8H3v66ktaTspN6ku6TzoaMK",
+   "reversible": true
+  },
+  {
+   "label": "euc-kr",
+   "pythonCodec": "cp949",
+   "text": "한국어 테스트: 서울은 대한민국의 수도이며 한강이 도시를 가로지릅니다. 김치와 비빔밥은 세계적으로 유명한 음식입니다.\n이것은 두 번째 줄로, 줄 바꿈과 문장 부호 처리를 확인하기 위한 것입니다.\n데이터는 브라우저 안에서 처리되며 서버로 전송되지 않습니다.\n",
+   "base64": "x9Gxub7uIMXXvbrGrjogvK2/78C6ILTrx9G5zrG5wMcgvPa1tcDMuOcgx9GwrcDMILW1vcO4piCwobfOwfa4qLTPtNkuILHoxKG/zSC68br2ueTAuiC8vLDowPvAuLfOIMCvuO3H0SDAvb3EwNS0z7TZLgrAzLDNwLogtc4gufjCsCDB2bfOLCDB2SC52bLesPogua7A5SC6zsijIMOzuK64piDIrsDOx8+x4iDAp8fRILDNwNS0z7TZLgq1pcDMxc20wiC66rbzv+zA+iC+yL+hvK0gw7O4rrXHuOcgvK259rfOIMD8vNu1x8H2IL7KvcC0z7TZLgo=",
+   "reversible": true
+  },
+  {
+   "label": "iso-2022-jp",
+   "pythonCodec": "iso2022_jp",
+   "text": "日本語のテスト：東京は世界で最も人口の多い都市の一つです。桜の季節にはたくさんの観光客が訪れます。\nこれは二行目で、改行と句読点の処理を確認するためのものです。\nデータはブラウザ内で処理され、サーバーには送信されません。\n",
+   "base64": "GyRCRnxLXDhsJE4lRiU5JUghJ0VsNX4kT0AkMyYkRzpHJGI/TTh9JE5CPyQkRVQ7VCROMGwkRCRHJDkhIzp5JE41KEBhJEskTyQ/JC8kNSRzJE40UTh3NVIkLEssJGwkXiQ5ISMbKEIKGyRCJDMkbCRPRnM5VExcJEchIjJ+OVQkSDZnRklFQCROPWhNfSRyM05HJyQ5JGskPyRhJE4kYiROJEckOSEjGyhCChskQiVHITwlPyRPJVYlaSUmJTZGYiRHPWhNfSQ1JGwhIiU1ITwlUCE8JEskT0F3Py4kNSRsJF4kOyRzISMbKEIK",
+   "reversible": false
+  },
+  {
+   "label": "windows-1252",
+   "pythonCodec": "cp1252",
+   "text": "Café crème, déjà vu — naïve façade à la française. Größe, Straße, Übung, Österreich.\nSeconde ligne : « guillemets », l'apostrophe et le symbole € (euro).\nLes données restent dans le navigateur.\n",
+   "base64": "Q2Fm6SBjcuhtZSwgZOlq4CB2dSCXIG5h73ZlIGZh52FkZSDgIGxhIGZyYW7nYWlzZS4gR3L232UsIFN0cmHfZSwg3GJ1bmcsINZzdGVycmVpY2guClNlY29uZGUgbGlnbmUgOiCrIGd1aWxsZW1ldHMguywgbCdhcG9zdHJvcGhlIGV0IGxlIHN5bWJvbGUggCAoZXVybykuCkxlcyBkb25u6WVzIHJlc3RlbnQgZGFucyBsZSBuYXZpZ2F0ZXVyLgo=",
+   "reversible": true
+  },
+  {
+   "label": "iso-8859-2",
+   "pythonCodec": "iso8859_2",
+   "text": "Zażółć gęślą jaźń - polski test kodowania. Łódź, Kraków, Wrocław.\nDruga linia sprawdza znaki diakrytyczne.\n",
+   "base64": "WmG/87PmIGfqtmyxIGphvPEgLSBwb2xza2kgdGVzdCBrb2Rvd2FuaWEuIKPzZLwsIEtyYWvzdywgV3JvY7Nhdy4KRHJ1Z2EgbGluaWEgc3ByYXdkemEgem5ha2kgZGlha3J5dHljem5lLgo=",
+   "reversible": true
+  },
+  {
+   "label": "windows-1250",
+   "pythonCodec": "cp1250",
+   "text": "Zażółć gęślą jaźń - polski test kodowania. Łódź, Kraków, Wrocław.\nDruga linia sprawdza znaki diakrytyczne.\n",
+   "base64": "WmG/87PmIGfqnGy5IGphn/EgLSBwb2xza2kgdGVzdCBrb2Rvd2FuaWEuIKPzZJ8sIEtyYWvzdywgV3JvY7Nhdy4KRHJ1Z2EgbGluaWEgc3ByYXdkemEgem5ha2kgZGlha3J5dHljem5lLgo=",
+   "reversible": true
+  },
+  {
+   "label": "windows-1251",
+   "pythonCodec": "cp1251",
+   "text": "Тест кириллицы: Москва - столица России. Быстрая коричневая лиса прыгает через ленивую собаку.\nВторая строка проверяет перенос строки и знаки препинания.\nДанные обрабатываются в браузере.\n",
+   "base64": "0uXx8iDq6PDo6+vo9vs6IMzu8eri4CAtIPHy7uvo9uAg0O7x8ejoLiDB+/Hy8OD/IOru8Oj37eXi4P8g6+jx4CDv8Pvj4OXyIPfl8OXnIOvl7eji8/4g8e7h4OrzLgrC8u7w4P8g8fLw7urgIO/w7uLl8P/l8iDv5fDl7e7xIPHy8O7q6CDoIOft4OroIO/w5e/o7eDt6P8uCsTg7e375SDu4fDg4eDy++Lg/vLx/yDiIOHw4PPn5fDlLgo=",
+   "reversible": true
+  },
+  {
+   "label": "koi8-r",
+   "pythonCodec": "koi8_r",
+   "text": "Тест кириллицы: Москва - столица России. Быстрая коричневая лиса прыгает через ленивую собаку.\nВторая строка проверяет перенос строки и знаки препинания.\nДанные обрабатываются в браузере.\n",
+   "base64": "9MXT1CDLydLJzMzJw9k6IO3P08vXwSAtINPUz8zJw8Eg8s/T08nJLiDi2dPU0sHRIMvP0snezsXXwdEgzMnTwSDQ0tnHwcXUIN7F0sXaIMzFzsnX1cAg08/CwcvVLgr31M/SwdEg09TSz8vBINDSz9fF0tHF1CDQxdLFzs/TINPU0s/LySDJINrOwcvJINDSxdDJzsHOydEuCuTBzs7ZxSDPwtLBwsHU2dfBwNTT0SDXIMLSwdXaxdLFLgo=",
+   "reversible": true
+  },
+  {
+   "label": "windows-1253",
+   "pythonCodec": "cp1253",
+   "text": "Ελληνικά: Η γρήγορη καφέ αλεπού πηδάει πάνω από τον τεμπέλη σκύλο.\n",
+   "base64": "xevr5+3p6tw6IMcg4/He4+/x5yDq4fbdIOHr5fDv/SDw5+Tc5ekg8Nzt+SDh8Pwg9O/tIPTl7PDd6+cg8+r96+8uCg==",
+   "reversible": true
+  },
+  {
+   "label": "windows-874",
+   "pythonCodec": "cp874",
+   "text": "ภาษาไทย: สวัสดีครับ ยินดีต้อนรับสู่กรุงเทพมหานคร\n",
+   "base64": "wNLJ0uS3wjogysfRyrTVpMPRuiDC1Lm01bXpzbnD0brK2eihw9in4Le+wcvSuaTDCg==",
+   "reversible": true
+  },
+  {
+   "label": "utf-16le",
+   "pythonCodec": "utf-16-le",
+   "text": "日本語のテスト：東京は世界で最も人口の多い都市の一つです。桜の季節にはたくさんの観光客が訪れます。\nこれは二行目で、改行と句読点の処理を確認するためのものです。\nデータはブラウザ内で処理され、サーバーには送信されません。\n",
+   "base64": "5WUsZ56KbjDGMLkwyDAa/3FnrE5vMBZOTHVnMABngjC6TuNTbjAaWUQw/ZACXm4wAE5kMGcwWTACMFxobjBjW8B7azBvMF8wTzBVMJMwbjCziUlRoltMMCqKjDB+MFkwAjAKAFMwjDBvMIxOTIjudmcwATA5ZUyIaDDlU62KuXBuMOZRBnSSMLp4jYpZMIswXzCBMG4wgjBuMGcwWTACMAoAxzD8ML8wbzDWMOkwpjC2MIVRZzDmUQZ0VTCMMAEwtTD8MNAw/DBrMG8wAZDhT1UwjDB+MFswkzACMAoA",
+   "reversible": true
+  },
+  {
+   "label": "utf-16be",
+   "pythonCodec": "utf-16-be",
+   "text": "日本語のテスト：東京は世界で最も人口の多い都市の一つです。桜の季節にはたくさんの観光客が訪れます。\nこれは二行目で、改行と句読点の処理を確認するためのものです。\nデータはブラウザ内で処理され、サーバーには送信されません。\n",
+   "base64": "ZeVnLIqeMG4wxjC5MMj/GmdxTqwwb04WdUwwZ2cAMIJOulPjMG5ZGjBEkP1eAjBuTgAwZDBnMFkwAmhcMG5bY3vAMGswbzBfME8wVTCTMG6Js1FJW6IwTIoqMIwwfjBZMAIACjBTMIwwb06MiEx27jBnMAFlOYhMMGhT5YqtcLkwblHmdAYwkni6io0wWTCLMF8wgTBuMIIwbjBnMFkwAgAKMMcw/DC/MG8w1jDpMKYwtlGFMGdR5nQGMFUwjDABMLUw/DDQMPwwazBvkAFP4TBVMIwwfjBbMJMwAgAK",
+   "reversible": true
+  },
+  {
+   "label": "utf-8",
+   "pythonCodec": "utf-8",
+   "text": "繁體中文測試：台灣的夜市非常熱鬧，小吃種類繁多，像是蚵仔煎、珍珠奶茶與鹹酥雞。\n這是第二行，用來檢查換行與標點符號的處理是否正確。\n資料在瀏覽器內處理，不會上傳到任何伺服器。\n",
+   "base64": "57mB6auU5Lit5paH5ris6Kmm77ya5Y+w54Gj55qE5aSc5biC6Z2e5bi454ax6ayn77yM5bCP5ZCD56iu6aGe57mB5aSa77yM5YOP5piv6Jq15LuU54WO44CB54+N54+g5aW26Iy26IiH6bm56YWl6Zue44CCCumAmeaYr+esrOS6jOihjO+8jOeUqOS+huaqouafpeaPm+ihjOiIh+aomem7nuespuiZn+eahOiZleeQhuaYr+WQpuato+eiuuOAggros4fmlpnlnKjngI/opr3lmajlhafomZXnkIbvvIzkuI3mnIPkuIrlgrPliLDku7vkvZXkvLrmnI3lmajjgIIK",
+   "reversible": true
+  },
+  {
+   "label": "utf-8",
+   "pythonCodec": "utf-8-sig",
+   "text": "繁體中文測試：台灣的夜市非常熱鬧，小吃種類繁多，像是蚵仔煎、珍珠奶茶與鹹酥雞。\n這是第二行，用來檢查換行與標點符號的處理是否正確。\n資料在瀏覽器內處理，不會上傳到任何伺服器。\n",
+   "base64": "77u/57mB6auU5Lit5paH5ris6Kmm77ya5Y+w54Gj55qE5aSc5biC6Z2e5bi454ax6ayn77yM5bCP5ZCD56iu6aGe57mB5aSa77yM5YOP5piv6Jq15LuU54WO44CB54+N54+g5aW26Iy26IiH6bm56YWl6Zue44CCCumAmeaYr+esrOS6jOihjO+8jOeUqOS+huaqouafpeaPm+ihjOiIh+aomem7nuespuiZn+eahOiZleeQhuaYr+WQpuato+eiuuOAggros4fmlpnlnKjngI/opr3lmajlhafomZXnkIbvvIzkuI3mnIPkuIrlgrPliLDku7vkvZXkvLrmnI3lmajjgIIK",
+   "reversible": false,
+   "bom": "utf-8"
+  },
+  {
+   "label": "utf-16le",
+   "pythonCodec": "utf-16",
+   "text": "日本語のテスト：東京は世界で最も人口の多い都市の一つです。桜の季節にはたくさんの観光客が訪れます。\nこれは二行目で、改行と句読点の処理を確認するためのものです。\nデータはブラウザ内で処理され、サーバーには送信されません。\n",
+   "base64": "//7lZSxnnopuMMYwuTDIMBr/cWesTm8wFk5MdWcwAGeCMLpO41NuMBpZRDD9kAJebjAATmQwZzBZMAIwXGhuMGNbwHtrMG8wXzBPMFUwkzBuMLOJSVGiW0wwKoqMMH4wWTACMAoAUzCMMG8wjE5MiO52ZzABMDllTIhoMOVTrYq5cG4w5lEGdJIwuniNilkwizBfMIEwbjCCMG4wZzBZMAIwCgDHMPwwvzBvMNYw6TCmMLYwhVFnMOZRBnRVMIwwATC1MPww0DD8MGswbzABkOFPVTCMMH4wWzCTMAIwCgA=",
+   "reversible": false,
+   "bom": "utf-16le"
+  },
+  {
+   "label": "utf-16be",
+   "pythonCodec": "utf-16",
+   "text": "日本語のテスト：東京は世界で最も人口の多い都市の一つです。桜の季節にはたくさんの観光客が訪れます。\nこれは二行目で、改行と句読点の処理を確認するためのものです。\nデータはブラウザ内で処理され、サーバーには送信されません。\n",
+   "base64": "/v9l5Wcsip4wbjDGMLkwyP8aZ3FOrDBvThZ1TDBnZwAwgk66U+MwblkaMESQ/V4CMG5OADBkMGcwWTACaFwwbltje8AwazBvMF8wTzBVMJMwbomzUUlbojBMiiowjDB+MFkwAgAKMFMwjDBvToyITHbuMGcwAWU5iEwwaFPliq1wuTBuUeZ0BjCSeLqKjTBZMIswXzCBMG4wgjBuMGcwWTACAAowxzD8ML8wbzDWMOkwpjC2UYUwZ1HmdAYwVTCMMAEwtTD8MNAw/DBrMG+QAU/hMFUwjDB+MFswkzACAAo=",
+   "reversible": false,
+   "bom": "utf-16be"
+  }
+ ],
+ "mojibake": [
+  {
+   "decodedAs": "windows-1252",
+   "actual": "utf-8",
+   "garbled": "CafÃ© crÃ¨me, dÃ©jÃ  vu â€” naÃ¯ve faÃ§ade Ã  la franÃ§aise. GrÃ¶ÃŸe, StraÃŸe, Ãœbung, Ã–sterreich.\nSeconde ligne : Â« guillemets Â», l'apostrophe et le symbole â‚¬ (euro).\nLes donnÃ©es restent dans le navigateur.\n",
+   "truth": "Café crème, déjà vu — naïve façade à la française. Größe, Straße, Übung, Österreich.\nSeconde ligne : « guillemets », l'apostrophe et le symbole € (euro).\nLes données restent dans le navigateur.\n",
+   "lossy": false
+  },
+  {
+   "decodedAs": "gbk",
+   "actual": "utf-8",
+   "garbled": "绻侀珨涓枃娓│锛氬彴鐏ｇ殑澶滃競闈炲父鐔遍锛屽皬鍚冪ó椤炵箒澶氾紝鍍忔槸铓典粩鐓庛€佺弽鐝犲ザ鑼惰垏楣归叆闆炪€�",
+   "truth": "繁體中文測試：台灣的夜市非常熱鬧，小吃種類繁多，像是蚵仔煎、珍珠奶茶與鹹酥雞。",
+   "lossy": true
+  },
+  {
+   "decodedAs": "big5",
+   "actual": "gb18030",
+   "garbled": "潠极笢恅聆彸ㄩ涴岆珨僇蚚懂潰脤晤鎢蛌遙腔恅趼ㄛ婦漪梓萸睫瘍睿杅趼123﹝",
+   "truth": "简体中文测试：这是一段用来检查编码转换的文字，包含标点符号和数字123。",
+   "lossy": false
+  },
+  {
+   "decodedAs": "gb18030",
+   "actual": "big5",
+   "garbled": "羉砰いゅ代刚芖カ獶盽荐緓贺摸羉钩琌矵肺痌イ籔男秔蔓",
+   "truth": "繁體中文測試：台灣的夜市非常熱鬧，小吃種類繁多，像是蚵仔煎、珍珠奶茶與鹹酥雞。",
+   "lossy": false
+  },
+  {
+   "decodedAs": "windows-1252",
+   "actual": "big5",
+   "garbled": "ÁcÅé¤¤¤å´ú¸Õ¡G¥xÆWªº©]¥««D±`¼ö¾x¡A¤p¦YºØÃþÁc¦h¡A¹³¬O³H¥J·Î¡B¬Ã¯]¥¤¯ù»PÄÐ¶pÂû¡C",
+   "truth": "繁體中文測試：台灣的夜市非常熱鬧，小吃種類繁多，像是蚵仔煎、珍珠奶茶與鹹酥雞。",
+   "lossy": false
+  },
+  {
+   "decodedAs": "shift_jis",
+   "actual": "utf-8",
+   "garbled": "譌･譛ｬ隱槭�繝�せ繝茨ｼ壽擲莠ｬ縺ｯ荳也阜縺ｧ譛�繧ゆｺｺ蜿｣縺ｮ螟壹＞驛ｽ蟶ゅ�荳�縺､縺ｧ縺吶�よ｡懊�蟄｣遽�縺ｫ縺ｯ縺溘￥縺輔ｓ縺ｮ隕ｳ蜈牙ｮ｢縺瑚ｨｪ繧後∪縺吶��",
+   "truth": "日本語のテスト：東京は世界で最も人口の多い都市の一つです。桜の季節にはたくさんの観光客が訪れます。",
+   "lossy": true
+  },
+  {
+   "decodedAs": "macintosh",
+   "actual": "utf-8",
+   "garbled": "Caf√© cr√®me, d√©j√† vu ‚Äî na√Øve fa√ßade √† la fran√ßaise. Gr√∂√üe, Stra√üe, √úbung, √ñsterreich.\nSeconde ligne : ¬´ guillemets ¬ª, l'apostrophe et le symbole ‚Ç¨ (euro).\nLes donn√©es restent dans le navigateur.\n",
+   "truth": "Café crème, déjà vu — naïve façade à la française. Größe, Straße, Übung, Österreich.\nSeconde ligne : « guillemets », l'apostrophe et le symbole € (euro).\nLes données restent dans le navigateur.\n",
+   "lossy": false
+  },
+  {
+   "decodedAs": "windows-1252",
+   "actual": "utf-8",
+   "garbled": "naÃ¯ve cafÃ© â€” â€œquotesâ€ â‚¬ Ã¼nÃ¯cÃ¶dÃ©",
+   "truth": "naïve café — “quotes” € ünïcödé",
+   "lossy": false
+  }
+ ]
+}

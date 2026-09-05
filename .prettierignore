@@ -8,3 +8,4 @@ branding
 *.md
 src/tools/sbom-viewer/schemas
 src/tools/cvss-calculator/fixtures/*.json
+src/tools/text-encoding-converter/fixtures/*.json

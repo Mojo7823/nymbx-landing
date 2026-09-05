@@ -55,6 +55,7 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'uuid-password-generator': lazy(() => import('./uuid-password-generator/UuidPasswordGenerator')),
   'timestamp-converter': lazy(() => import('./timestamp-converter/TimestampConverter')),
   'string-escape': lazy(() => import('./string-escape/StringEscape')),
+  'text-encoding-converter': lazy(() => import('./text-encoding-converter/TextEncodingConverter')),
   'text-hasher': lazy(() => import('./text-hasher/TextHasher')),
   'jwt-decoder': lazy(() => import('./jwt-decoder/JwtDecoder')),
   'certificate-decoder': lazy(() => import('./certificate-decoder/CertificateDecoder')),

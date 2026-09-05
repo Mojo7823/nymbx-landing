@@ -568,7 +568,7 @@ export const tools: ToolMeta[] = [
     description: 'Big5, GBK, Shift_JIS, UTF-16 → UTF-8',
     category: 'text-dev',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 57,
     icon: Languages,
   },

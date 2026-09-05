@@ -387,6 +387,7 @@ Promoted from the Backlog's Tier 1. Each is a small phase built on dependencies 
 - **Libraries:** native `TextDecoder` / `TextEncoder` (WHATWG encodings: Big5, GBK / GB18030, Shift_JIS, EUC-JP, EUC-KR, Windows-125x, ISO-8859-x, UTF-16 LE/BE).
 - **Build:** drop a text file → auto-detection candidates ranked by decode validity and heuristics (BOM, strict UTF-8 validity, CJK byte patterns) with side-by-side previews → choose the source encoding → output UTF-8 (BOM toggle) with optional line-ending normalization; download; mojibake-repair mode ("this UTF-8 text was decoded as Big5 — undo").
 - **Verify:** Big5 and GB18030 samples decode correctly; UTF-16 with and without BOM; mixed CRLF input; a 50 MB file streams without freezing (worker); re-encoding to the source encoding is byte-identical where the encoding is reversible; no network activity.
+- **Implementation notes (2026-09-05):** shipped with `chardet` 2.2.0 (MIT, ICU port) as the ranking signal behind deterministic layers (BOM, strict UTF-8, UTF-16 null-byte pattern + text-plausibility rule gated on no confident legacy verdict, fatal-decode validity); the only encoder is a reverse table built by enumerating byte sequences through the browser's own `TextDecoder` (canonical pointer order; Shift_JIS NEC rows second pass; Big5 十/卅 last pointer; box-drawing duplicates follow CP950, not the WHATWG encoder; GB18030 € → A2E3 and 4-byte sequences are decode-only; ISO-2022-JP decode-only). Output target is UTF-8 only. Engines differ on Big5 ETEN-area pairs and Shift_JIS error recovery, so mojibake fixtures were chosen to garble identically in Node and Chromium; UTF-16 without a BOM is not detected below 48 bytes (manual override exists). Handout: `docs/handouts/phase-57-text-encoding-converter.md`.
 
 ### Phase 58 — PDF metadata viewer / sanitizer
 - **Libraries:** `pdf-lib` (reuses Phase 11 plumbing), `pdf.js` for reading XMP.
@@ -411,7 +412,7 @@ Promoted from the Backlog's Tier 1. Each is a small phase built on dependencies 
 - Site-wide search/filter on the dashboard; keyboard shortcuts; favicon + meta/OG tags.
 - Cross-browser pass: Chromium, Firefox, WebKit (Playwright projects).
 - **Site-wide second-pass visual verification:** every tool page re-screenshotted at both viewports and themes against the phase-era screenshots; regressions fixed.
-- Lighthouse pass: performance + accessibility ≥ 90 on the dashboard and two heaviest tools.
+- Lighthouse pass: performance + accessibility ≥ 90 on the dashboard and two heaviest tools. Known contrast debt to clear here: the light-theme badge chips (`bg-mint text-pine` 2.97:1, `bg-amber-soft text-amber-badge` 4.17:1, used by ~32 components) fall short of WCAG AA 4.5:1 — flagged during Phase 57 verification.
 
 ---
 
