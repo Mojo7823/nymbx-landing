@@ -78,6 +78,7 @@ describe('tool registry', () => {
       'password-strength',
       'qr-generator-reader',
       'sbom-viewer',
+      'cvss-calculator',
     ])
     expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })

@@ -62,4 +62,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'password-strength': lazy(() => import('./password-strength/PasswordStrength')),
   'qr-generator-reader': lazy(() => import('./qr-generator-reader/QrGeneratorReader')),
   'sbom-viewer': lazy(() => import('./sbom-viewer/SbomViewer')),
+  'cvss-calculator': lazy(() => import('./cvss-calculator/CvssCalculator')),
 }

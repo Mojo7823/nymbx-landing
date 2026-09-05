@@ -7,3 +7,4 @@ vendor
 branding
 *.md
 src/tools/sbom-viewer/schemas
+src/tools/cvss-calculator/fixtures/*.json

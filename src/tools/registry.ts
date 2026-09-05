@@ -649,7 +649,7 @@ export const tools: ToolMeta[] = [
     description: 'Score vulnerabilities, v3.1 and v4.0',
     category: 'security',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 56,
     icon: Gauge,
   },
