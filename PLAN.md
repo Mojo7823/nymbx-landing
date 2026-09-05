@@ -164,7 +164,7 @@ The only server-assisted tool. **Clearly labeled in the UI.**
 
 # Extension phases
 
-Phases 16–52 extend the five groups. They follow the same standard four-task template and quality gates. Within a group they are ordered to maximize plumbing reuse; groups (and phases within them) may be reordered or pulled forward on demand — only Phase 53 (Polish & PWA) must remain last.
+Phases 16–60 extend the groups. They follow the same standard four-task template and quality gates. Within a group they are ordered to maximize plumbing reuse; groups (and phases within them) may be reordered or pulled forward on demand — only Phase 61 (Polish & PWA) must remain last.
 
 ## Group F — PDF & office extensions
 
@@ -203,10 +203,11 @@ Phases 16–52 extend the five groups. They follow the same standard four-task t
 - **Build:** markdown input (or `.md` file) → downloadable `.docx`; headings, lists, tables, code blocks, links, images (from data-URI or URL fetch opt-in).
 - **Verify:** output opens cleanly in Word and LibreOffice; heading levels map to Word styles; nested lists and tables correct; round-trip sanity vs Phase 14 (DOCX→MD→DOCX keeps structure).
 
-### Phase 52 — PDF editor (overlay & annotate)
-- **Libraries:** `pdf.js` (page rendering, reuses Phase 11/13 plumbing), `konva` + `react-konva` (interactive overlay layer, lazy), `perfect-freehand` (smoothed pen strokes), `pdf-lib` (export).
-- **Build:** dropzone → page-by-page editor: pdf.js renders each page as the background, with a Konva canvas layer on top holding editable objects — text boxes (font, size, color), image stamps (PNG/JPEG, e.g. a scanned signature), freehand pen/brush for drawn signatures (adjustable color/width, smoothed via perfect-freehand), and basic shapes (rectangle, ellipse, line/arrow with stroke/fill options). Select/move/resize/rotate/delete any object; undo/redo; page navigation with per-page edits preserved; export the edited PDF. **Export strategy:** attempt real PDF annotation objects first (pdf-lib low-level API) so edits remain movable in Acrobat; if fidelity or cross-viewer compatibility falls short, fall back to flattening edits into page content (vector where possible — `drawText`, `drawSvgPath` for pen strokes, shape ops, embedded images). Whichever mode ships is stated plainly in the UI.
-- **Verify:** exported objects land at pixel-correct positions and sizes regardless of editor zoom and across mixed page orientations; drawn signature stays sharp in the export (vector path, not blurry raster); text overlay with CJK characters (embed a Unicode font); undo/redo works across page switches; original dropped file is untouched; 100-page PDF stays responsive (render only visible pages); output opens correctly in browser viewers and Acrobat; no network activity while a file is loaded.
+### Phase 52 — PDF sign & annotate (narrowed 2026-09-05 from "PDF editor")
+Scope was cut to what people actually need — signing and light annotation — and to a single export mode, so the phase stays tractable. Shapes/arrows and real PDF annotation objects moved to the backlog.
+- **Libraries:** `pdf.js` (page rendering, reuses Phase 11/13 plumbing), `perfect-freehand` (smoothed pen strokes), `pdf-lib` (export). No Konva: a plain canvas/SVG overlay with a small object model is enough for the reduced object set.
+- **Build:** dropzone → page-by-page view; overlay objects limited to text boxes (font size, color), image stamps (PNG/JPEG, e.g. a scanned signature), freehand pen strokes (drawn signature; color/width), and date-stamp / checkmark presets. Select, move, resize, delete; undo/redo; per-page edits preserved while navigating; export **flattens** everything into page content (`drawText`, `drawSvgPath`, `drawImage`) and the UI states plainly that the result is not editable in other viewers.
+- **Verify:** exported objects land at pixel-correct positions and sizes regardless of editor zoom and across mixed page orientations; drawn signature stays sharp in the export (vector path, not raster); text overlay with CJK characters (embed the Noto Sans TC font already shipped for Phase 18); undo/redo works across page switches; original dropped file untouched; 100-page PDF stays responsive (render only visible pages); output opens correctly in browser viewers and Acrobat; no network activity while a file is loaded.
 
 ## Group G — Text & developer utilities
 
@@ -345,15 +346,61 @@ Phases 16–52 extend the five groups. They follow the same standard four-task t
 ### Phase 50 — removed (duplicate file finder, dropped from scope)
 
 ### Phase 51 — OCR (image / scanned PDF → text)
-- **Libraries:** `tesseract.js` (lazy; language packs self-hosted under `public/ocr/`).
-- **Build:** drop image or scanned PDF (pages via Phase 13's pdf.js render) → extracted text with per-page progress; language selection (English + Chinese traditional/simplified at minimum); copy/download text; feeds the Phase 13 "scanned PDF" gap.
-- **Verify:** clean 300-DPI scan reaches usable accuracy; language switching works; language packs load from our origin only; multi-page PDF OCR shows per-page progress and stays responsive; garbage image → low-confidence warning, not silent garbage text.
+- **Libraries:** `tesseract.js` (lazy). Worker script, WASM core and language packs are **all self-hosted under `public/ocr/`** — nothing may load from jsDelivr or tessdata.projectnaptha.com. `pdf.js` page rendering reused from Phase 13.
+- **Build:** drop images (PNG/JPEG/WebP) or a scanned PDF (pages rendered via pdf.js at ~300 DPI) → extracted text per page with per-page progress and confidence; language selection covering the site's locales — English, Traditional Chinese, Simplified Chinese and Indonesian (multi-select, e.g. `chi_tra+eng`); copy / download `.txt` (and `.md` with page headings); feeds the Phase 13 "scanned PDF" gap. Language packs load from our origin on first use with the Phase 8 prefetch pattern (streaming byte progress, stall timeout with retries, Cancel button) and are served immutable by `deploy/Caddyfile`.
+- **Verify:** clean 300-DPI scan reaches usable accuracy in each shipped language; language switching works; **network log shows worker, core and language packs from our origin only, never image bytes**; multi-page PDF OCR shows per-page progress and stays responsive (one page at a time, results appended); garbage image → low-confidence warning, not silent garbage text; encrypted PDF → clear error; works with the COOP/COEP headers active.
 
 ---
 
-## Phase 53 — Polish & PWA (site-wide final pass)
+## Group K — Scheduled from the 2026-09-05 roadmap review
 
-- `vite-plugin-pwa`: offline support for all client-side tools; cache strategy for the background-removal model.
+Promoted from the Backlog's Tier 1. Each is a small phase built on dependencies the site already ships.
+
+### Phase 53 — HTML → Markdown
+- **Libraries:** `turndown` + `turndown-plugin-gfm` (installed for Phase 14), `DOMPurify`.
+- **Build:** paste HTML or drop an `.html`/`.htm` file → Markdown with live preview (reuse the Phase 4 renderer); options: bullet marker, fenced code style, keep/strip images, keep/strip links; input is sanitized through DOMPurify before conversion; copy / download `.md`.
+- **Verify:** tables, nested lists, code blocks with language classes and inline formatting map correctly; `<script>` and event-handler attributes never survive into the output; a 5 MB page converts without freezing the UI (worker); relative URLs kept verbatim; malformed HTML → best-effort output, never a crash; no network activity.
+
+### Phase 54 — Screenshot redaction
+- **Libraries:** canvas only (`pica` for export scaling if needed).
+- **Build:** drop an image → zoomable canvas; draw rectangles to redact in black-out or pixelate mode (block-size slider); freehand brush option; region list with delete; undo/redo; export PNG or JPEG. Redaction is applied to pixel data, so the output holds no recoverable original pixels; metadata is stripped on export.
+- **Verify:** exported file has no original pixels under redacted regions (pixel diff, not just visual); pixelated output is not reversible by scaling; regions stay aligned at every zoom level and on HiDPI displays; EXIF/GPS absent from the output; a 4K screenshot stays responsive; no network activity.
+
+### Phase 55 — SBOM viewer / validator
+- **Libraries:** none for parsing (JSON; `DOMParser` for CycloneDX XML); `ajv` (lazy) with bundled CycloneDX 1.4–1.6 and SPDX 2.3 JSON schemas.
+- **Build:** drop a CycloneDX (JSON/XML) or SPDX (JSON) document → summary (format, spec version, component count, tools, timestamp); searchable, sortable components table (name, version, type, supplier, licenses, PURL/CPE, hashes); license summary with counts; dependency tree; vulnerabilities section when present; schema-validation errors with JSON paths; export the components table as CSV.
+- **Verify:** sample documents from the CycloneDX and SPDX example repositories load and validate; an invalid document lists precise errors; a 10k-component SBOM stays responsive (virtualized rows); no network activity (schemas are bundled).
+
+### Phase 56 — CVSS calculator
+- **Libraries:** none (scoring per the FIRST CVSS v3.1 and v4.0 specifications in a pure, unit-tested module).
+- **Build:** metric pickers for v3.1 (base, temporal, environmental) and v4.0 (base, threat, environmental, supplemental) ↔ vector-string parsing; live score, severity band and gauge; copy vector and score; state shareable via URL hash (no server).
+- **Verify:** v3.1 scores match the FIRST calculator for the specification's examples and edge cases (scope change, `Roundup`); v4.0 scores match the official macro-vector lookup for published examples; invalid vector strings → precise error; URL hash round-trips.
+
+### Phase 57 — Text encoding converter
+- **Libraries:** native `TextDecoder` / `TextEncoder` (WHATWG encodings: Big5, GBK / GB18030, Shift_JIS, EUC-JP, EUC-KR, Windows-125x, ISO-8859-x, UTF-16 LE/BE).
+- **Build:** drop a text file → auto-detection candidates ranked by decode validity and heuristics (BOM, strict UTF-8 validity, CJK byte patterns) with side-by-side previews → choose the source encoding → output UTF-8 (BOM toggle) with optional line-ending normalization; download; mojibake-repair mode ("this UTF-8 text was decoded as Big5 — undo").
+- **Verify:** Big5 and GB18030 samples decode correctly; UTF-16 with and without BOM; mixed CRLF input; a 50 MB file streams without freezing (worker); re-encoding to the source encoding is byte-identical where the encoding is reversible; no network activity.
+
+### Phase 58 — PDF metadata viewer / sanitizer
+- **Libraries:** `pdf-lib` (reuses Phase 11 plumbing), `pdf.js` for reading XMP.
+- **Build:** drop a PDF → Info dictionary (Title, Author, Subject, Keywords, Creator, Producer, dates) and XMP packet shown; edit fields; "strip all metadata" (Info + XMP + document ID reset) and selective strip; before/after size; download.
+- **Verify:** edited fields show in external viewers; after strip, `exiftool` and pdf.js report no author/creator/XMP; encrypted PDF → clear error; original untouched; a file with XMP but no Info dictionary is handled.
+
+### Phase 59 — Bulk file hasher: checksum manifest verification (extension of Phase 9)
+- **Libraries:** the existing `hash-wasm` worker.
+- **Build:** the hasher accepts a manifest (`SHA256SUMS`, `*.sha256`, `*.md5`, `*.sha1`, BSD `SHA256 (file) = …` style) alongside the files → algorithm auto-selected → per-file PASS / FAIL / MISSING / EXTRA table, summary counters, exportable report.
+- **Verify:** GNU and BSD manifest formats; paths with subdirectories and spaces; binary-mode `*` marker; files named in the manifest but not dropped → MISSING; dropped files absent from the manifest → EXTRA; a single flipped byte → FAIL with both digests shown.
+
+### Phase 60 — XLSX / CSV viewer: export (extension of Phase 21)
+- **Libraries:** SheetJS (already loaded by the viewer).
+- **Build:** export the active sheet as CSV (delimiter option) or JSON (array of objects keyed by the header row, or array of arrays); export all sheets as a zip of CSVs.
+- **Verify:** formulas export as computed values; dates export as ISO strings, not serial numbers; fields with commas/newlines are quoted correctly; a 100k-row export runs in a worker without freezing.
+
+---
+
+## Phase 61 — Polish & PWA (site-wide final pass)
+
+- `vite-plugin-pwa`: offline support for all client-side tools; cache strategy for the background-removal model and the OCR language packs (runs after Phase 51 for that reason).
 - Site-wide search/filter on the dashboard; keyboard shortcuts; favicon + meta/OG tags.
 - Cross-browser pass: Chromium, Firefox, WebKit (Playwright projects).
 - **Site-wide second-pass visual verification:** every tool page re-screenshotted at both viewports and themes against the phase-era screenshots; regressions fixed.
@@ -363,19 +410,10 @@ Phases 16–52 extend the five groups. They follow the same standard four-task t
 
 ## Backlog (unscheduled ideas)
 
-Add future tool ideas here; promote to a numbered extension phase when scheduled. Every entry must keep the privacy invariant (client-side unless explicitly server-assisted) and reuse existing plumbing where noted. Ordered roughly by value-for-effort for this site's audience (compliance / security-assessment work, CJK users). Added 2026-09-05 as a review of the roadmap after Phase 49; none of these is scheduled yet.
-
-### Tier 1 — cheap and high-fit (mostly existing dependencies)
-- **HTML → Markdown** (Converters). Paste HTML or drop an `.html` file → clean Markdown. Libraries: `turndown` + `turndown-plugin-gfm` (already installed for Phase 14), `DOMPurify` on the input. Why: completes the DOCX → HTML → MD family with almost no new code.
-- **Screenshot redaction** (Image). Drop a screenshot → draw rectangles to black-out or pixelate regions (irreversible, re-rendered from pixels, not a CSS blur) → export PNG. Libraries: canvas only. Why: security-assessment reports and CRA evidence constantly need redacted screenshots, and people currently do this in tools that upload the image.
-- **SBOM viewer / validator** (Security). Drop a CycloneDX or SPDX JSON → components table (name, version, supplier, license, PURL), license summary, dependency tree, schema validation with error positions. Libraries: none beyond JSON (optionally `ajv`, lazy, for schema validation). Why: SBOMs are a CRA deliverable; the audience produces and reviews them.
-- **CVSS calculator** (Security). v3.1 and v4.0 metric pickers ↔ vector string, base/temporal/environmental scores, severity band, copy vector. Libraries: none (scoring formulas from the FIRST specifications, unit-tested against the published examples). Why: daily instrument for the security-assessment audience.
-- **Text encoding converter** (Text & Developer). Drop a text file with a wrong or legacy encoding (Big5, GBK, Shift_JIS, EUC-KR, Windows-1252, UTF-16 LE/BE) → auto-detected candidates with side-by-side previews → save as UTF-8 (with/without BOM). Libraries: native `TextDecoder` (all listed encodings are in the WHATWG Encoding standard). Why: legacy Big5 files are still common for Taiwanese users; nothing else on the site handles mojibake.
-- **PDF metadata viewer / sanitizer** (PDF & Office). Show title/author/subject/keywords/creator/producer/dates and XMP; edit or strip all; before/after size. Libraries: `pdf-lib` (reuses Phase 11 plumbing). Why: the PDF counterpart of the EXIF stripper; documents leak author names and tool versions.
-- **Checksum manifest verifier** — extension of Phase 9, not a new tool. Drop files plus a `SHA256SUMS` / `.sha256` / `.md5` manifest → per-file pass/fail/missing table. Reuses the hasher worker. Why: verifying vendor release artifacts is a routine task and the hasher already computes the digests.
-- **XLSX → CSV / JSON export** — extension of Phase 21, not a new tool. Add "export active sheet as CSV / JSON" to the viewer; SheetJS is already loaded there.
+Add future tool ideas here; promote to a numbered extension phase when scheduled. Every entry must keep the privacy invariant (client-side unless explicitly server-assisted) and reuse existing plumbing where noted. Ordered roughly by value-for-effort for this site's audience (compliance / security-assessment work, CJK users). Added 2026-09-05 as a review of the roadmap after Phase 49; the Tier 1 items from that review were promoted to Phases 53–60 and the remaining tiers below are not scheduled.
 
 ### Tier 2 — moderate effort, clear gap
+- **PDF annotation objects & shapes** (PDF & Office). Deferred from Phase 52: rectangle/ellipse/arrow tools and an export mode that writes real, editable PDF annotation objects instead of flattening. Libraries: `pdf-lib` low-level API. Why: only worth it once the flattened sign-and-annotate flow has proven itself and cross-viewer fidelity can be tested properly.
 - **PDF form filler & flattener** (PDF & Office). List AcroForm fields, fill text/checkbox/radio/dropdown, flatten to static content, download. Libraries: `pdf-lib` form API + `pdf.js` preview. Why: compliance paperwork is largely PDF forms.
 - **PDF unlock / protect** (PDF & Office). Remove a known user password, or add owner/user passwords and permission flags. Libraries: `pdf-lib` cannot encrypt or decrypt; needs a WASM engine (`qpdf-wasm` or `mupdf.js`, several MB, lazy). Why: every current PDF tool rejects encrypted input with "remove the password first" and nothing on the site can do that.
 - **SSH / public key inspector** (Security). Paste an OpenSSH, PEM, or JWK public key → algorithm, size/curve, SHA-256 and MD5 fingerprints, `authorized_keys` line, and format conversion between the three. Libraries: Web Crypto + small parsers (reuses Phase 38 PEM handling). Why: pairs with the certificate decoder; fingerprint checks are a routine security-review step.

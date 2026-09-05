@@ -48,7 +48,7 @@
 ### Explicitly out of scope for Phase 0
 
 - Any actual tool functionality (no diff checker, no converters — nothing).
-- PWA/service worker (Phase 53), Gotenberg service (Phase 15), tool routes beyond stubs.
+- PWA/service worker (Phase 61, formerly 53), Gotenberg service (Phase 15), tool routes beyond stubs.
 - Do not add heavy libraries (mermaid, pdf.js, etc.) — they arrive with their tools.
 
 ## 3. Architecture conventions you are establishing
