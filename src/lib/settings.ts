@@ -22,6 +22,18 @@ export interface SettingsSchema {
     skipChrome: boolean
     baseUrl: string
   }
+  /**
+   * Screenshot redaction: toolbar preferences only. Neither the image nor
+   * the regions drawn on it are ever persisted.
+   */
+  screenshotRedaction: {
+    mode: 'black' | 'pixelate'
+    color: string
+    block: number
+    brush: number
+    format: 'png' | 'jpeg'
+    quality: number
+  }
   // Future tools extend this interface with their preference keys.
   [key: string]: unknown
 }

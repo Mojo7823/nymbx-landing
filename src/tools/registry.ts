@@ -260,7 +260,7 @@ export const tools: ToolMeta[] = [
     description: 'Black out or pixelate regions for good',
     category: 'image',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 54,
     icon: EyeOff,
   },

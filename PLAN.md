@@ -369,6 +369,7 @@ Promoted from the Backlog's Tier 1. Each is a small phase built on dependencies 
 - **Libraries:** canvas only (`pica` for export scaling if needed).
 - **Build:** drop an image → zoomable canvas; draw rectangles to redact in black-out or pixelate mode (block-size slider); freehand brush option; region list with delete; undo/redo; export PNG or JPEG. Redaction is applied to pixel data, so the output holds no recoverable original pixels; metadata is stripped on export.
 - **Verify:** exported file has no original pixels under redacted regions (pixel diff, not just visual); pixelated output is not reversible by scaling; regions stay aligned at every zoom level and on HiDPI displays; EXIF/GPS absent from the output; a 4K screenshot stays responsive; no network activity.
+- **Implementation notes (2026-09-05):** the preview canvas holds the redacted pixels (no overlay); pixelate is a per-cell mean mosaic (min block 8) with a permanent hint that small blocks can leak short text; brush regions use one hard-edged mask for both the erase and the clip pass so exports carry no partial-alpha halo; JPEG exports carry only the encoder's generic sRGB ICC profile — nothing from the source file survives; Ctrl/⌘+V pastes a screenshot and "Copy image" writes the PNG to the clipboard. Undo/redo helpers were generalised into `src/lib/history.ts` (shared with Phase 52).
 
 ### Phase 55 — SBOM viewer / validator
 - **Libraries:** none for parsing (JSON; `DOMParser` for CycloneDX XML); `ajv` (lazy) with bundled CycloneDX 1.4–1.6 and SPDX 2.3 JSON schemas.

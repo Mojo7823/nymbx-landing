@@ -42,6 +42,7 @@ describe('tool registry', () => {
       'svg-optimizer',
       'favicon-generator',
       'color-palette-extractor',
+      'screenshot-redaction',
       'bulk-file-hasher',
       'bulk-file-renamer',
       'zip-unzip',

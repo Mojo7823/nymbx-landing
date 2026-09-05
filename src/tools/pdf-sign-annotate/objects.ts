@@ -312,51 +312,18 @@ export function removeObject(objects: readonly SignObject[], id: string): SignOb
 }
 
 // ── History ──────────────────────────────────────────────────────────────
+//
+// The undo/redo machinery is generic (`src/lib/history.ts`); this module
+// keeps the page-object-shaped names the editor already imports.
 
-export const HISTORY_LIMIT = 100
+export { HISTORY_LIMIT, commit, amend, canUndo, canRedo, undo, redo } from '../../lib/history'
+import {
+  emptyHistory as emptyGenericHistory,
+  type History as GenericHistory,
+} from '../../lib/history'
 
-export interface History {
-  past: SignObject[][]
-  present: SignObject[]
-  future: SignObject[][]
-}
+export type History = GenericHistory<SignObject[]>
 
 export function emptyHistory(): History {
-  return { past: [], present: [], future: [] }
-}
-
-/** Commit a new objects array, dropping the redo stack. */
-export function commit(history: History, present: SignObject[]): History {
-  const past = [...history.past, history.present].slice(-HISTORY_LIMIT)
-  return { past, present, future: [] }
-}
-
-/**
- * Replace the present state without recording a step — used to coalesce a
- * burst of edits to the same object (typing in a text box) into the single
- * step that `commit` recorded when the burst started.
- */
-export function amend(history: History, present: SignObject[]): History {
-  return { ...history, present }
-}
-
-export function canUndo(history: History): boolean {
-  return history.past.length > 0
-}
-
-export function canRedo(history: History): boolean {
-  return history.future.length > 0
-}
-
-export function undo(history: History): History {
-  if (!canUndo(history)) return history
-  const past = history.past.slice(0, -1)
-  const present = history.past[history.past.length - 1]
-  return { past, present, future: [history.present, ...history.future].slice(0, HISTORY_LIMIT) }
-}
-
-export function redo(history: History): History {
-  if (!canRedo(history)) return history
-  const [present, ...future] = history.future
-  return { past: [...history.past, history.present].slice(-HISTORY_LIMIT), present, future }
+  return emptyGenericHistory<SignObject[]>([])
 }
