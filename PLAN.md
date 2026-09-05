@@ -342,10 +342,7 @@ Phases 16–52 extend the five groups. They follow the same standard four-task t
 - **Build:** create: multi-file/folder dropzone → compressed zip with level option. Extract: drop a zip → entry tree with sizes, extract all or selected files.
 - **Verify:** nested folder structure preserved both directions; unicode filenames survive; 4 GB archive streams without full-memory load; password-protected zip → clear "not supported" message; round-trip byte-identical.
 
-### Phase 50 — Duplicate file finder
-- **Libraries:** `hash-wasm` worker (reuses Phase 9).
-- **Build:** drop a set of files → group by size first, then content hash; duplicate groups with names/sizes; export report CSV. (Read-only: reports, never deletes.)
-- **Verify:** identical content under different names grouped; same size + different content NOT grouped (full hash, no false positives); 1000-file batch with progress; zero-byte files handled.
+### Phase 50 — removed (duplicate file finder, dropped from scope)
 
 ### Phase 51 — OCR (image / scanned PDF → text)
 - **Libraries:** `tesseract.js` (lazy; language packs self-hosted under `public/ocr/`).
@@ -366,4 +363,30 @@ Phases 16–52 extend the five groups. They follow the same standard four-task t
 
 ## Backlog (unscheduled ideas)
 
-Add future tool ideas here; promote to a numbered extension phase when scheduled. Currently empty — all previously suggested tools are scheduled as Phases 16–52.
+Add future tool ideas here; promote to a numbered extension phase when scheduled. Every entry must keep the privacy invariant (client-side unless explicitly server-assisted) and reuse existing plumbing where noted. Ordered roughly by value-for-effort for this site's audience (compliance / security-assessment work, CJK users). Added 2026-09-05 as a review of the roadmap after Phase 49; none of these is scheduled yet.
+
+### Tier 1 — cheap and high-fit (mostly existing dependencies)
+- **HTML → Markdown** (Converters). Paste HTML or drop an `.html` file → clean Markdown. Libraries: `turndown` + `turndown-plugin-gfm` (already installed for Phase 14), `DOMPurify` on the input. Why: completes the DOCX → HTML → MD family with almost no new code.
+- **Screenshot redaction** (Image). Drop a screenshot → draw rectangles to black-out or pixelate regions (irreversible, re-rendered from pixels, not a CSS blur) → export PNG. Libraries: canvas only. Why: security-assessment reports and CRA evidence constantly need redacted screenshots, and people currently do this in tools that upload the image.
+- **SBOM viewer / validator** (Security). Drop a CycloneDX or SPDX JSON → components table (name, version, supplier, license, PURL), license summary, dependency tree, schema validation with error positions. Libraries: none beyond JSON (optionally `ajv`, lazy, for schema validation). Why: SBOMs are a CRA deliverable; the audience produces and reviews them.
+- **CVSS calculator** (Security). v3.1 and v4.0 metric pickers ↔ vector string, base/temporal/environmental scores, severity band, copy vector. Libraries: none (scoring formulas from the FIRST specifications, unit-tested against the published examples). Why: daily instrument for the security-assessment audience.
+- **Text encoding converter** (Text & Developer). Drop a text file with a wrong or legacy encoding (Big5, GBK, Shift_JIS, EUC-KR, Windows-1252, UTF-16 LE/BE) → auto-detected candidates with side-by-side previews → save as UTF-8 (with/without BOM). Libraries: native `TextDecoder` (all listed encodings are in the WHATWG Encoding standard). Why: legacy Big5 files are still common for Taiwanese users; nothing else on the site handles mojibake.
+- **PDF metadata viewer / sanitizer** (PDF & Office). Show title/author/subject/keywords/creator/producer/dates and XMP; edit or strip all; before/after size. Libraries: `pdf-lib` (reuses Phase 11 plumbing). Why: the PDF counterpart of the EXIF stripper; documents leak author names and tool versions.
+- **Checksum manifest verifier** — extension of Phase 9, not a new tool. Drop files plus a `SHA256SUMS` / `.sha256` / `.md5` manifest → per-file pass/fail/missing table. Reuses the hasher worker. Why: verifying vendor release artifacts is a routine task and the hasher already computes the digests.
+- **XLSX → CSV / JSON export** — extension of Phase 21, not a new tool. Add "export active sheet as CSV / JSON" to the viewer; SheetJS is already loaded there.
+
+### Tier 2 — moderate effort, clear gap
+- **PDF form filler & flattener** (PDF & Office). List AcroForm fields, fill text/checkbox/radio/dropdown, flatten to static content, download. Libraries: `pdf-lib` form API + `pdf.js` preview. Why: compliance paperwork is largely PDF forms.
+- **PDF unlock / protect** (PDF & Office). Remove a known user password, or add owner/user passwords and permission flags. Libraries: `pdf-lib` cannot encrypt or decrypt; needs a WASM engine (`qpdf-wasm` or `mupdf.js`, several MB, lazy). Why: every current PDF tool rejects encrypted input with "remove the password first" and nothing on the site can do that.
+- **SSH / public key inspector** (Security). Paste an OpenSSH, PEM, or JWK public key → algorithm, size/curve, SHA-256 and MD5 fingerprints, `authorized_keys` line, and format conversion between the three. Libraries: Web Crypto + small parsers (reuses Phase 38 PEM handling). Why: pairs with the certificate decoder; fingerprint checks are a routine security-review step.
+- **JSON Schema validator** (Text & Developer). Paste/drop a schema and an instance → validation errors with JSON paths, draft 07/2019-09/2020-12. Libraries: `ajv` (lazy). Why: natural companion to the JSON formatter; also validates SBOM and configuration files.
+- **Image watermark** (Image). Text or logo stamp with opacity, tiling, position presets; batch + zip. Libraries: canvas, `pica` for output scaling. Why: same UX as PDF watermark (Phase 18); frequently requested for shared evidence images.
+- **PDF page numbers / header-footer stamp** — extension of Phase 18. Sequential "Page N of M" with position, font size, start number, and range. Reuses the watermark plumbing almost entirely.
+- **SQL formatter** (Text & Developer). Format / minify SQL with dialect selection. Libraries: `sql-formatter` (lazy). Why: popular developer utility, low effort.
+
+### Tier 3 — larger bets or conditional
+- **Video / audio trim & convert** (new "Media" category or Files). Trim, mute, convert MP4/WebM/MP3/WAV, extract audio, GIF from clip. Libraries: `ffmpeg.wasm` (~30 MB, lazy, multithreaded; COOP/COEP headers are already in place). Why: the strongest privacy story on the site (people upload personal videos to random converters), but a big phase — model-download UX from Phase 8 applies.
+- **PPTX / XLSX → PDF (server-assisted)** (Converters). Same Gotenberg LibreOffice route and UI as Phase 15 with a different accept list. Conditional: only after the Phase 15 Gotenberg deployment TODO is closed, since it would ship dead in production today.
+- **Unicode inspector** (Text & Developer). Per-character code points, UTF-8/16 bytes, NFC/NFD/NFKC/NFKD normalization, and a warning list for invisible / bidi-control / mixed-script (homoglyph) characters. Libraries: none. Why: homoglyph and invisible-character checks have a security angle; character names table is large, so ship without names or load lazily.
+- **CIDR / subnet calculator** (Text & Developer). IPv4/IPv6 CIDR → network, broadcast, range, host count, split/merge. Libraries: none. Why: common network-assessment utility, trivial to build.
+- **Number base converter** (Text & Developer). Bin/oct/dec/hex with two's-complement width and byte view; pairs with the hex viewer. Libraries: none. Small but frequently used.

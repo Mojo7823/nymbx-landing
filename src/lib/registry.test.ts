@@ -2,17 +2,19 @@ import { describe, expect, it } from 'vitest'
 import { categories, getTool, tools } from '../tools/registry'
 
 describe('tool registry', () => {
-  it('contains all 49 planned tools across 7 categories', () => {
-    expect(tools).toHaveLength(49)
+  it('contains all 48 planned tools across 7 categories', () => {
+    expect(tools).toHaveLength(48)
     expect(categories).toHaveLength(7)
   })
 
-  it('has unique slugs and phase numbers covering 1–52 (29, 33 and 35 were dropped)', () => {
+  it('has unique slugs and phase numbers covering 1–52 (29, 33, 35 and 50 were dropped)', () => {
     const slugs = new Set(tools.map((t) => t.slug))
-    expect(slugs.size).toBe(49)
+    expect(slugs.size).toBe(48)
     const phases = tools.map((t) => t.phase).sort((a, b) => a - b)
     expect(phases).toEqual(
-      Array.from({ length: 52 }, (_, i) => i + 1).filter((p) => p !== 29 && p !== 33 && p !== 35),
+      Array.from({ length: 52 }, (_, i) => i + 1).filter(
+        (p) => p !== 29 && p !== 33 && p !== 35 && p !== 50,
+      ),
     )
   })
 
