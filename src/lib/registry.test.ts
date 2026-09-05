@@ -57,6 +57,7 @@ describe('tool registry', () => {
       'pdf-compress',
       'xlsx-csv-viewer',
       'pdf-sign-annotate',
+      'pdf-metadata',
       'docx-to-html-markdown',
       'docx-pdf',
       'markdown-to-docx',

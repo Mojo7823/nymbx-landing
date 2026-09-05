@@ -97,7 +97,8 @@ export const categories: ToolCategory[] = [
   { id: 'security', name: 'Security & Inspection', icon: Shield },
 ]
 
-const soon = 'coming-soon' as const
+// Every registry entry is built as of Phase 58; a future unbuilt tool would
+// re-introduce a `coming-soon` status here.
 const client = 'client-side' as const
 
 export const tools: ToolMeta[] = [
@@ -414,7 +415,7 @@ export const tools: ToolMeta[] = [
     description: 'View, edit or strip document metadata',
     category: 'pdf-office',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 58,
     icon: FileSearch,
   },
