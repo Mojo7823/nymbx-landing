@@ -118,4 +118,19 @@ describe('FileDropzone', () => {
     expect(inputs[1]!.hasAttribute('webkitdirectory')).toBe(true)
     expect(screen.getByRole('button', { name: /choose a whole folder/i })).toBeInTheDocument()
   })
+
+  it('reports refused files through onReject', async () => {
+    const onFiles = vi.fn()
+    const onReject = vi.fn()
+    const { container } = render(
+      <FileDropzone accept="application/pdf" onFiles={onFiles} onReject={onReject} />,
+    )
+
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement
+    await userEvent.upload(input, makeFile('notes.txt', 10), { applyAccept: false })
+
+    expect(onFiles).not.toHaveBeenCalled()
+    expect(onReject).toHaveBeenCalledOnce()
+    expect(onReject.mock.calls[0]![0].map((f: File) => f.name)).toEqual(['notes.txt'])
+  })
 })

@@ -182,6 +182,7 @@ Phases 16–60 extend the groups. They follow the same standard four-task templa
 - **Libraries:** `pdf-lib`.
 - **Build:** text or image stamp; opacity, size, rotation (diagonal preset), position presets; apply to all pages or a range; live preview on first page.
 - **Verify:** watermark position consistent across mixed orientations; opacity renders correctly in external viewers; text watermark with CJK characters (embed a Unicode font).
+- **Fix (2026-09-05):** CJK watermark text exported through `@pdf-lib/fontkit` subsetting rendered with about half the glyphs missing in poppler and pdf.js. Both PDF workers now embed fonts via `src/lib/pdfFont.ts` (fontkit 2); `src/lib/pdfFont.test.ts` checks every used glyph keeps its outline.
 
 ### Phase 19 — Images → PDF
 - **Libraries:** `pdf-lib`.
@@ -206,6 +207,7 @@ Phases 16–60 extend the groups. They follow the same standard four-task templa
 ### Phase 52 — PDF sign & annotate (narrowed 2026-09-05 from "PDF editor")
 Scope was cut to what people actually need — signing and light annotation — and to a single export mode, so the phase stays tractable. Shapes/arrows and real PDF annotation objects moved to the backlog.
 - **Libraries:** `pdf.js` (page rendering, reuses Phase 11/13 plumbing), `perfect-freehand` (smoothed pen strokes), `pdf-lib` (export). No Konva: a plain canvas/SVG overlay with a small object model is enough for the reduced object set.
+- **Implementation notes (2026-09-05):** text is embedded with `fontkit` 2 through `src/lib/pdfFont.ts` instead of `@pdf-lib/fontkit`, whose Noto Sans TC subsets lose glyphs (see Phase 18 fix). Ink outlines are written with explicit `Q` segments because pdf-lib mis-parses the SVG `T` shorthand that perfect-freehand's path helper emits.
 - **Build:** dropzone → page-by-page view; overlay objects limited to text boxes (font size, color), image stamps (PNG/JPEG, e.g. a scanned signature), freehand pen strokes (drawn signature; color/width), and date-stamp / checkmark presets. Select, move, resize, delete; undo/redo; per-page edits preserved while navigating; export **flattens** everything into page content (`drawText`, `drawSvgPath`, `drawImage`) and the UI states plainly that the result is not editable in other viewers.
 - **Verify:** exported objects land at pixel-correct positions and sizes regardless of editor zoom and across mixed page orientations; drawn signature stays sharp in the export (vector path, not raster); text overlay with CJK characters (embed the Noto Sans TC font already shipped for Phase 18); undo/redo works across page switches; original dropped file untouched; 100-page PDF stays responsive (render only visible pages); output opens correctly in browser viewers and Acrobat; no network activity while a file is loaded.
 

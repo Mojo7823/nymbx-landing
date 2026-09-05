@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 import { expose } from 'comlink'
 import { degrees, PDFDocument, rgb, StandardFonts } from 'pdf-lib'
-import fontkit from '@pdf-lib/fontkit'
+import { embedSubsetFont } from '../../lib/pdfFont'
 import { normalizeRotate, placeStamp, viewedSize, type PositionPreset } from './placement'
 
 export interface WatermarkOptions {
@@ -43,7 +43,7 @@ const api = {
     const font =
       opts.kind === 'text'
         ? opts.fontBytes
-          ? (doc.registerFontkit(fontkit), await doc.embedFont(opts.fontBytes, { subset: true }))
+          ? await embedSubsetFont(doc, opts.fontBytes)
           : await doc.embedFont(StandardFonts.Helvetica)
         : null
 

@@ -7,6 +7,8 @@
  * mapped back through the page's rotation.
  */
 
+import { viewedSize, viewedToUser } from '../../lib/pdfGeometry'
+
 export type PositionPreset =
   | 'top-left'
   | 'top-center'
@@ -30,36 +32,10 @@ export const POSITION_PRESETS: PositionPreset[] = [
   'bottom-right',
 ]
 
-/** Normalize any /Rotate value to 0 | 90 | 180 | 270. */
-export function normalizeRotate(angle: number): 0 | 90 | 180 | 270 {
-  const r = ((((Math.round(angle / 90) * 90) % 360) + 360) % 360) as 0 | 90 | 180 | 270
-  return r
-}
-
-/** Page dimensions as displayed by a viewer (swapped for 90/270). */
-export function viewedSize(w: number, h: number, rotate: number): { vw: number; vh: number } {
-  return rotate % 180 === 0 ? { vw: w, vh: h } : { vw: h, vh: w }
-}
-
-/** Map a viewed-space point back to raw user space. */
-export function viewedToUser(
-  vx: number,
-  vy: number,
-  w: number,
-  h: number,
-  rotate: number,
-): { x: number; y: number } {
-  switch (rotate) {
-    case 90:
-      return { x: w - vy, y: vx }
-    case 180:
-      return { x: w - vx, y: h - vy }
-    case 270:
-      return { x: vy, y: h - vx }
-    default:
-      return { x: vx, y: vy }
-  }
-}
+// Rotation/viewed-space helpers live in src/lib/pdfGeometry.ts (shared with
+// the sign & annotate tool); re-exported here so this module stays the single
+// import site for the watermark tool.
+export { normalizeRotate, viewedSize, viewedToUser } from '../../lib/pdfGeometry'
 
 /** Horizontal/vertical anchor of a preset: 0 = left/bottom, 1 = right/top. */
 export function presetAnchor(preset: PositionPreset): { ax: number; ay: number } {

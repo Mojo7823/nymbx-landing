@@ -404,7 +404,7 @@ export const tools: ToolMeta[] = [
     description: 'Sign, stamp and annotate, flattened on export',
     category: 'pdf-office',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 52,
     icon: PenTool,
   },

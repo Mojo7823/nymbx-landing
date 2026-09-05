@@ -11,6 +11,8 @@ export interface FileDropzoneProps {
   /** Max size per file, in bytes. */
   maxSize?: number
   onFiles?: (files: File[]) => void
+  /** Called with the files that were refused (wrong type or over `maxSize`). */
+  onReject?: (files: File[]) => void
   /**
    * Path-aware callback. When `folders` is enabled, dropped/picked folders
    * arrive here with paths relative to the drop (e.g. `photos/a.jpg`);
@@ -53,6 +55,7 @@ export function FileDropzone({
   multiple = false,
   maxSize,
   onFiles,
+  onReject,
   onPaths,
   folders = false,
   hint,
@@ -72,6 +75,7 @@ export function FileDropzone({
     const tooBig = maxSize ? items.filter(({ file }) => file.size > maxSize) : []
     const rejected = new Set([...wrongType, ...tooBig])
     const accepted = items.filter((item) => !rejected.has(item))
+    if (rejected.size > 0) onReject?.([...rejected].map(({ file }) => file))
 
     if (wrongType.length > 0) {
       setError(`Unsupported file type: ${wrongType.map(({ file }) => file.name).join(', ')}`)

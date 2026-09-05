@@ -40,6 +40,7 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'pdf-watermark': lazy(() => import('./pdf-watermark/PdfWatermark')),
   'images-to-pdf': lazy(() => import('./images-to-pdf/ImagesToPdf')),
   'pdf-compress': lazy(() => import('./pdf-compress/PdfCompress')),
+  'pdf-sign-annotate': lazy(() => import('./pdf-sign-annotate/PdfSignAnnotate')),
   'xlsx-csv-viewer': lazy(() => import('./xlsx-csv-viewer/XlsxCsvViewer')),
   'markdown-to-docx': lazy(() => import('./markdown-to-docx/MarkdownToDocx')),
   'json-formatter': lazy(() => import('./json-formatter/JsonFormatter')),
