@@ -302,7 +302,7 @@ export const tools: ToolMeta[] = [
     description: 'Extract text from images and scans',
     category: 'files',
     badge: client,
-    status: soon,
+    status: 'available',
     phase: 51,
     icon: ScanText,
   },

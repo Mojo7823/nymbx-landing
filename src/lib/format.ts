@@ -13,3 +13,15 @@ export function formatBytes(n: number): string {
   const rounded = value >= 100 ? Math.round(value).toString() : value.toFixed(1).replace(/\.0$/, '')
   return `${rounded} ${UNITS[unit]}`
 }
+
+/**
+ * `12.4 MB of 84.1 MB · 1.1 MB/s` — the numbers half of a download progress
+ * label. Callers prefix it with what is being downloaded ("Downloading AI
+ * model · …", "Downloading OCR engine · …"). Speed is dropped when unknown.
+ */
+export function transferLabel(loaded: number, total: number, bytesPerSecond?: number): string {
+  const amounts = `${formatBytes(loaded)} of ${formatBytes(total)}`
+  const speed =
+    bytesPerSecond !== undefined && bytesPerSecond > 0 ? ` · ${formatBytes(bytesPerSecond)}/s` : ''
+  return `${amounts}${speed}`
+}

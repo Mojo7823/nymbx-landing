@@ -2,7 +2,15 @@
 // public/models/ so the background-remover tool never touches a third-party
 // CDN (privacy invariant). Runs via the predev/prebuild hooks; the copy is
 // skipped when the target already matches the installed package version.
-import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -75,4 +83,54 @@ if (existsSync(fontTarget)) {
 } else {
   cpSync(fontSource, fontTarget)
   console.log('copy-model-assets: copied Noto Sans TC → public/fonts')
+}
+
+// Self-host the tesseract.js OCR engine (worker script + WASM cores) under
+// public/ocr/engine/<version>/ so the OCR tool never touches jsDelivr
+// (privacy invariant — the library's defaults point at a CDN). Language data
+// is NOT copied here: there is no npm package for tessdata_fast, so the
+// gzipped packs are committed under public/ocr/lang/ (see its SOURCES.md).
+//
+// Only the `*.wasm.js` builds are copied. tesseract.js's browser adapter
+// (node_modules/tesseract.js/src/worker-script/browser/getCore.js) always
+// `importScripts()` one of those single-file builds, which carry the WASM
+// inline as base64; the sibling `.wasm` and loader `.js` files are used by the
+// Node adapter only and would add ~18 MB of dead weight to the image.
+const ocrEngineSource = join(root, 'node_modules', 'tesseract.js', 'dist')
+const ocrCoreSource = join(root, 'node_modules', 'tesseract.js-core')
+
+if (!existsSync(ocrEngineSource) || !existsSync(ocrCoreSource)) {
+  console.error('copy-model-assets: tesseract.js / tesseract.js-core is not installed')
+  process.exit(1)
+}
+const { version: ocrVersion } = JSON.parse(
+  readFileSync(join(root, 'node_modules', 'tesseract.js', 'package.json')),
+)
+const ocrTargetDir = join(root, 'public', 'ocr', 'engine', ocrVersion)
+const ocrStamp = join(root, 'public', 'ocr', 'engine', '.version')
+
+if (existsSync(ocrStamp) && readFileSync(ocrStamp, 'utf8') === ocrVersion) {
+  console.log(`copy-model-assets: public/ocr/engine already at ${ocrVersion}, skipping`)
+} else {
+  console.log(`copy-model-assets: copying tesseract.js engine ${ocrVersion} → public/ocr/engine …`)
+  const coreTargetDir = join(ocrTargetDir, 'core')
+  mkdirSync(coreTargetDir, { recursive: true })
+  cpSync(join(ocrEngineSource, 'worker.min.js'), join(ocrTargetDir, 'worker.min.js'))
+  for (const file of readdirSync(ocrCoreSource).filter((f) => f.endsWith('.wasm.js'))) {
+    cpSync(join(ocrCoreSource, file), join(coreTargetDir, file))
+  }
+  // The tool prefetches these files with byte-level progress before handing
+  // over to tesseract.js, so it needs their exact sizes and the version
+  // directory name. Written unversioned (like models/resources.json) and
+  // therefore always revalidated; the files it points at are immutable.
+  const files = {}
+  for (const rel of ['worker.min.js', ...readdirSync(coreTargetDir).map((f) => `core/${f}`)]) {
+    files[rel] = statSync(join(ocrTargetDir, rel)).size
+  }
+  writeFileSync(
+    join(root, 'public', 'ocr', 'engine', 'manifest.json'),
+    `${JSON.stringify({ version: ocrVersion, files }, null, 2)}\n`,
+  )
+  writeFileSync(ocrStamp, ocrVersion)
+  console.log('copy-model-assets: done')
 }

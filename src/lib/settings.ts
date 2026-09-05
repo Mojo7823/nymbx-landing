@@ -6,6 +6,8 @@ import { openDB, type DBSchema, type IDBPDatabase } from 'idb'
  */
 export interface SettingsSchema {
   theme: 'light' | 'dark'
+  /** OCR tool: selected language pack ids, e.g. `['eng', 'chi_tra']`. */
+  ocrLanguages: string[]
   // Future tools extend this interface with their preference keys.
   [key: string]: unknown
 }

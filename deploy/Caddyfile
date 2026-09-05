@@ -49,6 +49,25 @@
 		}
 		header @model_chunks Cache-Control "public, max-age=31536000, immutable"
 
+		# Phase 51 (OCR): the tesseract.js engine and the tessdata language
+		# packs both live under version-stamped directories, so they can be
+		# cached forever. `cacheMethod: 'none'` keeps language data out of
+		# IndexedDB, which makes this the only repeat-visit cache there is.
+		# manifest.json and .version name the current engine version and must
+		# always revalidate.
+		@ocr_assets {
+			path /ocr/engine/* /ocr/lang/*
+			not path /ocr/engine/manifest.json /ocr/engine/.version
+		}
+		header @ocr_assets Cache-Control "public, max-age=31536000, immutable"
+
+		# The two asset catalogs name the *current* version directory. Without an
+		# explicit policy browsers apply heuristic freshness and could keep a
+		# stale catalog after a version bump, pointing at files that no longer
+		# exist. no-cache still allows ETag/Last-Modified revalidation.
+		@asset_catalogs path /models/resources.json /models/.version /ocr/engine/manifest.json /ocr/engine/.version
+		header @asset_catalogs Cache-Control "no-cache"
+
 		# SPA fallback: unknown paths serve the app shell.
 		try_files {path} /index.html
 		file_server

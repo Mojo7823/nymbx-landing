@@ -45,6 +45,7 @@ describe('tool registry', () => {
       'bulk-file-hasher',
       'bulk-file-renamer',
       'zip-unzip',
+      'ocr',
       'pdf-split',
       'pdf-resize',
       'pdf-to-image-markdown',
