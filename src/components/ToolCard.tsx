@@ -8,10 +8,12 @@ export function ToolCard({ tool }: { tool: ToolMeta }) {
   const Icon = tool.icon
 
   return (
+    // No aria-label: the accessible name must contain the visible text (WCAG
+    // 2.5.3, axe `label-content-name-mismatch`), so it is derived from the
+    // card content — name, description and the "Coming soon" chip when shown.
     <Link
       to={`/tools/${tool.slug}`}
       data-tool-card
-      aria-label={`${tool.name}${available ? '' : ' (coming soon)'}`}
       className="group flex flex-col gap-3 rounded-lg border border-line bg-card p-4 transition-all hover:-translate-y-px hover:border-pine/50 hover:shadow-sm"
     >
       <div className="flex items-start justify-between">

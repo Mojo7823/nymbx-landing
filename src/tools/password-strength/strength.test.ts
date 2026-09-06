@@ -1,7 +1,13 @@
-import { describe, expect, it } from 'vitest'
-import { checkStrength, formatGuesses, MAX_ANALYZED_LENGTH } from './strength'
+import { beforeAll, describe, expect, it } from 'vitest'
+import { checkStrength, formatGuesses, initStrength, MAX_ANALYZED_LENGTH } from './strength'
 
 describe('password strength', () => {
+  // The dictionaries are loaded through a dynamic import so the route chunk
+  // stays small; the scorer needs them before it can be called.
+  beforeAll(async () => {
+    await initStrength()
+  })
+
   it('returns null for empty input (nothing to show)', () => {
     expect(checkStrength('')).toBeNull()
   })

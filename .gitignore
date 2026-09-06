@@ -9,3 +9,5 @@ public/fonts
 public/zxing
 .visual-checks
 public/ocr/engine
+test-results
+playwright-report

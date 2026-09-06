@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config'
+import { configDefaults, defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -205,5 +205,9 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     css: false,
+    // `e2e/` holds Playwright specs (`npm run e2e`); Vitest must not collect
+    // them — @playwright/test throws when its `test.describe` runs outside the
+    // Playwright runner.
+    exclude: [...configDefaults.exclude, 'e2e/**'],
   },
 })

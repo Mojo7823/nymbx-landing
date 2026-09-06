@@ -32,7 +32,10 @@ export function ToolLayout({ title, description, badge, children }: ToolLayoutPr
       </Link>
       <header className="mt-4 mb-8 border-b border-line pb-6">
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+          <h1
+            data-tool-title
+            className="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl"
+          >
             {title}
           </h1>
           <PrivacyBadge badge={badge} />

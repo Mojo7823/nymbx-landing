@@ -1,6 +1,4 @@
-import { ZxcvbnFactory, type ZxcvbnResult } from '@zxcvbn-ts/core'
-import { adjacencyGraphs, dictionary as commonDictionary } from '@zxcvbn-ts/language-common'
-import { dictionary as englishDictionary, translations } from '@zxcvbn-ts/language-en'
+import type { ZxcvbnFactory, ZxcvbnResult } from '@zxcvbn-ts/core'
 
 /** Long pastes would jank the synchronous scorer; analyze a prefix and say so. */
 export const MAX_ANALYZED_LENGTH = 512
@@ -36,14 +34,42 @@ const PATTERN_LABELS: Record<string, string> = {
   bruteforce: 'Random characters',
 }
 
+/**
+ * The zxcvbn dictionaries are ~1.6 MB of the page's weight, which is far too
+ * much to ship with the route. They live behind a single dynamic import that
+ * runs on the first keystroke (or on idle after mount), so the page itself
+ * stays small and the packages become their own chunks.
+ */
 let factory: ZxcvbnFactory | null = null
+let loading: Promise<ZxcvbnFactory> | null = null
+
+/** True once the dictionaries are loaded and `checkStrength` can be called. */
+export function isStrengthReady(): boolean {
+  return factory !== null
+}
+
+/** Load the dictionaries. Idempotent; concurrent callers share one import. */
+export function initStrength(): Promise<ZxcvbnFactory> {
+  if (factory) return Promise.resolve(factory)
+  loading ??= Promise.all([
+    import('@zxcvbn-ts/core'),
+    import('@zxcvbn-ts/language-common'),
+    import('@zxcvbn-ts/language-en'),
+  ]).then(([core, common, english]) => {
+    factory = new core.ZxcvbnFactory({
+      translations: english.translations,
+      graphs: common.adjacencyGraphs,
+      dictionary: { ...common.dictionary, ...english.dictionary },
+    })
+    return factory
+  })
+  return loading
+}
 
 function getFactory(): ZxcvbnFactory {
-  factory ??= new ZxcvbnFactory({
-    translations,
-    graphs: adjacencyGraphs,
-    dictionary: { ...commonDictionary, ...englishDictionary },
-  })
+  if (!factory) {
+    throw new Error('checkStrength() called before initStrength() resolved')
+  }
   return factory
 }
 
@@ -75,6 +101,7 @@ function rowsOf(result: ZxcvbnResult): CrackTimeRow[] {
 /**
  * Score a password entirely locally. Returns `null` for empty input.
  * Pure and side-effect-free: reads nothing, writes nothing, sends nothing.
+ * Requires `initStrength()` to have resolved first.
  */
 export function checkStrength(password: string): StrengthResult | null {
   if (password === '') return null

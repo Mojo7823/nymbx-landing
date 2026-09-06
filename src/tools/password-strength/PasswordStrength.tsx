@@ -1,10 +1,10 @@
-import { useMemo, useState } from 'react'
-import { Eye, EyeOff, ShieldCheck, Sparkles, Trash2 } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { Eye, EyeOff, Loader2, ShieldCheck, Sparkles, Trash2 } from 'lucide-react'
 import { Button } from '../../components/Button'
 import { ToolLayout } from '../../components/ToolLayout'
 import { cx } from '../../lib/cx'
 import { useDebouncedValue } from '../../lib/useDebouncedValue'
-import { checkStrength, SCORE_LABELS } from './strength'
+import { checkStrength, initStrength, isStrengthReady, SCORE_LABELS } from './strength'
 
 const WEAK_SAMPLE = 'password123'
 const STRONG_SAMPLE = 'grape-crystal orbit?7 violin'
@@ -30,8 +30,45 @@ function charsetSummary(password: string): string {
 export default function PasswordStrength() {
   const [password, setPassword] = useState('')
   const [revealed, setRevealed] = useState(false)
+  const [ready, setReady] = useState(isStrengthReady)
+  const [loadError, setLoadError] = useState(false)
   const debounced = useDebouncedValue(password, 200)
-  const result = useMemo(() => checkStrength(debounced), [debounced])
+  const result = useMemo(() => (ready ? checkStrength(debounced) : null), [ready, debounced])
+
+  // The zxcvbn dictionaries are 1.6 MB, so they are not part of this route's
+  // chunk. Fetch them when the browser is idle, and immediately once the user
+  // starts typing — whichever comes first. `initStrength` is idempotent.
+  const typing = password !== ''
+  useEffect(() => {
+    if (ready) return
+    let cancelled = false
+    const start = () => {
+      initStrength().then(
+        () => {
+          if (!cancelled) setReady(true)
+        },
+        () => {
+          if (!cancelled) setLoadError(true)
+        },
+      )
+    }
+    if (typing) {
+      start()
+      return () => {
+        cancelled = true
+      }
+    }
+    // requestIdleCallback is not in Safari before 17; setTimeout is the fallback.
+    const idleCapable = typeof window.requestIdleCallback === 'function'
+    const handle = idleCapable
+      ? window.requestIdleCallback(start, { timeout: 3000 })
+      : window.setTimeout(start, 1500)
+    return () => {
+      cancelled = true
+      if (idleCapable) window.cancelIdleCallback(handle)
+      else window.clearTimeout(handle)
+    }
+  }, [ready, typing])
 
   function clear() {
     // State only — the value was never written anywhere else, so clearing
@@ -179,6 +216,15 @@ export default function PasswordStrength() {
             </p>
           )}
         </div>
+      ) : loadError ? (
+        <p role="alert" className="mt-6 text-sm text-amber-badge">
+          The password dictionaries could not be loaded. Check your connection and reload the page.
+        </p>
+      ) : typing && !ready ? (
+        <p role="status" className="mt-6 flex items-center gap-2 text-sm text-muted">
+          <Loader2 className="size-4 animate-spin" />
+          Loading dictionaries…
+        </p>
       ) : (
         <p className="mt-6 text-sm text-faint">
           The strength meter, crack-time estimates, and advice appear here as you type.
