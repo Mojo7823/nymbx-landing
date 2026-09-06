@@ -405,6 +405,7 @@ Promoted from the Backlog's Tier 1. Each is a small phase built on dependencies 
 - **Libraries:** SheetJS (already loaded by the viewer).
 - **Build:** export the active sheet as CSV (delimiter option) or JSON (array of objects keyed by the header row, or array of arrays); export all sheets as a zip of CSVs.
 - **Verify:** formulas export as computed values; dates export as ISO strings, not serial numbers; fields with commas/newlines are quoted correctly; a 100k-row export runs in a worker without freezing.
+- **Implementation notes (2026-09-06):** export runs in the existing sheet worker over the dense cell data rather than through `sheet_to_csv`/`sheet_to_json` (those emit formatted text or raw serials): typed values by default (numbers, TRUE/FALSE, text codes kept as text, errors as their text) with an "as displayed" option; dates become ISO 8601 shaped by the cell's number format (`YYYY-MM-DD`, `YYYY-MM-DDTHH:MM:SS`, `HH:MM:SS`, naive, 1904 system honoured) — this needs `cellNF: true` at read time; RFC 4180 CSV with delimiter/quote-all/BOM options; JSON as objects keyed by the header row (empty headers → column letter, duplicates suffixed, blank rows skipped) or arrays; "current view" exports the grid's sorted/filtered rows; all sheets as a zip of CSVs with file-name-safe sheet names. 100k rows export in ~0.3 s with no main-thread long task. Handout: `docs/handouts/phase-60-xlsx-export.md`.
 
 ---
 

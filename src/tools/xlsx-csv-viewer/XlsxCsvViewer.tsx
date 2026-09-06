@@ -6,7 +6,9 @@ import { FileDropzone } from '../../components/FileDropzone'
 import { Button } from '../../components/Button'
 import { ProgressBar } from '../../components/ProgressBar'
 import { cx } from '../../lib/cx'
+import { downloadBlob } from '../../lib/download'
 import { formatBytes } from '../../lib/format'
+import { toast } from '../../lib/toast'
 import { wrapWorker, type WorkerHandle } from '../../lib/worker'
 import { useDebouncedValue } from '../../lib/useDebouncedValue'
 import {
@@ -17,6 +19,8 @@ import {
   visibleRange,
   type SortDir,
 } from './gridMath'
+import { ExportPanel } from './ExportPanel'
+import { fileStem, safeSheetFileName, type ExportOptions } from './exportOptions'
 import type { SheetMeta, SheetWorkerApi } from './sheet.worker'
 
 const ROW_H = 32
@@ -53,6 +57,7 @@ export default function XlsxCsvViewer() {
   const [sortDir, setSortDir] = useState<SortDir>('asc')
   const [selection, setSelection] = useState<{ a: CellPos; b: CellPos } | null>(null)
   const [copied, setCopied] = useState(false)
+  const [exporting, setExporting] = useState(false)
   const [scrollTop, setScrollTop] = useState(0)
   const [viewportH, setViewportH] = useState(480)
 
@@ -187,6 +192,46 @@ export default function XlsxCsvViewer() {
     }
   }
 
+  /** File name for a download: "<workbook stem> - <safe sheet name>.<ext>". */
+  function exportFileName(ext: string): string {
+    const sheetName = file ? safeSheetFileName(file.sheets[active].name, new Set()) : 'Sheet'
+    return `${fileStem(file?.name ?? 'workbook')} - ${sheetName}.${ext}`
+  }
+
+  async function runExport(job: () => Promise<{ bytes: Uint8Array; name: string; type: string }>) {
+    // The button is disabled while a job runs, so exports cannot overlap.
+    if (exporting) return
+    setExporting(true)
+    setError(null)
+    try {
+      const { bytes, name, type } = await job()
+      // Re-wrap so the BlobPart type is exact (the worker hands back a
+      // transferred Uint8Array typed over ArrayBufferLike).
+      downloadBlob(new Blob([new Uint8Array(bytes)], { type }), name)
+    } catch {
+      toast('Could not export this sheet.', { variant: 'error' })
+    } finally {
+      setExporting(false)
+    }
+  }
+
+  function exportSheet(opts: ExportOptions) {
+    void runExport(async () => ({
+      bytes: await worker().exportSheet(active, opts),
+      name: exportFileName(opts.format === 'csv' ? 'csv' : 'json'),
+      type: opts.format === 'csv' ? 'text/csv;charset=utf-8' : 'application/json',
+    }))
+  }
+
+  function exportAll(opts: Omit<ExportOptions, 'format' | 'rowIndices'>) {
+    const stem = fileStem(file?.name ?? 'workbook')
+    void runExport(async () => ({
+      bytes: await worker().exportAllCsv(opts, stem),
+      name: `${stem}-sheets.zip`,
+      type: 'application/zip',
+    }))
+  }
+
   const range = visibleRange(scrollTop, viewportH, ROW_H, displayIndices.length, OVERSCAN)
   const contentWidth = GUTTER_W + shownCols * COL_W
 
@@ -287,6 +332,18 @@ export default function XlsxCsvViewer() {
               {copied ? 'Copied' : 'Copy selection'}
             </Button>
             <span className="text-[11px] text-faint">Click a cell, shift-click to extend</span>
+            {meta && (
+              <ExportPanel
+                sheetName={meta.name}
+                sheetCount={file.sheets.length}
+                viewRowIndices={
+                  debouncedQuery || sortCol !== null ? (rows ? displayIndices : []) : null
+                }
+                busy={exporting}
+                onExport={exportSheet}
+                onExportAll={exportAll}
+              />
+            )}
           </div>
 
           {meta && meta.cols > MAX_COLS && (

@@ -1,0 +1,89 @@
+{
+  "mixed.xlsx": {
+    "sheetNames": ["Data", "Empty", "Q3 Sales \"east\" & <west>"],
+    "date1904": false,
+    "sheets": {
+      "Data": {
+        "rows": [
+          ["Name", "Amount", "Ratio", "When", "Stamp", "Flag", "Notes", "Code"],
+          [
+            "Alice, \"the\" first",
+            1234.5,
+            0.125,
+            "2024-03-05",
+            "2024-03-05T10:15:30",
+            true,
+            "line one\nline two",
+            "007"
+          ],
+          ["Bob", -42, 1, "1999-12-31", "2000-01-01T00:00:00", false, "plain", "0042"],
+          [
+            "Chloé 名前",
+            0,
+            0.5,
+            "2026-09-06",
+            "2026-09-06T23:59:59",
+            true,
+            " leading and trailing ",
+            "9"
+          ],
+          [null, null, null, null, null, null, null, null],
+          ["Dan", 1000000, 0.075, "1970-01-01", "1970-01-01T12:00:00", false, "tab\there", "10"],
+          [
+            "Alice, \"the\" first|Bob",
+            1001192.5,
+            "#DIV/0!",
+            "2026-09-06",
+            45356.5,
+            true,
+            "ends with newline\n",
+            null
+          ]
+        ],
+        "dims": "A1:H7",
+        "formats": {
+          "D2": "yyyy-mm-dd",
+          "E2": "m/d/yy h:mm",
+          "D3": "yyyy-mm-dd",
+          "E3": "m/d/yy h:mm",
+          "D4": "yyyy-mm-dd",
+          "E4": "m/d/yy h:mm",
+          "D6": "yyyy-mm-dd",
+          "E6": "m/d/yy h:mm",
+          "D7": "yyyy-mm-dd"
+        }
+      },
+      "Empty": {
+        "rows": [],
+        "dims": "A1:A1",
+        "formats": {}
+      },
+      "Q3 Sales \"east\" & <west>": {
+        "rows": [
+          ["only", "one"],
+          ["row", 2]
+        ],
+        "dims": "A1:B2",
+        "formats": {}
+      }
+    }
+  },
+  "dates-1904.xlsx": {
+    "sheetNames": ["Dates1904"],
+    "date1904": true,
+    "sheets": {
+      "Dates1904": {
+        "rows": [["When"], ["2024-03-05"]],
+        "dims": "A1:A2",
+        "formats": {
+          "A2": "yyyy-mm-dd"
+        }
+      }
+    }
+  },
+  "big-100k.xlsx": {
+    "rows_including_header": 100001,
+    "row2": [1, 0, "2023-03-15", "row 0, \"quoted\""],
+    "lastRow": [100000, 860.25, "2024-03-03", "row 99999"]
+  }
+}
