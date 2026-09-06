@@ -10,6 +10,7 @@ export function ToolCard({ tool }: { tool: ToolMeta }) {
   return (
     <Link
       to={`/tools/${tool.slug}`}
+      data-tool-card
       aria-label={`${tool.name}${available ? '' : ' (coming soon)'}`}
       className="group flex flex-col gap-3 rounded-lg border border-line bg-card p-4 transition-all hover:-translate-y-px hover:border-pine/50 hover:shadow-sm"
     >

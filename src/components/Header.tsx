@@ -1,9 +1,16 @@
 import { Link } from 'react-router'
-import { ArrowLeft, Menu, WifiOff } from 'lucide-react'
+import { ArrowLeft, Keyboard, Menu, WifiOff } from 'lucide-react'
 import { ThemeToggle } from './ThemeToggle'
 import { useOnline } from '../lib/useOnline'
 
-export function Header({ onOpenNav }: { onOpenNav: () => void }) {
+export function Header({
+  onOpenNav,
+  onOpenShortcuts,
+}: {
+  onOpenNav: () => void
+  /** Opens the keyboard-shortcuts dialog (same as pressing `?`). */
+  onOpenShortcuts?: () => void
+}) {
   const online = useOnline()
 
   return (
@@ -34,6 +41,17 @@ export function Header({ onOpenNav }: { onOpenNav: () => void }) {
               <WifiOff className="size-3" />
               Offline
             </span>
+          )}
+          {onOpenShortcuts && (
+            <button
+              type="button"
+              onClick={onOpenShortcuts}
+              aria-label="Keyboard shortcuts"
+              title="Keyboard shortcuts"
+              className="hidden size-9 cursor-pointer items-center justify-center rounded-md border border-line bg-card text-muted transition-colors hover:text-ink sm:inline-flex"
+            >
+              <Keyboard className="size-4" />
+            </button>
           )}
           <Link
             to="/"

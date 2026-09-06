@@ -90,6 +90,21 @@ describe('tool registry', () => {
     expect(tools.every((t) => ids.has(t.category))).toBe(true)
   })
 
+  it('gives every tool 2–6 unique lowercase keywords that are not other slugs', () => {
+    const slugs = new Set(tools.map((t) => t.slug))
+    for (const tool of tools) {
+      expect(tool.keywords.length, tool.slug).toBeGreaterThanOrEqual(2)
+      expect(tool.keywords.length, tool.slug).toBeLessThanOrEqual(6)
+      expect(new Set(tool.keywords).size, tool.slug).toBe(tool.keywords.length)
+      for (const keyword of tool.keywords) {
+        expect(keyword, tool.slug).toBe(keyword.toLowerCase())
+        expect(keyword.trim(), tool.slug).toBe(keyword)
+        // A keyword that is another tool's slug would pull the wrong card up.
+        expect(slugs.has(keyword) && keyword !== tool.slug, `${tool.slug}: ${keyword}`).toBe(false)
+      }
+    }
+  })
+
   it('looks up tools by slug', () => {
     expect(getTool('diff-checker')?.name).toBe('Diff checker')
     expect(getTool('nope')).toBeUndefined()

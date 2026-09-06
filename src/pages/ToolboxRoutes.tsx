@@ -1,18 +1,37 @@
-import { useState } from 'react'
-import { Outlet, Route, Routes } from 'react-router'
+import { useCallback, useState } from 'react'
+import { Outlet, Route, Routes, useNavigate } from 'react-router'
 import { Header } from '../components/Header'
 import { Sidebar } from '../components/Sidebar'
 import { Footer } from '../components/Footer'
+import { ShortcutsDialog } from '../components/ShortcutsDialog'
+import { useGlobalShortcuts } from '../lib/shortcuts'
 import { Dashboard } from './Dashboard'
 import { ToolPage } from './ToolPage'
 import { NotFound } from './NotFound'
 
 function Shell() {
   const [navOpen, setNavOpen] = useState(false)
+  const [helpOpen, setHelpOpen] = useState(false)
+  const navigate = useNavigate()
+
+  const onFocusSearch = useCallback(() => {
+    const input = document.getElementById('tool-search')
+    if (input instanceof HTMLInputElement) {
+      input.focus()
+      input.select()
+      return
+    }
+    // Not on the dashboard — go there and let it focus the box on mount.
+    void navigate('/tools', { state: { focusSearch: true } })
+  }, [navigate])
+
+  const onOpenHelp = useCallback(() => setHelpOpen(true), [])
+
+  useGlobalShortcuts({ onFocusSearch, onOpenHelp })
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <Header onOpenNav={() => setNavOpen(true)} />
+      <Header onOpenNav={() => setNavOpen(true)} onOpenShortcuts={onOpenHelp} />
       <div className="flex w-full flex-1">
         <Sidebar open={navOpen} onClose={() => setNavOpen(false)} />
         <main className="flex min-w-0 flex-1 flex-col">
@@ -20,6 +39,7 @@ function Shell() {
         </main>
       </div>
       <Footer />
+      <ShortcutsDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>
   )
 }
