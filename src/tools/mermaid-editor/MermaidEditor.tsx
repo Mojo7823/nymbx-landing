@@ -53,6 +53,8 @@ export default function MermaidEditor() {
             keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
             placeholder('Write a mermaid diagram definition…'),
             EditorView.lineWrapping,
+            // The contenteditable needs an accessible name (axe aria-input-field-name).
+            EditorView.contentAttributes.of({ 'aria-label': 'Mermaid diagram source' }),
             EditorView.updateListener.of((update) => {
               if (update.docChanged) {
                 const next = update.state.doc.toString()

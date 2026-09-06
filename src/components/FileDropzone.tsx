@@ -136,10 +136,12 @@ export function FileDropzone({
 
   return (
     <div className={className}>
+      {/* No aria-label: the accessible name must contain the visible text (WCAG
+          2.5.3), so it is derived from the content. The file inputs sit outside
+          the button so no interactive control is nested inside it. */}
       <div
         role="button"
         tabIndex={0}
-        aria-label={multiple ? 'Choose files or drag them here' : 'Choose a file or drag it here'}
         onClick={() => inputRef.current?.click()}
         onKeyDown={onKeyDown}
         onDragOver={(e) => {
@@ -160,18 +162,19 @@ export function FileDropzone({
         </p>
         {hint && <p className="text-xs text-muted">{hint}</p>}
         <p className="font-mono text-[10px] tracking-wide text-faint uppercase">{privacyNote}</p>
-        <input
-          ref={inputRef}
-          type="file"
-          accept={accept}
-          multiple={multiple}
-          className="sr-only"
-          tabIndex={-1}
-          onChange={(e) => {
-            if (e.target.files) takeFiles(e.target.files)
-          }}
-        />
       </div>
+      <input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        multiple={multiple}
+        aria-label={multiple ? 'Choose files' : 'Choose a file'}
+        className="sr-only"
+        tabIndex={-1}
+        onChange={(e) => {
+          if (e.target.files) takeFiles(e.target.files)
+        }}
+      />
 
       {folders && (
         <div className="mt-2 flex justify-center">
@@ -192,6 +195,7 @@ export function FileDropzone({
             }}
             type="file"
             accept={accept}
+            aria-label="Choose a folder"
             className="sr-only"
             tabIndex={-1}
             onChange={(e) => {

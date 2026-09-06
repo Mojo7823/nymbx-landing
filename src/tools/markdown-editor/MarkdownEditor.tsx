@@ -207,6 +207,8 @@ export default function MarkdownEditor() {
         ]),
         placeholder('Write markdown here…'),
         EditorView.lineWrapping,
+        // The contenteditable needs an accessible name (axe aria-input-field-name).
+        EditorView.contentAttributes.of({ 'aria-label': 'Markdown source' }),
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {
             const next = update.state.doc.toString()

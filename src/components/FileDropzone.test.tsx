@@ -36,13 +36,16 @@ describe('FileDropzone', () => {
 
   it('is keyboard reachable as a button', () => {
     render(<FileDropzone onFiles={() => {}} />)
-    expect(screen.getByRole('button', { name: /choose a file/i })).toHaveAttribute('tabindex', '0')
+    expect(screen.getByRole('button', { name: /drop a file here/i })).toHaveAttribute(
+      'tabindex',
+      '0',
+    )
   })
 
   it('accepts dropped files', () => {
     const onFiles = vi.fn()
     render(<FileDropzone onFiles={onFiles} />)
-    const zone = screen.getByRole('button', { name: /choose a file/i })
+    const zone = screen.getByRole('button', { name: /drop a file here/i })
 
     const file = makeFile('dropped.txt', 10)
     const dataTransfer = { files: [file], items: [], types: ['Files'] }
@@ -56,7 +59,7 @@ describe('FileDropzone', () => {
   it('reports plain drops through onPaths when folders are enabled', async () => {
     const onPaths = vi.fn()
     render(<FileDropzone multiple folders onFiles={() => {}} onPaths={onPaths} />)
-    const zone = screen.getByRole('button', { name: /choose files/i })
+    const zone = screen.getByRole('button', { name: /drop files here/i })
 
     const file = makeFile('dropped.txt', 10)
     const dataTransfer = { files: [file], items: [], types: ['Files'] }
@@ -71,7 +74,7 @@ describe('FileDropzone', () => {
   it('traverses dropped folders and reports relative paths', async () => {
     const onPaths = vi.fn()
     render(<FileDropzone multiple folders onFiles={() => {}} onPaths={onPaths} />)
-    const zone = screen.getByRole('button', { name: /choose files/i })
+    const zone = screen.getByRole('button', { name: /drop files here/i })
 
     const inner = new File(['x'], 'a.jpg')
     let served = false

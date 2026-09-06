@@ -63,6 +63,17 @@ export function Dashboard() {
     [setParams],
   )
 
+  // The URL write is a router navigation, which React Router runs as a
+  // transition. Doing it on every keystroke let a second keystroke that landed
+  // mid-transition render against stale state and lose characters (measured at
+  // < 20 ms between keys). Keep the keystroke path local and push the URL from
+  // a short debounce instead; `?q=` stays linkable, just 150 ms behind.
+  useEffect(() => {
+    if (query === pushed.current) return
+    const id = setTimeout(() => setParam('q', query), 150)
+    return () => clearTimeout(id)
+  }, [query, setParam])
+
   // Sidebar links point at /tools#<category-id>; scroll when the hash changes.
   useEffect(() => {
     if (!location.hash) return
@@ -100,10 +111,8 @@ export function Dashboard() {
   function onInputKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === 'Escape') {
       event.preventDefault()
-      if (query) {
-        setQuery('')
-        setParam('q', '')
-      } else inputRef.current?.blur()
+      if (query) setQuery('')
+      else inputRef.current?.blur()
     } else if (event.key === 'Enter') {
       const top = results[0]
       if (trimmed && top) {
@@ -145,10 +154,7 @@ export function Dashboard() {
             ref={inputRef}
             type="search"
             value={query}
-            onChange={(e) => {
-              setQuery(e.target.value)
-              setParam('q', e.target.value)
-            }}
+            onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onInputKeyDown}
             placeholder="Search tools… (e.g. pdf, hash, resize)"
             aria-label="Search tools"
@@ -161,7 +167,6 @@ export function Dashboard() {
                 type="button"
                 onClick={() => {
                   setQuery('')
-                  setParam('q', '')
                   inputRef.current?.focus()
                 }}
                 aria-label="Clear search"

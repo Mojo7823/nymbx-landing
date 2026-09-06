@@ -38,6 +38,10 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
       <div
         className={cx('fixed inset-0 z-50 lg:hidden', !open && 'pointer-events-none')}
         aria-hidden={!open}
+        // `inert` keeps the closed drawer's links and Close button out of the
+        // tab order (axe `aria-hidden-focus`); pointer-events-none stays as the
+        // fallback for browsers without inert.
+        inert={!open}
       >
         <div
           onClick={onClose}
