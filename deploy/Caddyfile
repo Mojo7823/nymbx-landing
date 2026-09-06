@@ -68,6 +68,21 @@
 		@asset_catalogs path /models/resources.json /models/.version /ocr/engine/manifest.json /ocr/engine/.version
 		header @asset_catalogs Cache-Control "no-cache"
 
+		# Phase 61 (PWA): the service worker, its manifest, the offline asset
+		# catalog and the app shell must always revalidate, otherwise a client
+		# can be pinned to a stale sw.js (and therefore a stale precache) for as
+		# long as the heuristic freshness lifetime lasts. workbox-*.js is hashed
+		# and is left to the /assets rules / heuristics.
+		@nocache path /sw.js /manifest.webmanifest /offline-assets.json /index.html
+		header @nocache Cache-Control "no-cache"
+
+		# The SPA fallback below rewrites extension-less routes (/, /tools,
+		# /tools/<slug>, /itsme) to index.html *after* `header` has run, so match
+		# the shell by its request shape: every app route is extension-less and
+		# every static file has one.
+		@spa not path *.*
+		header @spa Cache-Control "no-cache"
+
 		# SPA fallback: unknown paths serve the app shell.
 		try_files {path} /index.html
 		file_server

@@ -18,8 +18,12 @@ export function getTheme(): Theme {
   }
 }
 
+/** Browser UI colour (Android address bar, installed-PWA title bar). */
+const THEME_COLORS: Record<Theme, string> = { light: '#ffffff', dark: '#1b1b1f' }
+
 export function applyTheme(theme: Theme): void {
   document.documentElement.classList.toggle('dark', theme === 'dark')
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLORS[theme])
   try {
     localStorage.setItem(STORAGE_KEY, theme)
   } catch {

@@ -1,9 +1,15 @@
 export type ToastVariant = 'info' | 'success' | 'error'
 
+export interface ToastAction {
+  label: string
+  onClick: () => void
+}
+
 export interface ToastItem {
   id: number
   message: string
   variant: ToastVariant
+  action?: ToastAction
 }
 
 const DEFAULT_DURATION = 4000
@@ -32,12 +38,21 @@ export function dismissToast(id: number): void {
   emit()
 }
 
-/** Imperative toast — call from anywhere; rendered by the <Toaster /> in the app shell. */
+/**
+ * Imperative toast — call from anywhere; rendered by the <Toaster /> in the app
+ * shell. Pass `duration: 0` for a toast that stays until dismissed (used with
+ * an `action`, e.g. the service worker's "A new version is ready." prompt).
+ */
 export function toast(
   message: string,
-  opts?: { variant?: ToastVariant; duration?: number },
+  opts?: { variant?: ToastVariant; duration?: number; action?: ToastAction },
 ): number {
-  const item: ToastItem = { id: nextId++, message, variant: opts?.variant ?? 'info' }
+  const item: ToastItem = {
+    id: nextId++,
+    message,
+    variant: opts?.variant ?? 'info',
+    action: opts?.action,
+  }
   items = [...items, item]
   emit()
   const duration = opts?.duration ?? DEFAULT_DURATION

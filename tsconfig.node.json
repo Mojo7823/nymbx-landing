@@ -18,5 +18,10 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["vite.config.ts"]
+  "include": [
+    "vite.config.ts",
+    "scripts/offlineAssets.ts",
+    "scripts/offlineAssets.test.ts",
+    "src/pwa/constants.ts"
+  ]
 }

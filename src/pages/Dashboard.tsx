@@ -3,6 +3,7 @@ import { useLocation } from 'react-router'
 import { Search, SearchX } from 'lucide-react'
 import { categories, tools, type ToolMeta } from '../tools/registry'
 import { ToolCard } from '../components/ToolCard'
+import { OfflinePanel } from '../pwa/OfflinePanel'
 
 function matches(tool: ToolMeta, query: string): boolean {
   const q = query.trim().toLowerCase()
@@ -91,6 +92,10 @@ export function Dashboard() {
           })}
         </div>
       )}
+
+      {/* Phase 61: offline status + opt-in bulk download. Irrelevant while the
+          user is filtering, so it stays out of the way during a search. */}
+      {query.trim() === '' && <OfflinePanel />}
     </div>
   )
 }

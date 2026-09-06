@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { useParams } from 'react-router'
 import { getTool } from '../tools/registry'
 import { toolComponents } from '../tools/routes'
+import { ChunkErrorBoundary } from '../components/ChunkErrorBoundary'
 import { ProgressBar } from '../components/ProgressBar'
 import { NotFound } from './NotFound'
 import { ToolPlaceholder } from './ToolPlaceholder'
@@ -17,14 +18,18 @@ export function ToolPage() {
   }
 
   return (
-    <Suspense
-      fallback={
-        <div className="mx-auto w-full max-w-4xl px-6 py-16">
-          <ProgressBar label={`Loading ${tool.name}…`} />
-        </div>
-      }
-    >
-      <Component />
-    </Suspense>
+    // Keyed by slug so a failed tool resets the boundary when the user picks
+    // another tool instead of staying stuck on the error card.
+    <ChunkErrorBoundary key={slug}>
+      <Suspense
+        fallback={
+          <div className="mx-auto w-full max-w-4xl px-6 py-16">
+            <ProgressBar label={`Loading ${tool.name}…`} />
+          </div>
+        }
+      >
+        <Component />
+      </Suspense>
+    </ChunkErrorBoundary>
   )
 }

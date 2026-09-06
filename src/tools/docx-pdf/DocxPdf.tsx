@@ -5,6 +5,7 @@ import { FileDropzone } from '../../components/FileDropzone'
 import { Button } from '../../components/Button'
 import { ProgressBar } from '../../components/ProgressBar'
 import { formatBytes } from '../../lib/format'
+import { useOnline } from '../../lib/useOnline'
 import { downloadBlob } from '../../lib/download'
 import { convertToPdf, pdfName, ConvertError, MAX_FILE_BYTES, type ConvertHandle } from './convert'
 
@@ -58,6 +59,8 @@ export default function DocxPdf() {
     setError(null)
   }
 
+  const online = useOnline()
+
   return (
     <ToolLayout
       title="DOCX → PDF"
@@ -73,6 +76,14 @@ export default function DocxPdf() {
           <strong className="font-semibold">This tool uploads your file to our server</strong> for
           conversion. It is processed in memory and deleted immediately after, so nothing is stored.
           Every other tool in this toolbox runs entirely on your device.
+          {!online && (
+            <>
+              {' '}
+              <strong className="font-semibold">
+                You&rsquo;re offline — this server-assisted tool needs a connection.
+              </strong>
+            </>
+          )}
         </p>
       </div>
 
@@ -147,7 +158,7 @@ export default function DocxPdf() {
               </Button>
             </div>
           ) : (
-            <Button onClick={() => void convert()} disabled={busy}>
+            <Button onClick={() => void convert()} disabled={busy || !online}>
               <CloudUpload className="size-4" />
               {busy ? 'Converting…' : 'Upload & convert to PDF'}
             </Button>

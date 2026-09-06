@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import { AlertCircle, CheckCircle2, Info, X } from 'lucide-react'
+import { Button } from './Button'
 import { cx } from '../lib/cx'
 import { dismissToast, getToasts, subscribeToasts, type ToastVariant } from '../lib/toast'
 
@@ -23,7 +24,7 @@ export function Toaster() {
       aria-live="polite"
       className="pointer-events-none fixed right-4 bottom-4 z-50 flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-2"
     >
-      {current.map(({ id, message, variant }) => {
+      {current.map(({ id, message, variant, action }) => {
         const Icon = icons[variant]
         return (
           <div
@@ -32,7 +33,21 @@ export function Toaster() {
             className="pointer-events-auto flex items-start gap-2.5 rounded-lg border border-line bg-card p-3 text-sm shadow-lg"
           >
             <Icon className={cx('mt-0.5 size-4 shrink-0', variantClasses[variant])} />
-            <p className="min-w-0 flex-1 text-ink break-words">{message}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-ink break-words">{message}</p>
+              {action && (
+                <Button
+                  variant="secondary"
+                  className="mt-2 h-7 px-2.5 text-xs"
+                  onClick={() => {
+                    action.onClick()
+                    dismissToast(id)
+                  }}
+                >
+                  {action.label}
+                </Button>
+              )}
+            </div>
             <button
               type="button"
               aria-label="Dismiss notification"

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, render, screen } from '@testing-library/react'
 import { Toaster } from './Toast'
 import { dismissToast, toast } from '../lib/toast'
@@ -30,5 +30,22 @@ describe('toast()', () => {
     })
     expect(screen.getAllByRole('status')).toHaveLength(1)
     expect(screen.getByRole('status')).toHaveTextContent('second')
+  })
+
+  it('renders an action button that runs its handler and dismisses the toast', () => {
+    render(<Toaster />)
+    const onClick = vi.fn()
+    act(() => {
+      toast('A new version is ready.', {
+        duration: 0,
+        action: { label: 'Reload', onClick },
+      })
+    })
+    const button = screen.getByRole('button', { name: 'Reload' })
+    act(() => {
+      button.click()
+    })
+    expect(onClick).toHaveBeenCalledOnce()
+    expect(screen.queryByRole('status')).toBeNull()
   })
 })
