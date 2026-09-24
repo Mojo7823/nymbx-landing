@@ -1,3 +1,4 @@
+import { ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router'
 import type { ToolMeta } from '../tools/registry'
 import { PrivacyBadge } from './PrivacyBadge'
@@ -14,7 +15,7 @@ export function ToolCard({ tool }: { tool: ToolMeta }) {
     <Link
       to={`/tools/${tool.slug}`}
       data-tool-card
-      className="group flex flex-col gap-3 rounded-lg border border-line bg-card p-4 transition-all hover:-translate-y-px hover:border-pine/50 hover:shadow-sm"
+      className="group flex flex-col gap-4 rounded-xl border border-line bg-card p-5 transition-all hover:-translate-y-px hover:border-pine/50 hover:shadow-sm"
     >
       <div className="flex items-start justify-between">
         <span
@@ -27,13 +28,10 @@ export function ToolCard({ tool }: { tool: ToolMeta }) {
         >
           <Icon className="size-4.5" />
         </span>
-        <span
+        <ArrowUpRight
           aria-hidden
-          className="text-[10px] text-faint tabular-nums"
-          title={`Phase ${tool.phase}`}
-        >
-          {String(tool.phase).padStart(2, '0')}
-        </span>
+          className="size-4 text-faint transition-colors group-hover:text-pine"
+        />
       </div>
 
       <div>

@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { ArrowLeft, Keyboard, Menu, WifiOff } from 'lucide-react'
+import { Keyboard, Menu, WifiOff } from 'lucide-react'
 import { ThemeToggle } from './ThemeToggle'
 import { useOnline } from '../lib/useOnline'
 
@@ -14,8 +14,14 @@ export function Header({
   const online = useOnline()
 
   return (
-    <header className="sticky top-0 z-40 bg-page/60 shadow-[0_1px_12px_rgba(0,0,0,0.08)] backdrop-blur-md dark:shadow-[0_1px_12px_rgba(0,0,0,0.5)]">
-      <div className="flex h-14 w-full items-center gap-3 px-4 sm:px-6">
+    <header className="sticky top-0 z-40 border-b border-line bg-page/95 backdrop-blur-md">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:rounded-md focus:bg-card focus:p-3"
+      >
+        Skip to content
+      </a>
+      <div className="flex h-14 w-full items-center gap-2 px-4 sm:gap-3 sm:px-6">
         <button
           type="button"
           onClick={onOpenNav}
@@ -25,10 +31,10 @@ export function Header({
           <Menu className="size-4" />
         </button>
 
-        <Link to="/tools" className="flex items-center gap-3">
+        <Link to="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
           <img src="/nymbx-icon.svg" alt="" className="h-9 w-auto" />
           <span className="font-display text-lg font-semibold tracking-tight text-ink">
-            NYMBX <span className="font-normal text-muted">Toolbox</span>
+            NYMBX <span className="hidden font-normal text-muted min-[400px]:inline">Toolbox</span>
           </span>
         </Link>
 
@@ -54,11 +60,10 @@ export function Header({
             </button>
           )}
           <Link
-            to="/"
-            className="hidden items-center gap-1.5 text-xs font-medium text-muted transition-colors hover:text-pine sm:inline-flex"
+            to="/about"
+            className="inline-flex shrink-0 items-center gap-1.5 text-xs font-medium text-muted transition-colors hover:text-pine"
           >
-            <ArrowLeft className="size-3.5" />
-            Portfolio
+            About
           </Link>
           <ThemeToggle />
         </div>

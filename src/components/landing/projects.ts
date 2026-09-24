@@ -153,7 +153,7 @@ export const projects: Project[] = [
       zh: 'PDF、圖片、文字與資料工具全部在瀏覽器裡執行，檔案只在你的裝置上處理，絕不上傳。',
     },
     status: 'live',
-    href: '/tools',
+    href: '/',
     tags: {
       en: ['Client-side', 'Zero uploads', 'React + WASM'],
       id: ['Di sisi klien', 'Tanpa unggahan', 'React + WASM'],

@@ -27,6 +27,7 @@ import { markdown, markdownLanguage } from '@codemirror/lang-markdown'
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language'
 import { tags } from '@lezer/highlight'
 import { ToolLayout } from '../../components/ToolLayout'
+import { MarkdownPreview } from '../markdown-renderer/MarkdownPreview'
 import { SplitPane } from '../../components/SplitPane'
 import { Button } from '../../components/Button'
 import { downloadBlob } from '../../lib/download'
@@ -369,7 +370,7 @@ export default function MarkdownEditor() {
           </div>
         ))}
 
-        <div className="ms-auto flex gap-2">
+        <div className="ms-auto flex flex-wrap gap-2">
           <Button variant="ghost" size="sm" onClick={() => openInput.current?.click()}>
             <FileUp className="size-3.5" />
             Open .md
@@ -408,7 +409,7 @@ export default function MarkdownEditor() {
         label="Resize editor and preview"
         first={
           <section aria-label="Markdown editor">
-            <div className="mb-2 flex h-8 items-center justify-between gap-2">
+            <div className="mb-3 flex min-h-8 flex-wrap items-center justify-between gap-2">
               <h2 className="text-xs font-semibold tracking-wide text-muted uppercase">Editor</h2>
             </div>
             <div
@@ -417,24 +418,7 @@ export default function MarkdownEditor() {
             />
           </section>
         }
-        second={
-          <section aria-label="Rendered preview">
-            <div className="mb-2 flex h-8 items-center justify-between gap-2">
-              <h2 className="text-xs font-semibold tracking-wide text-muted uppercase">Preview</h2>
-            </div>
-            {html ? (
-              <div
-                className="md-preview h-[36rem] overflow-auto rounded-lg border border-line bg-card p-4"
-                // Safe: renderMarkdown passes all output through DOMPurify.
-                dangerouslySetInnerHTML={{ __html: html }}
-              />
-            ) : (
-              <div className="flex h-[36rem] items-center justify-center rounded-lg border border-dashed border-line-strong text-sm text-muted">
-                The rendered document appears here.
-              </div>
-            )}
-          </section>
-        }
+        second={<MarkdownPreview html={html} />}
       />
 
       <p aria-live="polite" className="mt-4 font-mono text-xs text-muted tabular-nums">

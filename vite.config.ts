@@ -59,9 +59,9 @@ const pwaPlugin = VitePWA({
   manifest: {
     name: 'NYMBX Toolbox',
     short_name: 'NYMBX',
-    description: 'Private, in-browser tools — files never leave your device.',
+    description: 'Privacy-first browser tools for everyday work.',
     id: '/tools',
-    start_url: '/tools',
+    start_url: '/',
     scope: '/',
     display: 'standalone',
     background_color: '#ffffff',

@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Outlet, Route, Routes, useNavigate } from 'react-router'
+import { Navigate, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router'
 import { Header } from '../components/Header'
 import { Sidebar } from '../components/Sidebar'
 import { Footer } from '../components/Footer'
@@ -22,7 +22,7 @@ function Shell() {
       return
     }
     // Not on the dashboard — go there and let it focus the box on mount.
-    void navigate('/tools', { state: { focusSearch: true } })
+    void navigate('/', { state: { focusSearch: true } })
   }, [navigate])
 
   const onOpenHelp = useCallback(() => setHelpOpen(true), [])
@@ -34,7 +34,7 @@ function Shell() {
       <Header onOpenNav={() => setNavOpen(true)} onOpenShortcuts={onOpenHelp} />
       <div className="flex w-full flex-1">
         <Sidebar open={navOpen} onClose={() => setNavOpen(false)} />
-        <main className="flex min-w-0 flex-1 flex-col">
+        <main id="main-content" tabIndex={-1} className="flex min-w-0 flex-1 flex-col">
           <Outlet />
         </main>
       </div>
@@ -44,16 +44,19 @@ function Shell() {
   )
 }
 
-/**
- * Everything under /tools. Loaded lazily so the portfolio landing doesn't pull
- * in the tool registry and its icon set.
- */
+function LegacyDashboard() {
+  const { search, hash, state } = useLocation()
+  return <Navigate to={`/${search}${hash}`} state={state} replace />
+}
+
+/** The homepage catalog and lazy-loaded tools share one navigation shell. */
 export default function ToolboxRoutes() {
   return (
     <Routes>
       <Route element={<Shell />}>
         <Route index element={<Dashboard />} />
-        <Route path=":slug" element={<ToolPage />} />
+        <Route path="tools" element={<LegacyDashboard />} />
+        <Route path="tools/:slug" element={<ToolPage />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

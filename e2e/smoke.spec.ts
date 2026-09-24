@@ -98,7 +98,7 @@ test.describe('dashboard', () => {
     await page.goto('/tools/diff-checker')
     await expect(page.locator('[data-tool-title]')).toBeVisible()
     await page.keyboard.press('ControlOrMeta+KeyK')
-    await expect(page).toHaveURL(/\/tools$/)
+    await expect(page).toHaveURL('http://127.0.0.1:4173/')
     await expect(page.locator('#tool-search')).toBeFocused()
   })
 

@@ -1,12 +1,11 @@
 import { Suspense, lazy, useEffect } from 'react'
-import { Route, Routes } from 'react-router'
+import { Route, Routes, useLocation } from 'react-router'
 import { ChunkErrorBoundary } from './components/ChunkErrorBoundary'
 import { Toaster } from './components/Toast'
 import { ProgressBar } from './components/ProgressBar'
-import { Landing } from './pages/Landing'
-import { NotFound } from './pages/NotFound'
 
 const ToolboxRoutes = lazy(() => import('./pages/ToolboxRoutes'))
+const Landing = lazy(() => import('./pages/Landing').then((m) => ({ default: m.Landing })))
 const ItsMe = lazy(() => import('./pages/ItsMe'))
 
 function PageLoader({ label }: { label: string }) {
@@ -38,11 +37,26 @@ function useServiceWorker(): void {
 
 export default function App() {
   useServiceWorker()
+  const { pathname } = useLocation()
+  useEffect(() => {
+    const url = `https://nymbx.dev${pathname === '/tools' ? '/' : pathname}`
+    document.querySelector('link[rel="canonical"]')?.setAttribute('href', url)
+    document.querySelector('meta[property="og:url"]')?.setAttribute('content', url)
+  }, [pathname])
 
   return (
     <>
       <Routes>
-        <Route index element={<Landing />} />
+        <Route
+          path="about"
+          element={
+            <ChunkErrorBoundary>
+              <Suspense fallback={<PageLoader label="Loading about NYMBX…" />}>
+                <Landing />
+              </Suspense>
+            </ChunkErrorBoundary>
+          }
+        />
         <Route
           path="itsme"
           element={
@@ -54,7 +68,7 @@ export default function App() {
           }
         />
         <Route
-          path="tools/*"
+          path="*"
           element={
             <ChunkErrorBoundary>
               <Suspense fallback={<PageLoader label="Loading the toolbox…" />}>
@@ -63,7 +77,6 @@ export default function App() {
             </ChunkErrorBoundary>
           }
         />
-        <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />
     </>

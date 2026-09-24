@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { ClipboardPaste, Download, Printer, X } from 'lucide-react'
 import type { Highlighter } from 'shiki'
 import { ToolLayout } from '../../components/ToolLayout'
+import { MarkdownPreview } from '../markdown-renderer/MarkdownPreview'
 import { SplitPane } from '../../components/SplitPane'
 import { Button } from '../../components/Button'
 import { CopyButton } from '../../components/CopyButton'
@@ -106,11 +107,22 @@ ${html}
       description="Live GFM preview with syntax-highlighted code blocks. The rendered HTML is sanitized and everything runs in your browser."
       badge="client-side"
     >
+      <div className="mb-4 flex flex-wrap items-center justify-end gap-2">
+        <CopyButton text={html} label="Copy HTML" disabled={!html} />
+        <Button variant="secondary" size="sm" onClick={exportHtml} disabled={!html}>
+          <Download className="size-3.5" />
+          Export .html
+        </Button>
+        <Button variant="secondary" size="sm" onClick={() => window.print()} disabled={!html}>
+          <Printer className="size-3.5" />
+          Print
+        </Button>
+      </div>
       <SplitPane
         label="Resize editor and preview"
         first={
           <section aria-label="Markdown input">
-            <div className="mb-2 flex h-8 items-center justify-between gap-2">
+            <div className="mb-3 flex min-h-8 flex-wrap items-center justify-between gap-2">
               <h2 className="text-xs font-semibold tracking-wide text-muted uppercase">Markdown</h2>
               <div className="flex gap-2">
                 <Button variant="secondary" size="sm" onClick={pasteFromClipboard}>
@@ -134,40 +146,7 @@ ${html}
             />
           </section>
         }
-        second={
-          <section aria-label="Rendered preview">
-            <div className="mb-2 flex h-8 items-center justify-between gap-2">
-              <h2 className="text-xs font-semibold tracking-wide text-muted uppercase">Preview</h2>
-              <div className="flex gap-2">
-                <CopyButton text={html} label="Copy HTML" disabled={!html} />
-                <Button variant="secondary" size="sm" onClick={exportHtml} disabled={!html}>
-                  <Download className="size-3.5" />
-                  Export .html
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => window.print()}
-                  disabled={!html}
-                >
-                  <Printer className="size-3.5" />
-                  Print
-                </Button>
-              </div>
-            </div>
-            {html ? (
-              <div
-                className="md-preview h-[36rem] overflow-auto rounded-lg border border-line bg-card p-4"
-                // Safe: renderMarkdown passes all output through DOMPurify.
-                dangerouslySetInnerHTML={{ __html: html }}
-              />
-            ) : (
-              <div className="flex h-[36rem] items-center justify-center rounded-lg border border-dashed border-line-strong text-sm text-muted">
-                The rendered document appears here.
-              </div>
-            )}
-          </section>
-        }
+        second={<MarkdownPreview html={html} />}
       />
 
       <p aria-live="polite" className="mt-4 font-mono text-xs text-muted tabular-nums">

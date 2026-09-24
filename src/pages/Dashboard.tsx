@@ -74,7 +74,7 @@ export function Dashboard() {
     return () => clearTimeout(id)
   }, [query, setParam])
 
-  // Sidebar links point at /tools#<category-id>; scroll when the hash changes.
+  // Sidebar links point at /#<category-id>; scroll when the hash changes.
   useEffect(() => {
     if (!location.hash) return
     document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: 'smooth' })
@@ -140,14 +140,19 @@ export function Dashboard() {
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12" onKeyDown={onGridKeyDown}>
-      <section className="mb-10 max-w-2xl">
-        <h1 className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+      <section className="mb-10 rounded-2xl border border-line bg-soft/50 p-5 sm:p-8">
+        <p className="mb-3 text-xs font-semibold tracking-[0.16em] text-pine uppercase">
+          Your everyday toolbox
+        </p>
+        <h1 className="font-display text-3xl leading-tight font-semibold tracking-tight text-ink sm:text-4xl">
           Every tool. One tab.
-          <br />
-          Nothing leaves your device.
         </h1>
 
-        <div className="relative mt-6">
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
+          Simple tools for documents, images, code, and everyday work. Files stay on your device,
+          except in tools clearly labeled server-assisted.
+        </p>
+        <div className="relative mt-6 max-w-2xl">
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-faint" />
           <input
             id="tool-search"
@@ -156,10 +161,10 @@ export function Dashboard() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onInputKeyDown}
-            placeholder="Search tools… (e.g. pdf, hash, resize)"
+            placeholder="Search tools…"
             aria-label="Search tools"
             autoComplete="off"
-            className="h-11 w-full rounded-lg border border-line bg-card pr-24 pl-9 text-sm text-ink placeholder:text-faint focus:border-pine focus:outline-none"
+            className="h-11 w-full rounded-lg border border-line bg-card pr-10 pl-9 text-sm text-ink placeholder:text-faint focus:border-pine focus:outline-none sm:pr-24"
           />
           <div className="absolute top-1/2 right-2 flex -translate-y-1/2 items-center gap-1">
             {query && (
@@ -265,7 +270,7 @@ function FilterChip({
       onClick={onClick}
       aria-pressed={active}
       className={cx(
-        'cursor-pointer rounded-full border px-3 py-1 text-xs font-medium transition-colors',
+        'cursor-pointer rounded-full border px-3 py-2 text-xs font-medium transition-colors',
         active
           ? 'border-pine/40 bg-mint text-pine'
           : 'border-line bg-card text-muted hover:border-line-strong hover:text-ink',

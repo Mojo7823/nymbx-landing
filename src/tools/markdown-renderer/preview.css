@@ -3,7 +3,7 @@
   font-size: 0.9rem;
   line-height: 1.7;
   color: var(--c-ink);
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
 }
 
 .md-preview > :first-child {
@@ -201,6 +201,14 @@
 @media print {
   body * {
     visibility: hidden;
+  }
+  .markdown-preview-pane,
+  .markdown-focus[open] {
+    position: absolute;
+    inset: 0;
+    height: auto;
+    overflow: visible;
+    border: none;
   }
   .md-preview,
   .md-preview * {

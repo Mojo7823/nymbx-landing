@@ -1,3 +1,5 @@
+import { Link } from 'react-router'
+
 export function Footer() {
   return (
     <footer className="border-t border-line">
@@ -5,6 +7,9 @@ export function Footer() {
         <p className="text-xs text-faint">
           admin@nymbx.dev · NYMBX Toolbox · {new Date().getFullYear()}
         </p>
+        <Link to="/about" className="text-xs text-muted hover:text-pine">
+          About NYMBX
+        </Link>
       </div>
     </footer>
   )

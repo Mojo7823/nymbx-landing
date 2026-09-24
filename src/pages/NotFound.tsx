@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router'
-import { ArrowLeft, Wrench } from 'lucide-react'
+import { ArrowLeft, UserRound } from 'lucide-react'
 
 export function NotFound() {
   useEffect(() => {
@@ -25,10 +25,10 @@ export function NotFound() {
           <ArrowLeft className="size-4" /> Back home
         </Link>
         <Link
-          to="/tools"
+          to="/about"
           className="inline-flex h-10 items-center gap-2 rounded-md border border-line-strong px-4 text-sm font-medium text-ink transition-colors hover:border-brand hover:text-brand"
         >
-          <Wrench className="size-4" /> Browse the toolbox
+          <UserRound className="size-4" /> About NYMBX
         </Link>
       </div>
     </div>

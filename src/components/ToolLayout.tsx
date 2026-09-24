@@ -22,15 +22,15 @@ export function ToolLayout({ title, description, badge, children }: ToolLayoutPr
   }, [title])
 
   return (
-    <article className="w-full px-4 py-8 sm:px-6 sm:py-10">
+    <article className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
       <Link
-        to="/tools"
+        to="/"
         className="inline-flex items-center gap-1.5 text-xs font-medium text-muted transition-colors hover:text-pine"
       >
         <ArrowLeft className="size-3.5" />
         All tools
       </Link>
-      <header className="mt-4 mb-8 border-b border-line pb-6">
+      <header className="mt-4 mb-6 border-b border-line pb-5">
         <div className="flex flex-wrap items-center gap-3">
           <h1
             data-tool-title
@@ -40,7 +40,7 @@ export function ToolLayout({ title, description, badge, children }: ToolLayoutPr
           </h1>
           <PrivacyBadge badge={badge} />
         </div>
-        <p className="mt-2 max-w-2xl text-sm text-muted">{description}</p>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">{description}</p>
       </header>
       {children}
     </article>
