@@ -19,6 +19,6 @@ services:
       - gotenberg
 
   gotenberg:
-    image: gotenberg/gotenberg:8
+    image: gotenberg/gotenberg:8.36.0
     # No published ports: reachable only on the compose network, mirroring
     # the private-only (no public domain) Zeabur service.

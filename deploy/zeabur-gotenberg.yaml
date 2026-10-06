@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://schema.zeabur.app/template.json
+apiVersion: zeabur.com/v1
+kind: Template
+metadata:
+  name: NYMBX private DOCX conversion
+spec:
+  services:
+    - name: gotenberg
+      template: PREBUILT_V2
+      spec:
+        source:
+          image: gotenberg/gotenberg:8.36.0
+        ports:
+          - id: web
+            port: 3000
+            type: HTTP
+        # No domain binding or public port forwarding; Caddy uses private DNS.
+        portForwarding:
+          enabled: false
+        healthCheck:
+          type: HTTP
+          port: web
+          http:
+            path: /health
