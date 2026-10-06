@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Navigate, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router'
+import { Outlet, Route, Routes, useNavigate } from 'react-router'
 import { Header } from '../components/Header'
 import { Sidebar } from '../components/Sidebar'
 import { Footer } from '../components/Footer'
@@ -22,7 +22,7 @@ function Shell() {
       return
     }
     // Not on the dashboard — go there and let it focus the box on mount.
-    void navigate('/', { state: { focusSearch: true } })
+    void navigate('/tools', { state: { focusSearch: true } })
   }, [navigate])
 
   const onOpenHelp = useCallback(() => setHelpOpen(true), [])
@@ -44,18 +44,12 @@ function Shell() {
   )
 }
 
-function LegacyDashboard() {
-  const { search, hash, state } = useLocation()
-  return <Navigate to={`/${search}${hash}`} state={state} replace />
-}
-
-/** The homepage catalog and lazy-loaded tools share one navigation shell. */
+/** The tools catalog and lazy-loaded tools share one navigation shell. */
 export default function ToolboxRoutes() {
   return (
     <Routes>
       <Route element={<Shell />}>
-        <Route index element={<Dashboard />} />
-        <Route path="tools" element={<LegacyDashboard />} />
+        <Route path="tools" element={<Dashboard />} />
         <Route path="tools/:slug" element={<ToolPage />} />
         <Route path="*" element={<NotFound />} />
       </Route>

@@ -74,7 +74,7 @@ export function Dashboard() {
     return () => clearTimeout(id)
   }, [query, setParam])
 
-  // Sidebar links point at /#<category-id>; scroll when the hash changes.
+  // Sidebar links point at /tools#<category-id>; scroll when the hash changes.
   useEffect(() => {
     if (!location.hash) return
     document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: 'smooth' })

@@ -12,7 +12,7 @@ function CategoryList({ onNavigate }: { onNavigate?: () => void }) {
         return (
           <Link
             key={cat.id}
-            to={`/#${cat.id}`}
+            to={`/tools#${cat.id}`}
             onClick={onNavigate}
             className="flex items-center gap-2.5 rounded-md px-2 py-2.5 text-sm text-muted transition-colors hover:bg-mint hover:text-ink"
           >
@@ -72,11 +72,11 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
           </div>
           <CategoryList onNavigate={onClose} />
           <Link
-            to="/about"
+            to="/contact"
             onClick={onClose}
             className="mt-4 block border-t border-line px-2 py-4 text-sm text-muted hover:text-pine"
           >
-            About NYMBX
+            Contact NYMBX
           </Link>
         </div>
       </dialog>

@@ -22,6 +22,9 @@
 
 	encode zstd gzip
 
+	# The tools catalog is the homepage; preserve bookmarked searches.
+	redir / /tools{?query} 308
+
 	# Phase 15 (DOCX → PDF, server-assisted): proxy conversions to the private
 	# Gotenberg service. handle_path strips the prefix, so the client's
 	# POST /api/convert/forms/libreoffice/convert reaches Gotenberg as
@@ -76,8 +79,8 @@
 		@nocache path /sw.js /manifest.webmanifest /offline-assets.json /index.html
 		header @nocache Cache-Control "no-cache"
 
-		# The SPA fallback below rewrites extension-less routes (/, /tools,
-		# /tools/<slug>, /itsme) to index.html *after* `header` has run, so match
+		# The SPA fallback below rewrites extension-less routes (/tools,
+		# /tools/<slug>, /contact, /itsme) to index.html *after* `header` has run, so match
 		# the shell by its request shape: every app route is extension-less and
 		# every static file has one.
 		@spa not path *.*

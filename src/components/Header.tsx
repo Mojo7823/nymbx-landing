@@ -31,7 +31,7 @@ export function Header({
           <Menu className="size-4" />
         </button>
 
-        <Link to="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
+        <Link to="/tools" className="flex min-w-0 items-center gap-2 sm:gap-3">
           <img src="/nymbx-icon.svg" alt="" className="h-9 w-auto" />
           <span className="font-display text-lg font-semibold tracking-tight text-ink">
             NYMBX <span className="hidden font-normal text-muted min-[400px]:inline">Toolbox</span>
@@ -60,10 +60,10 @@ export function Header({
             </button>
           )}
           <Link
-            to="/about"
+            to="/contact"
             className="inline-flex shrink-0 items-center gap-1.5 text-xs font-medium text-muted transition-colors hover:text-pine"
           >
-            About
+            Contact
           </Link>
           <ThemeToggle />
         </div>

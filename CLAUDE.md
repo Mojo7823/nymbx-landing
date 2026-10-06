@@ -4,6 +4,21 @@ Privacy-first, browser-based all-in-one toolbox. All file processing happens **c
 
 The full roadmap lives in [PLAN.md](PLAN.md). Work proceeds one phase (= one tool) at a time; do not start a new phase while the current one has open defects.
 
+## Ownership
+
+This repository is owned and managed by GitHub user `Mojo7823`.
+
+- Treat this as a personal project, not a repository owned by the shared company account `Auray-expert`.
+- Use `Mojo7823` for repository ownership and account-dependent GitHub operations. Verify the active account before using `gh`; do not assume the machine's default account is correct.
+
+## Platform routes
+
+- Main domain: `https://nymbx.dev`.
+- `/` redirects to `/tools`, preserving query strings and URL fragments.
+- `/tools` is the toolbox homepage; individual tools live at `/tools/<slug>`.
+- `/contact` contains the original portfolio and contact homepage.
+- Internal toolbox navigation must point directly to `/tools`, not `/`.
+
 ## Stack
 
 - Vite + React 19.2 + TypeScript (strict) + Tailwind CSS
@@ -34,7 +49,7 @@ The full roadmap lives in [PLAN.md](PLAN.md). Work proceeds one phase (= one too
 
 ## Layout conventions
 
-- `/` is the portfolio landing (`src/pages/Landing.tsx` + `src/components/landing/`); the toolbox dashboard lives at `/tools` and is lazy-loaded via `src/pages/ToolboxRoutes.tsx`
+- The portfolio and contact page uses `src/pages/Landing.tsx` + `src/components/landing/`; toolbox routes are lazy-loaded via `src/pages/ToolboxRoutes.tsx`. URLs are listed in Platform routes above.
 - `src/tools/<tool-name>/` — one directory per tool (component, worker, tests)
 - `src/components/` — shared UI (ToolLayout, FileDropzone, Button, Toast, …)
 - `src/lib/` — shared utilities (download, zip, worker helper, settings store)

@@ -61,7 +61,7 @@ const pwaPlugin = VitePWA({
     short_name: 'NYMBX',
     description: 'Privacy-first browser tools for everyday work.',
     id: '/tools',
-    start_url: '/',
+    start_url: '/tools',
     scope: '/',
     display: 'standalone',
     background_color: '#ffffff',

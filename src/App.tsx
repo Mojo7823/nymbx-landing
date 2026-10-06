@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from 'react'
-import { Route, Routes, useLocation } from 'react-router'
+import { Navigate, Route, Routes, useLocation } from 'react-router'
 import { ChunkErrorBoundary } from './components/ChunkErrorBoundary'
 import { Toaster } from './components/Toast'
 import { ProgressBar } from './components/ProgressBar'
@@ -14,6 +14,11 @@ function PageLoader({ label }: { label: string }) {
       <ProgressBar label={label} />
     </div>
   )
+}
+
+function HomeRedirect() {
+  const { search, hash, state } = useLocation()
+  return <Navigate to={`/tools${search}${hash}`} state={state} replace />
 }
 
 /**
@@ -39,7 +44,7 @@ export default function App() {
   useServiceWorker()
   const { pathname } = useLocation()
   useEffect(() => {
-    const url = `https://nymbx.dev${pathname === '/tools' ? '/' : pathname}`
+    const url = `https://nymbx.dev${pathname === '/' ? '/tools' : pathname}`
     document.querySelector('link[rel="canonical"]')?.setAttribute('href', url)
     document.querySelector('meta[property="og:url"]')?.setAttribute('content', url)
   }, [pathname])
@@ -47,11 +52,12 @@ export default function App() {
   return (
     <>
       <Routes>
+        <Route path="/" element={<HomeRedirect />} />
         <Route
-          path="about"
+          path="contact"
           element={
             <ChunkErrorBoundary>
-              <Suspense fallback={<PageLoader label="Loading about NYMBX…" />}>
+              <Suspense fallback={<PageLoader label="Loading contact information…" />}>
                 <Landing />
               </Suspense>
             </ChunkErrorBoundary>

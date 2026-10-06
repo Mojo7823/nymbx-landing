@@ -1,22 +1,30 @@
 import { expect, test } from '@playwright/test'
 
-test('homepage, legacy links, and about navigation', async ({ page }) => {
-  await page.goto('/')
-  await expect(page.getByRole('heading', { name: 'Every tool. One tab.' })).toBeVisible()
-  await expect(page.locator('[data-tool-card]').first()).toBeVisible()
-  await page.getByRole('link', { name: 'About', exact: true }).click()
-  await expect(page).toHaveURL(/\/about$/)
-  await expect(page.locator('#projects')).toBeVisible()
+test('homepage redirects to tools, preserves bookmarks, and links to contact', async ({ page }) => {
+  await page.goto('/?q=hash#files')
+  await expect(page).toHaveURL(/\/tools\?q=hash#files$/)
+  await expect(page.getByRole('searchbox')).toHaveValue('hash')
+  await expect(page.locator('[data-tool-card] h3').first()).toHaveText('Bulk file hasher')
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     'href',
-    'https://nymbx.dev/about',
+    'https://nymbx.dev/tools',
   )
+  await page.getByRole('link', { name: 'Contact', exact: true }).click()
+  await expect(page).toHaveURL(/\/contact$/)
+  await expect(page.locator('#projects')).toBeVisible()
+  await expect(page.locator('#contact a[href="mailto:admin@nymbx.dev"]')).toBeVisible()
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    'https://nymbx.dev/contact',
+  )
+  await page.getByRole('link', { name: 'NYMBX toolbox home', exact: true }).click()
+  await expect(page).toHaveURL(/\/tools$/)
   await page.goto('/tools?q=hash#files')
-  await expect(page).toHaveURL(/\/\?q=hash#files$/)
+  await expect(page).toHaveURL(/\/tools\?q=hash#files$/)
   await expect(page.getByRole('searchbox')).toHaveValue('hash')
   await page.goto('/tools/markdown-editor')
   await page.getByRole('link', { name: 'All tools', exact: true }).click()
-  await expect(page).toHaveURL('http://127.0.0.1:4173/')
+  await expect(page).toHaveURL(/\/tools$/)
 })
 
 for (const slug of ['markdown-editor', 'markdown-renderer']) {
@@ -84,7 +92,7 @@ test('mobile categories trap focus, close with Escape, and navigate home', async
   await expect(opener).toBeFocused()
   await opener.click()
   await drawer.getByRole('link', { name: 'Markdown' }).click()
-  await expect(page).toHaveURL(/\/#markdown$/)
+  await expect(page).toHaveURL(/\/tools#markdown$/)
   await expect(drawer).toBeHidden()
   await expect(page.getByRole('searchbox')).toBeVisible()
 })

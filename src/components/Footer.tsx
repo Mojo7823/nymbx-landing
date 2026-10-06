@@ -7,8 +7,8 @@ export function Footer() {
         <p className="text-xs text-faint">
           admin@nymbx.dev · NYMBX Toolbox · {new Date().getFullYear()}
         </p>
-        <Link to="/about" className="text-xs text-muted hover:text-pine">
-          About NYMBX
+        <Link to="/contact" className="text-xs text-muted hover:text-pine">
+          Contact NYMBX
         </Link>
       </div>
     </footer>

@@ -19,16 +19,16 @@ export function NotFound() {
       </p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Link
-          to="/"
+          to="/tools"
           className="inline-flex h-10 items-center gap-2 rounded-md bg-brand px-4 text-sm font-medium text-white transition-colors hover:bg-brand-deep dark:text-brand-ink"
         >
           <ArrowLeft className="size-4" /> Back home
         </Link>
         <Link
-          to="/about"
+          to="/contact"
           className="inline-flex h-10 items-center gap-2 rounded-md border border-line-strong px-4 text-sm font-medium text-ink transition-colors hover:border-brand hover:text-brand"
         >
-          <UserRound className="size-4" /> About NYMBX
+          <UserRound className="size-4" /> Contact NYMBX
         </Link>
       </div>
     </div>
