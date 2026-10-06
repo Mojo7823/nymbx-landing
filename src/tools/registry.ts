@@ -515,6 +515,17 @@ export const tools: ToolMeta[] = [
     icon: Braces,
   },
   {
+    slug: 'json-schema-validator',
+    name: 'JSON Schema validator',
+    description: 'Check JSON against a schema with precise error paths',
+    keywords: ['ajv', 'draft-07', '2019-09', '2020-12', 'configuration'],
+    category: 'text-dev',
+    badge: client,
+    status: 'available',
+    phase: 62,
+    icon: ShieldCheck,
+  },
+  {
     slug: 'yaml-json-toml',
     name: 'YAML ↔ JSON ↔ TOML',
     description: 'Convert config formats',

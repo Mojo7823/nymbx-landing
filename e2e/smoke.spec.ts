@@ -127,7 +127,7 @@ test.describe('dashboard', () => {
 })
 
 /**
- * The 54 tool routes are swept in fixed shards so the work spreads over
+ * Tool routes are swept in fixed shards so the work spreads over
  * Playwright's workers (the slug list can only be read at run time, so a test
  * per tool is not possible without duplicating the registry here).
  */

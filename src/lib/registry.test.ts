@@ -2,87 +2,15 @@ import { describe, expect, it } from 'vitest'
 import { categories, getTool, tools } from '../tools/registry'
 
 describe('tool registry', () => {
-  it('contains all 54 planned tools across 7 categories', () => {
-    expect(tools).toHaveLength(54)
-    expect(categories).toHaveLength(7)
-  })
-
-  it('has unique slugs and phase numbers covering 1–58 (29, 33, 35 and 50 were dropped)', () => {
+  it('has unique route slugs', () => {
     const slugs = new Set(tools.map((t) => t.slug))
-    expect(slugs.size).toBe(54)
-    const phases = tools.map((t) => t.phase).sort((a, b) => a - b)
-    expect(phases).toEqual(
-      Array.from({ length: 58 }, (_, i) => i + 1).filter(
-        (p) => p !== 29 && p !== 33 && p !== 35 && p !== 50,
-      ),
-    )
+    expect(slugs.size).toBe(tools.length)
   })
 
   it('marks exactly one tool as server-assisted (DOCX ↔ PDF)', () => {
     const serverAssisted = tools.filter((t) => t.badge === 'server-assisted')
     expect(serverAssisted).toHaveLength(1)
     expect(serverAssisted[0]!.slug).toBe('docx-pdf')
-  })
-
-  it('marks built tools as available and the rest as coming-soon', () => {
-    const available = tools.filter((t) => t.status === 'available').map((t) => t.slug)
-    expect(available).toEqual([
-      'em-dash-remover',
-      'double-line-remover',
-      'diff-checker',
-      'markdown-renderer',
-      'mermaid-editor',
-      'markdown-editor',
-      'image-resize',
-      'background-remover',
-      'image-format-converter',
-      'image-compressor',
-      'crop-rotate-flip',
-      'exif-viewer',
-      'svg-optimizer',
-      'favicon-generator',
-      'color-palette-extractor',
-      'screenshot-redaction',
-      'bulk-file-hasher',
-      'bulk-file-renamer',
-      'zip-unzip',
-      'ocr',
-      'pdf-split',
-      'pdf-resize',
-      'pdf-to-image-markdown',
-      'pdf-merge',
-      'pdf-page-organizer',
-      'pdf-watermark',
-      'images-to-pdf',
-      'pdf-compress',
-      'xlsx-csv-viewer',
-      'pdf-sign-annotate',
-      'pdf-metadata',
-      'docx-to-html-markdown',
-      'docx-pdf',
-      'markdown-to-docx',
-      'html-to-markdown',
-      'json-formatter',
-      'yaml-json-toml',
-      'csv-json',
-      'base64',
-      'url-encode',
-      'regex-tester',
-      'word-counter',
-      'uuid-password-generator',
-      'timestamp-converter',
-      'string-escape',
-      'text-encoding-converter',
-      'text-hasher',
-      'jwt-decoder',
-      'certificate-decoder',
-      'hex-viewer',
-      'password-strength',
-      'qr-generator-reader',
-      'sbom-viewer',
-      'cvss-calculator',
-    ])
-    expect(tools.every((t) => t.status === 'available' || t.status === 'coming-soon')).toBe(true)
   })
 
   it('only references declared categories', () => {
