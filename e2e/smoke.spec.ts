@@ -34,7 +34,7 @@ interface ToolLink {
 
 /** Read the tool list off the dashboard so the spec never duplicates the registry. */
 async function readToolLinks(page: Page): Promise<ToolLink[]> {
-  await page.goto('/tools')
+  await page.goto('/')
   const cards = page.locator('[data-tool-card]')
   await expect(cards.first()).toBeVisible()
   return cards.evaluateAll((nodes) =>
@@ -98,7 +98,7 @@ test.describe('dashboard', () => {
     await page.goto('/tools/diff-checker')
     await expect(page.locator('[data-tool-title]')).toBeVisible()
     await page.keyboard.press('ControlOrMeta+KeyK')
-    await expect(page).toHaveURL(/\/tools$/)
+    await expect(page).toHaveURL(/\/$/)
     await expect(page.locator('#tool-search')).toBeFocused()
   })
 

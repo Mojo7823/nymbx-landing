@@ -3,7 +3,15 @@ import { Maximize2, Minimize2 } from 'lucide-react'
 import { Button } from '../../components/Button'
 
 /** Receives only HTML sanitized by the Markdown renderers. */
-export function MarkdownPreview({ html }: { html: string }) {
+export function MarkdownPreview({
+  html,
+  loading = false,
+  error,
+}: {
+  html: string
+  loading?: boolean
+  error?: string
+}) {
   const [focused, setFocused] = useState(false)
   const dialogRef = useRef<HTMLDialogElement>(null)
 
@@ -20,7 +28,18 @@ export function MarkdownPreview({ html }: { html: string }) {
     }
   }, [focused])
 
-  const renderedDocument = html ? (
+  const renderedDocument = error ? (
+    <div role="alert" className="flex flex-col items-start gap-3 py-4 text-sm text-amber-badge">
+      <p>{error}</p>
+      <Button variant="secondary" size="sm" onClick={() => window.location.reload()}>
+        Reload tool
+      </Button>
+    </div>
+  ) : loading ? (
+    <p role="status" className="py-16 text-center text-sm text-muted">
+      Loading preview…
+    </p>
+  ) : html ? (
     // Safe: both callers sanitize their rendered HTML with DOMPurify.
     <div className="md-preview" dangerouslySetInnerHTML={{ __html: html }} />
   ) : (

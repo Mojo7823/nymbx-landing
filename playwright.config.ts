@@ -25,7 +25,7 @@ export default defineConfig({
   },
   webServer: {
     command: 'npm run preview -- --port 4173 --strictPort --host 127.0.0.1',
-    url: 'http://127.0.0.1:4173/tools',
+    url: 'http://127.0.0.1:4173/',
     reuseExistingServer: true,
     timeout: 60_000,
   },

@@ -40,11 +40,7 @@ export function Landing() {
               language selector and the theme toggle it does not fit beside
               the icon under ~420px and was drawing over "Projects". The hero
               directly below carries the name at full size. */}
-          <Link
-            to="/tools"
-            className="flex shrink-0 items-center gap-3"
-            aria-label="NYMBX toolbox home"
-          >
+          <Link to="/" className="flex shrink-0 items-center gap-3" aria-label="NYMBX toolbox home">
             <img src="/nymbx-icon-blue.svg" alt="" className="h-9 w-auto sm:h-10" />
             <span className="hidden font-display text-xl font-semibold tracking-tight text-ink sm:inline">
               NYMBX
@@ -99,7 +95,7 @@ export function Landing() {
                 {t.hero.viewProjects} <ArrowRight className="size-4" />
               </a>
               <Link
-                to="/tools"
+                to="/"
                 className="inline-flex h-11 items-center gap-2 rounded-lg border border-line-strong px-5 text-sm font-medium text-ink transition-colors hover:border-brand hover:text-brand"
               >
                 <Wrench className="size-4" /> {t.hero.openToolbox}
@@ -155,7 +151,7 @@ export function Landing() {
                   <Mail className="size-4" /> {CONTACT_EMAIL}
                 </a>
                 <Link
-                  to="/tools"
+                  to="/"
                   className="inline-flex h-11 items-center gap-2 rounded-lg border border-[var(--c-art-dim)] px-5 text-sm font-medium text-[var(--c-art-ink)] transition-colors hover:border-[var(--c-art-accent)] hover:text-[var(--c-art-accent)]"
                 >
                   <Wrench className="size-4" /> {t.contact.tryToolbox}
@@ -171,7 +167,7 @@ export function Landing() {
           <p className="text-xs text-faint">
             {CONTACT_EMAIL} · NYMBX · {new Date().getFullYear()}
           </p>
-          <Link to="/tools" className="text-xs text-faint hover:text-brand">
+          <Link to="/" className="text-xs text-faint hover:text-brand">
             NYMBX Toolbox →
           </Link>
         </div>

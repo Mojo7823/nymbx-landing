@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ClipboardPaste, Download, Printer, X } from 'lucide-react'
-import type { Highlighter } from 'shiki'
+import type { HighlighterCore } from 'shiki/core'
 import { ToolLayout } from '../../components/ToolLayout'
 import { MarkdownPreview } from '../markdown-renderer/MarkdownPreview'
 import { SplitPane } from '../../components/SplitPane'
@@ -10,7 +10,7 @@ import { downloadBlob } from '../../lib/download'
 import { toast } from '../../lib/toast'
 import { useDebouncedValue } from '../../lib/useDebouncedValue'
 import { createRenderer, renderMarkdown } from './renderMarkdown'
-import { highlightCode, loadHighlighter } from './highlight'
+import { highlightCode, highlightLanguage, loadHighlighter } from './highlight'
 import './preview.css'
 
 const SAMPLE = `# Markdown renderer
@@ -48,14 +48,28 @@ img { max-width: 100%; }
 
 export default function MarkdownRenderer() {
   const [source, setSource] = useState(SAMPLE)
-  const [highlighter, setHighlighter] = useState<Highlighter | null>(null)
+  const [highlighter, setHighlighter] = useState<{ value: HighlighterCore } | null>(null)
   const debouncedSource = useDebouncedValue(source, 200)
 
+  const { html, languages } = useMemo(() => {
+    const needed = new Set<string>()
+    const md = createRenderer((code, lang) => {
+      const name = highlightLanguage(lang)
+      if (name) needed.add(name)
+      return highlighter ? highlightCode(highlighter.value, code, lang) : ''
+    })
+    return {
+      html: renderMarkdown(md, debouncedSource),
+      languages: [...needed].sort().join(','),
+    }
+  }, [highlighter, debouncedSource])
+
   useEffect(() => {
+    if (!languages) return
     let cancelled = false
-    loadHighlighter()
-      .then((h) => {
-        if (!cancelled) setHighlighter(h)
+    void loadHighlighter(languages.split(','))
+      .then((value) => {
+        if (!cancelled) setHighlighter({ value })
       })
       .catch(() => {
         // Highlighting is progressive enhancement — plain code blocks remain.
@@ -63,16 +77,7 @@ export default function MarkdownRenderer() {
     return () => {
       cancelled = true
     }
-  }, [])
-
-  const md = useMemo(
-    () =>
-      createRenderer(
-        highlighter ? (code, lang) => highlightCode(highlighter, code, lang) : undefined,
-      ),
-    [highlighter],
-  )
-  const html = useMemo(() => renderMarkdown(md, debouncedSource), [md, debouncedSource])
+  }, [languages])
 
   async function pasteFromClipboard() {
     try {
@@ -150,7 +155,7 @@ ${html}
       />
 
       <p aria-live="polite" className="mt-4 font-mono text-xs text-muted tabular-nums">
-        {highlighter === null ? 'Loading syntax highlighter…' : ''}
+        {languages && highlighter === null ? 'Loading syntax highlighter…' : ''}
       </p>
     </ToolLayout>
   )

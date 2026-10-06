@@ -1,14 +1,18 @@
 import { expect, test } from '@playwright/test'
 
-test('homepage redirects to tools, preserves bookmarks, and links to contact', async ({ page }) => {
+test('homepage shows tools without redirecting, preserves bookmarks, and links to contact', async ({
+  page,
+}) => {
+  const response = await page.goto('/')
+  await expect(page.getByRole('searchbox')).toBeVisible()
+  await expect(page).toHaveURL(/\/$/)
+  expect(response?.status()).toBe(200)
+  expect(response?.request().redirectedFrom()).toBeNull()
   await page.goto('/?q=hash#files')
-  await expect(page).toHaveURL(/\/tools\?q=hash#files$/)
+  await expect(page).toHaveURL(/\/\?q=hash#files$/)
   await expect(page.getByRole('searchbox')).toHaveValue('hash')
   await expect(page.locator('[data-tool-card] h3').first()).toHaveText('Bulk file hasher')
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
-    'href',
-    'https://nymbx.dev/tools',
-  )
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://nymbx.dev/')
   await page.getByRole('link', { name: 'Contact', exact: true }).click()
   await expect(page).toHaveURL(/\/contact$/)
   await expect(page.locator('#projects')).toBeVisible()
@@ -18,13 +22,13 @@ test('homepage redirects to tools, preserves bookmarks, and links to contact', a
     'https://nymbx.dev/contact',
   )
   await page.getByRole('link', { name: 'NYMBX toolbox home', exact: true }).click()
-  await expect(page).toHaveURL(/\/tools$/)
+  await expect(page).toHaveURL(/\/$/)
   await page.goto('/tools?q=hash#files')
   await expect(page).toHaveURL(/\/tools\?q=hash#files$/)
   await expect(page.getByRole('searchbox')).toHaveValue('hash')
   await page.goto('/tools/markdown-editor')
   await page.getByRole('link', { name: 'All tools', exact: true }).click()
-  await expect(page).toHaveURL(/\/tools$/)
+  await expect(page).toHaveURL(/\/$/)
 })
 
 for (const slug of ['markdown-editor', 'markdown-renderer']) {
@@ -50,6 +54,7 @@ for (const slug of ['markdown-editor', 'markdown-renderer']) {
       await source.fill(markdown)
     }
     const preview = page.locator('.markdown-preview-pane')
+    await preview.scrollIntoViewIfNeeded()
     await expect(preview.getByRole('heading', { name: marker })).toBeVisible()
     const focus = page.getByRole('button', { name: 'Focus preview', exact: true })
     await focus.click()
@@ -92,7 +97,7 @@ test('mobile categories trap focus, close with Escape, and navigate home', async
   await expect(opener).toBeFocused()
   await opener.click()
   await drawer.getByRole('link', { name: 'Markdown' }).click()
-  await expect(page).toHaveURL(/\/tools#markdown$/)
+  await expect(page).toHaveURL(/\/#markdown$/)
   await expect(drawer).toBeHidden()
   await expect(page.getByRole('searchbox')).toBeVisible()
 })

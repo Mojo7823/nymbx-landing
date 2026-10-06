@@ -12,7 +12,7 @@ function CategoryList({ onNavigate }: { onNavigate?: () => void }) {
         return (
           <Link
             key={cat.id}
-            to={`/tools#${cat.id}`}
+            to={`/#${cat.id}`}
             onClick={onNavigate}
             className="flex items-center gap-2.5 rounded-md px-2 py-2.5 text-sm text-muted transition-colors hover:bg-mint hover:text-ink"
           >

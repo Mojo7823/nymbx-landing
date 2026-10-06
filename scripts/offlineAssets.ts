@@ -3,10 +3,10 @@
  *
  * Two jobs, both derived from the rollup/rolldown bundle:
  *
- * 1. `shellFiles` — the app shell: the entry chunks, the `/tools` route chunk
+ * 1. `shellFiles` — the app shell: the entry chunks, the toolbox route chunk
  *    and everything they statically import, plus all CSS and web fonts. The
  *    PWA plugin's `manifestTransforms` keeps only these, so a visitor who only
- *    ever opens the landing page does not precache 36 MB of tool chunks.
+ *    ever opens the dashboard does not precache 36 MB of tool chunks.
  * 2. `offline-assets.json` — the full list of cacheable assets with exact byte
  *    sizes, used by the dashboard's "download all tools" action (it feeds
  *    `prefetchUrls`, which verifies the byte length of every response).

@@ -60,8 +60,8 @@ const pwaPlugin = VitePWA({
     name: 'NYMBX Toolbox',
     short_name: 'NYMBX',
     description: 'Privacy-first browser tools for everyday work.',
-    id: '/tools',
-    start_url: '/tools',
+    id: '/tools', // Keep the installed app identity stable when its launch URL changes.
+    start_url: '/',
     scope: '/',
     display: 'standalone',
     background_color: '#ffffff',
@@ -139,7 +139,8 @@ const pwaPlugin = VitePWA({
         options: {
           cacheName: ASSET_CACHE,
           matchOptions: IGNORE_VARY,
-          expiration: { maxEntries: 1500, maxAgeSeconds: 90 * DAY, purgeOnQuotaError: true },
+          // Older deployments must not crowd a complete current download out of a count cap.
+          expiration: { maxAgeSeconds: 90 * DAY, purgeOnQuotaError: true },
           cacheableResponse: { statuses: [0, 200] },
         },
       },

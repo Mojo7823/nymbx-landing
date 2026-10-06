@@ -22,7 +22,7 @@ function Shell() {
       return
     }
     // Not on the dashboard — go there and let it focus the box on mount.
-    void navigate('/tools', { state: { focusSearch: true } })
+    void navigate('/', { state: { focusSearch: true } })
   }, [navigate])
 
   const onOpenHelp = useCallback(() => setHelpOpen(true), [])
@@ -49,6 +49,7 @@ export default function ToolboxRoutes() {
   return (
     <Routes>
       <Route element={<Shell />}>
+        <Route index element={<Dashboard />} />
         <Route path="tools" element={<Dashboard />} />
         <Route path="tools/:slug" element={<ToolPage />} />
         <Route path="*" element={<NotFound />} />

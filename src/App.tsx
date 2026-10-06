@@ -1,10 +1,10 @@
 import { Suspense, lazy, useEffect } from 'react'
-import { Navigate, Route, Routes, useLocation } from 'react-router'
+import { Route, Routes, useLocation } from 'react-router'
 import { ChunkErrorBoundary } from './components/ChunkErrorBoundary'
 import { Toaster } from './components/Toast'
 import { ProgressBar } from './components/ProgressBar'
+import ToolboxRoutes from './pages/ToolboxRoutes'
 
-const ToolboxRoutes = lazy(() => import('./pages/ToolboxRoutes'))
 const Landing = lazy(() => import('./pages/Landing').then((m) => ({ default: m.Landing })))
 const ItsMe = lazy(() => import('./pages/ItsMe'))
 
@@ -14,11 +14,6 @@ function PageLoader({ label }: { label: string }) {
       <ProgressBar label={label} />
     </div>
   )
-}
-
-function HomeRedirect() {
-  const { search, hash, state } = useLocation()
-  return <Navigate to={`/tools${search}${hash}`} state={state} replace />
 }
 
 /**
@@ -44,7 +39,7 @@ export default function App() {
   useServiceWorker()
   const { pathname } = useLocation()
   useEffect(() => {
-    const url = `https://nymbx.dev${pathname === '/' ? '/tools' : pathname}`
+    const url = `https://nymbx.dev${pathname === '/tools' ? '/' : pathname}`
     document.querySelector('link[rel="canonical"]')?.setAttribute('href', url)
     document.querySelector('meta[property="og:url"]')?.setAttribute('content', url)
   }, [pathname])
@@ -52,7 +47,6 @@ export default function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<HomeRedirect />} />
         <Route
           path="contact"
           element={
@@ -77,9 +71,7 @@ export default function App() {
           path="*"
           element={
             <ChunkErrorBoundary>
-              <Suspense fallback={<PageLoader label="Loading the toolbox…" />}>
-                <ToolboxRoutes />
-              </Suspense>
+              <ToolboxRoutes />
             </ChunkErrorBoundary>
           }
         />

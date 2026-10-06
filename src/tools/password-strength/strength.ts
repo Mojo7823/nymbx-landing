@@ -37,8 +37,8 @@ const PATTERN_LABELS: Record<string, string> = {
 /**
  * The zxcvbn dictionaries are ~1.6 MB of the page's weight, which is far too
  * much to ship with the route. They live behind a single dynamic import that
- * runs on the first keystroke (or on idle after mount), so the page itself
- * stays small and the packages become their own chunks.
+ * runs on the first non-empty input, so an unused checker stays small and the
+ * packages become their own chunks.
  */
 let factory: ZxcvbnFactory | null = null
 let loading: Promise<ZxcvbnFactory> | null = null

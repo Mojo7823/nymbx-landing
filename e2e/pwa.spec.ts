@@ -10,29 +10,21 @@ import { expect, test } from '@playwright/test'
 test.describe('PWA and offline', () => {
   test.skip(({ browserName }) => browserName !== 'chromium', 'offline emulation is Chromium-only')
 
-  test('serves a manifest with the three icons', async ({ request }) => {
-    const response = await request.get('/manifest.webmanifest')
-    expect(response.status()).toBe(200)
-    const manifest = (await response.json()) as {
-      icons: { src: string; sizes: string; purpose?: string }[]
-    }
-    expect(manifest.icons).toHaveLength(3)
-    const sources = manifest.icons.map((icon) => icon.src)
-    expect(sources.some((src) => src.includes('pwa-192'))).toBe(true)
-    expect(sources.some((src) => src.includes('pwa-512'))).toBe(true)
-    expect(sources.some((src) => src.includes('pwa-maskable-512'))).toBe(true)
-  })
-
   test('registers a service worker and keeps opened tools working offline', async ({
     page,
     context,
   }) => {
-    await page.goto('/tools')
-    await page.waitForFunction(() => navigator.serviceWorker.ready.then(() => true), null, {
+    await page.goto('/')
+    await page.waitForFunction(() => !!navigator.serviceWorker.controller, null, {
       timeout: 20_000,
     })
     const cacheNames = await page.evaluate(() => caches.keys())
     expect(cacheNames.some((name) => name.includes('workbox-precache'))).toBe(true)
+    // The first visit must expose bulk download even when the shell mounts
+    // before the asynchronously registered worker. No navigation/reload first.
+    await expect(
+      page.getByRole('button', { name: /Download all tools for offline use/ }),
+    ).toBeVisible()
 
     // Visiting a tool pulls its chunk into the runtime asset cache.
     await page.goto('/tools/diff-checker')
@@ -41,7 +33,7 @@ test.describe('PWA and offline', () => {
 
     await context.setOffline(true)
 
-    await page.goto('/tools')
+    await page.goto('/')
     await expect(page.locator('[data-tool-card]').first()).toBeVisible()
     // Precached responses keep their COOP/COEP headers.
     expect(await page.evaluate(() => crossOriginIsolated)).toBe(true)

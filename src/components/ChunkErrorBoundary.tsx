@@ -53,7 +53,7 @@ export class ChunkErrorBoundary extends Component<Props, State> {
               Retry
             </Button>
             <Link
-              to="/tools"
+              to="/"
               className="inline-flex h-8 items-center rounded-md px-3 text-xs font-medium text-muted hover:text-pine"
             >
               Back to all tools

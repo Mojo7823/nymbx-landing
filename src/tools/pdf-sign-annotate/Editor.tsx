@@ -3,6 +3,7 @@ import type { PDFDocumentProxy } from 'pdfjs-dist'
 import { cx } from '../../lib/cx'
 import { strokesToPath, type InkPoint, type InkStroke } from './ink'
 import { createPageRenderer, type PageInfo } from './pdfDoc'
+import { PREVIEW_FONT } from './previewFont'
 import {
   boundsOf,
   clampToPage,
@@ -21,8 +22,6 @@ import {
 } from './objects'
 
 export type EditorTool = 'select' | 'text' | 'image' | 'draw' | 'check' | 'date'
-
-export const PREVIEW_FONT = '"NYMBX Sign", system-ui, sans-serif'
 
 const HANDLES: ResizeHandle[] = ['nw', 'ne', 'sw', 'se']
 

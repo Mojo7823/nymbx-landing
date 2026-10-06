@@ -23,9 +23,10 @@ import { formatBytes } from '../../lib/format'
 import { downloadBlob } from '../../lib/download'
 import { toast } from '../../lib/toast'
 import { wrapWorker, type WorkerHandle } from '../../lib/worker'
-import { Editor, PREVIEW_FONT, type EditorTool } from './Editor'
-import { SignaturePad } from './SignaturePad'
-import { Thumbnails } from './Thumbnails'
+import type { Editor as EditorComponent, EditorTool } from './Editor'
+import type { SignaturePad as SignaturePadComponent } from './SignaturePad'
+import type { Thumbnails as ThumbnailsComponent } from './Thumbnails'
+import { FONT_URL, PREVIEW_FONT, loadPreviewFont } from './previewFont'
 import { exportPlan } from './exportPlan'
 import { scaleStrokes, strokeBounds, translateStrokes, type InkStroke } from './ink'
 import { openPdf, pdfErrorMessage, type LoadedPdf } from './pdfDoc'
@@ -54,14 +55,17 @@ import {
 } from './objects'
 import type { ImageAsset, SignWorkerApi } from './sign.worker'
 
-const FONT_URL = '/fonts/NotoSansTC-Regular.ttf'
-const FONT_FAMILY = 'NYMBX Sign'
-const FONT_STYLE_ID = 'nymbx-sign-font'
 const MAX_IMAGE_BYTES = 20 * 1024 * 1024
 const INK_MERGE_MS = 600
 const DEFAULT_TEXT_SIZE = 16
 const DEFAULT_CHECK_SIZE = 28
 const SIGNATURE_PAGE_SHARE = 0.3
+
+interface EditorModules {
+  Editor: typeof EditorComponent
+  SignaturePad: typeof SignaturePadComponent
+  Thumbnails: typeof ThumbnailsComponent
+}
 
 interface StoredImage {
   bytes: Uint8Array
@@ -82,28 +86,6 @@ function measureTextWidth(text: string, size: number): number {
     ...text.split('\n').map((line) => ctx.measureText(line === '' ? ' ' : line).width),
   )
   return Math.max(widest, size)
-}
-
-/** Load the export font into the document so the preview uses the same metrics. */
-function usePreviewFont(): boolean {
-  const [ready, setReady] = useState(false)
-  useEffect(() => {
-    if (!document.getElementById(FONT_STYLE_ID)) {
-      const style = document.createElement('style')
-      style.id = FONT_STYLE_ID
-      style.textContent = `@font-face{font-family:'${FONT_FAMILY}';src:url('${FONT_URL}') format('truetype');font-display:block}`
-      document.head.appendChild(style)
-    }
-    let cancelled = false
-    void document.fonts
-      .load(`16px "${FONT_FAMILY}"`)
-      .catch(() => undefined)
-      .then(() => !cancelled && setReady(true))
-    return () => {
-      cancelled = true
-    }
-  }, [])
-  return ready
 }
 
 async function toPngOrJpeg(file: File): Promise<{ bytes: Uint8Array; type: 'png' | 'jpeg' }> {
@@ -139,6 +121,9 @@ export default function PdfSignAnnotate() {
   const [padOpen, setPadOpen] = useState(false)
   const [lastSignature, setLastSignature] = useState<InkStroke[] | null>(null)
   const [loading, setLoading] = useState(false)
+  const [loadingLabel, setLoadingLabel] = useState('Reading PDF')
+  const [editorLoadError, setEditorLoadError] = useState(false)
+  const [editorModules, setEditorModules] = useState<EditorModules | null>(null)
   const [exporting, setExporting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -151,17 +136,18 @@ export default function PdfSignAnnotate() {
   const imagesRef = useRef(images)
   const pdfRef = useRef<LoadedPdf | null>(null)
 
-  const fontReady = usePreviewFont()
+  const loadGeneration = useRef(0)
+  const Editor = editorModules?.Editor
+  const Thumbnails = editorModules?.Thumbnails
+  const SignaturePad = editorModules?.SignaturePad
 
   useEffect(() => {
     imagesRef.current = images
   }, [images])
-  useEffect(() => {
-    pdfRef.current = pdf
-  }, [pdf])
 
   useEffect(
     () => () => {
+      loadGeneration.current++
       workerRef.current?.terminate()
       for (const img of Object.values(imagesRef.current)) URL.revokeObjectURL(img.url)
       void pdfRef.current?.task.destroy()
@@ -221,11 +207,40 @@ export default function PdfSignAnnotate() {
   async function loadFile(files: File[]) {
     const file = files[0]
     if (!file) return
+    const generation = ++loadGeneration.current
+    let loaded: LoadedPdf | null = null
+    let preparingEditor = false
     setError(null)
+    setEditorLoadError(false)
+    setLoadingLabel('Reading PDF')
     setLoading(true)
     try {
-      const loaded = await openPdf(file)
-      void pdf?.task.destroy()
+      loaded = await openPdf(file)
+      if (generation !== loadGeneration.current) {
+        void loaded.task.destroy()
+        return
+      }
+      preparingEditor = true
+      setLoadingLabel('Loading editor and annotation font')
+      // Invalid files do not fetch the font or editor. No annotation controls
+      // are exposed until the real CJK font is ready to measure and render.
+      const [editor, thumbnails, signature] = await Promise.all([
+        import('./Editor'),
+        import('./Thumbnails'),
+        import('./SignaturePad'),
+        loadPreviewFont(),
+      ])
+      if (generation !== loadGeneration.current) {
+        void loaded.task.destroy()
+        return
+      }
+      setEditorModules({
+        Editor: editor.Editor,
+        Thumbnails: thumbnails.Thumbnails,
+        SignaturePad: signature.SignaturePad,
+      })
+      void pdfRef.current?.task.destroy()
+      pdfRef.current = loaded
       setPdf(loaded)
       setPageIndex(0)
       setHistory(emptyHistory())
@@ -233,17 +248,29 @@ export default function PdfSignAnnotate() {
       setTool('select')
       setZoom('fit')
     } catch (err) {
-      setError(pdfErrorMessage(err))
+      void loaded?.task.destroy()
+      if (generation !== loadGeneration.current) return
+      if (preparingEditor) {
+        setEditorLoadError(true)
+        setError(
+          'Could not load the editor or annotation font. Check your connection and reload the tool; reload clears the PDF.',
+        )
+      } else {
+        setError(pdfErrorMessage(err))
+      }
     } finally {
-      setLoading(false)
+      if (generation === loadGeneration.current) setLoading(false)
     }
   }
 
   function reset() {
+    loadGeneration.current++
     void pdf?.task.destroy()
     for (const img of Object.values(images)) URL.revokeObjectURL(img.url)
     setImages({})
     setPdf(null)
+    pdfRef.current = null
+    setEditorLoadError(false)
     setHistory(emptyHistory())
     setSelectedId(null)
     setDragged(null)
@@ -472,15 +499,25 @@ export default function PdfSignAnnotate() {
       description="Place a signature, text, dates and checkmarks on a PDF — flattened into a copy, in your browser"
       badge="client-side"
     >
-      {!pdf ? (
+      {!pdf || !Editor || !Thumbnails || !SignaturePad ? (
         <>
           {error && (
             <p role="alert" className="mb-4 text-sm text-red-600 dark:text-red-400">
               {error}
             </p>
           )}
+          {editorLoadError && !loading && (
+            <Button
+              variant="secondary"
+              size="sm"
+              className="mb-4"
+              onClick={() => window.location.reload()}
+            >
+              Reload tool
+            </Button>
+          )}
           {loading ? (
-            <ProgressBar label="Reading PDF" />
+            <ProgressBar label={loadingLabel} />
           ) : (
             <>
               <FileDropzone
@@ -697,7 +734,7 @@ export default function PdfSignAnnotate() {
 
               <div className="overflow-auto rounded-lg border border-line bg-shade p-2">
                 <div ref={stageRef}>
-                  {page && fontReady && (
+                  {page && (
                     <Editor
                       doc={pdf.doc}
                       pageIndex={pageIndex}
@@ -872,7 +909,7 @@ export default function PdfSignAnnotate() {
         </>
       )}
 
-      {padOpen && (
+      {padOpen && SignaturePad && (
         <SignaturePad
           initialStrokes={lastSignature ?? undefined}
           initialThickness={inkThickness}

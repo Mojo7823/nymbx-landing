@@ -36,9 +36,11 @@ export function OfflinePanel() {
   useEffect(() => {
     const controller = new AbortController()
     void (async () => {
-      if (!('serviceWorker' in navigator)) return
-      const registration = await navigator.serviceWorker.getRegistration()
-      if (!registration || controller.signal.aborted) return
+      if (!import.meta.env.PROD || !('serviceWorker' in navigator)) return
+      // The primary shell can mount before App's lazy registration. Await the
+      // real lifecycle instead of treating an early missing registration as final.
+      await navigator.serviceWorker.ready
+      if (controller.signal.aborted) return
       setReady(true)
       try {
         await refresh(controller.signal)

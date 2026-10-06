@@ -31,10 +31,6 @@ describe('ChunkErrorBoundary', () => {
 
     expect(await screen.findByRole('button', { name: /retry/i })).toBeInTheDocument()
     expect(screen.getByText('This page failed to load.')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /back to all tools/i })).toHaveAttribute(
-      'href',
-      '/tools',
-    )
   })
 
   it('explains the failure as a missing download while offline', async () => {

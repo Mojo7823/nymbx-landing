@@ -1,10 +1,15 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Eye, EyeOff, Loader2, ShieldCheck, Sparkles, Trash2 } from 'lucide-react'
 import { Button } from '../../components/Button'
 import { ToolLayout } from '../../components/ToolLayout'
 import { cx } from '../../lib/cx'
-import { useDebouncedValue } from '../../lib/useDebouncedValue'
-import { checkStrength, initStrength, isStrengthReady, SCORE_LABELS } from './strength'
+import {
+  checkStrength,
+  initStrength,
+  isStrengthReady,
+  SCORE_LABELS,
+  type StrengthResult,
+} from './strength'
 
 const WEAK_SAMPLE = 'password123'
 const STRONG_SAMPLE = 'grape-crystal orbit?7 violin'
@@ -32,48 +37,48 @@ export default function PasswordStrength() {
   const [revealed, setRevealed] = useState(false)
   const [ready, setReady] = useState(isStrengthReady)
   const [loadError, setLoadError] = useState(false)
-  const debounced = useDebouncedValue(password, 200)
-  const result = useMemo(() => (ready ? checkStrength(debounced) : null), [ready, debounced])
-
-  // The zxcvbn dictionaries are 1.6 MB, so they are not part of this route's
-  // chunk. Fetch them when the browser is idle, and immediately once the user
-  // starts typing — whichever comes first. `initStrength` is idempotent.
+  const [analysis, setAnalysis] = useState<{
+    result: StrengthResult | null
+    summary: string
+  } | null>(null)
   const typing = password !== ''
+  const result = analysis?.result ?? null
+
+  // Fetch the dictionaries only when there is something to score, never on idle.
   useEffect(() => {
-    if (ready) return
+    if (ready || !typing) return
     let cancelled = false
-    const start = () => {
-      initStrength().then(
-        () => {
-          if (!cancelled) setReady(true)
-        },
-        () => {
-          if (!cancelled) setLoadError(true)
-        },
-      )
-    }
-    if (typing) {
-      start()
-      return () => {
-        cancelled = true
-      }
-    }
-    // requestIdleCallback is not in Safari before 17; setTimeout is the fallback.
-    const idleCapable = typeof window.requestIdleCallback === 'function'
-    const handle = idleCapable
-      ? window.requestIdleCallback(start, { timeout: 3000 })
-      : window.setTimeout(start, 1500)
+    initStrength().then(
+      () => {
+        if (!cancelled) setReady(true)
+      },
+      () => {
+        if (!cancelled) setLoadError(true)
+      },
+    )
     return () => {
       cancelled = true
-      if (idleCapable) window.cancelIdleCallback(handle)
-      else window.clearTimeout(handle)
     }
   }, [ready, typing])
 
+  useEffect(() => {
+    if (!ready || password === '') return
+    const timer = window.setTimeout(() => {
+      setAnalysis({ result: checkStrength(password), summary: charsetSummary(password) })
+    }, 200)
+    return () => window.clearTimeout(timer)
+  }, [password, ready])
+
+  function changePassword(value: string) {
+    if (value === password) return
+    setPassword(value)
+    setAnalysis(null)
+    if (value === '') setLoadError(false)
+  }
+
   function clear() {
-    // State only — the value was never written anywhere else, so clearing
-    // the field leaves no trace of the password behind.
-    setPassword('')
+    // No storage or network writes; discard the input and its analysis together.
+    changePassword('')
   }
 
   const filled = result ? result.score + 1 : 0
@@ -91,8 +96,7 @@ export default function PasswordStrength() {
         <ShieldCheck className="mt-0.5 size-4 shrink-0" />
         <p>
           <strong className="font-semibold">Your password never leaves this device.</strong> It is
-          not sent over the network, not saved to storage, and clearing the field removes every
-          trace of it.
+          not sent over the network or saved to storage. Clear removes the input and its analysis.
         </p>
       </div>
 
@@ -106,7 +110,7 @@ export default function PasswordStrength() {
             name="password"
             type={revealed ? 'text' : 'password'}
             value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            onChange={(event) => changePassword(event.target.value)}
             placeholder="Type or paste a password to check it…"
             spellCheck={false}
             autoComplete="new-password"
@@ -129,11 +133,11 @@ export default function PasswordStrength() {
           </Button>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="ghost" size="sm" onClick={() => setPassword(WEAK_SAMPLE)}>
+          <Button variant="ghost" size="sm" onClick={() => changePassword(WEAK_SAMPLE)}>
             <Sparkles className="size-3.5" />
             Load weak sample
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => setPassword(STRONG_SAMPLE)}>
+          <Button variant="ghost" size="sm" onClick={() => changePassword(STRONG_SAMPLE)}>
             <Sparkles className="size-3.5" />
             Load strong sample
           </Button>
@@ -165,7 +169,7 @@ export default function PasswordStrength() {
               ))}
             </div>
             <p className="mt-2 font-mono text-[11px] text-muted tabular-nums">
-              {charsetSummary(debounced)} · ≈{result.guessesDisplay} guesses needed
+              {analysis?.summary} · ≈{result.guessesDisplay} guesses needed
             </p>
           </div>
 
@@ -216,10 +220,16 @@ export default function PasswordStrength() {
             </p>
           )}
         </div>
-      ) : loadError ? (
-        <p role="alert" className="mt-6 text-sm text-amber-badge">
-          The password dictionaries could not be loaded. Check your connection and reload the page.
-        </p>
+      ) : typing && loadError ? (
+        <div className="mt-6">
+          <p role="alert" className="mb-2 text-sm text-amber-badge">
+            The password dictionaries could not be loaded. Check your connection, then reload the
+            tool. Reload clears this input.
+          </p>
+          <Button variant="secondary" size="sm" onClick={() => window.location.reload()}>
+            Reload tool
+          </Button>
+        </div>
       ) : typing && !ready ? (
         <p role="status" className="mt-6 flex items-center gap-2 text-sm text-muted">
           <Loader2 className="size-4 animate-spin" />

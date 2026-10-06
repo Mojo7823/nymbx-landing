@@ -74,8 +74,8 @@ export default function DocxPdf() {
         <CloudUpload className="mt-0.5 size-4 shrink-0" />
         <p>
           <strong className="font-semibold">This tool uploads your file to our server</strong> for
-          conversion. It is processed in memory and deleted immediately after, so nothing is stored.
-          Every other tool in this toolbox runs entirely on your device.
+          conversion. Temporary conversion files are removed after processing; your document is not
+          retained. Every other tool in this toolbox runs entirely on your device.
           {!online && (
             <>
               {' '}

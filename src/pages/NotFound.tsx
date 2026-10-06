@@ -19,7 +19,7 @@ export function NotFound() {
       </p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Link
-          to="/tools"
+          to="/"
           className="inline-flex h-10 items-center gap-2 rounded-md bg-brand px-4 text-sm font-medium text-white transition-colors hover:bg-brand-deep dark:text-brand-ink"
         >
           <ArrowLeft className="size-4" /> Back home

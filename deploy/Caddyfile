@@ -22,9 +22,6 @@
 
 	encode zstd gzip
 
-	# The tools catalog is the homepage; preserve bookmarked searches.
-	redir / /tools{?query} 308
-
 	# Phase 15 (DOCX → PDF, server-assisted): proxy conversions to the private
 	# Gotenberg service. handle_path strips the prefix, so the client's
 	# POST /api/convert/forms/libreoffice/convert reaches Gotenberg as
