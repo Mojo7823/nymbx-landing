@@ -26,25 +26,46 @@ function CategoryList({ onNavigate }: { onNavigate?: () => void }) {
   )
 }
 
-export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function Sidebar({
+  open,
+  onClose,
+  collapsed,
+}: {
+  open: boolean
+  onClose: () => void
+  collapsed: boolean
+}) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   useEffect(() => {
     if (!open) return
+    const desktop = window.matchMedia('(min-width: 1024px)')
+    if (desktop.matches) {
+      onClose()
+      return
+    }
     const dialog = dialogRef.current
     if (!dialog) return
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     dialog.showModal()
+    const onBreakpointChange = (event: MediaQueryListEvent) => {
+      if (event.matches) onClose()
+    }
+    desktop.addEventListener('change', onBreakpointChange)
     return () => {
+      desktop.removeEventListener('change', onBreakpointChange)
       dialog.close()
       document.body.style.overflow = previousOverflow
     }
-  }, [open])
+  }, [open, onClose])
 
   return (
     <>
       {/* Desktop: static column */}
-      <aside className="sticky top-14 hidden h-[calc(100dvh-3.5rem)] w-52 shrink-0 overflow-y-auto border-r border-line bg-soft/40 px-3 py-6 lg:block">
+      <aside
+        id="desktop-sidebar"
+        className={`sticky top-14 hidden h-[calc(100dvh-3.5rem)] w-52 shrink-0 overflow-y-auto border-r border-line bg-soft/40 px-3 py-6 ${collapsed ? '' : 'lg:block'}`}
+      >
         <CategoryList />
       </aside>
 

@@ -26,7 +26,7 @@
    - A client-side text filter/search box over the cards.
 4. **App shell:**
    - Header: site name ("NYMBX Toolbox"), theme toggle (light/dark, persisted, no flash-of-wrong-theme on reload).
-   - Category navigation (sidebar on desktop, collapsible on mobile).
+   - Category navigation: collapsible desktop sidebar (header toggle, preference persisted), independent native-dialog drawer on mobile.
    - Footer with the privacy statement: *"Your files never leave this device — all processing happens in your browser."*
    - 404 page for unknown routes.
 5. **Shared components** in `src/components/` (future tools will consume these — design the APIs for reuse, add basic Vitest coverage):

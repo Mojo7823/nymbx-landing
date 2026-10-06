@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Outlet, Route, Routes, useNavigate } from 'react-router'
 import { Header } from '../components/Header'
 import { Sidebar } from '../components/Sidebar'
@@ -9,10 +9,29 @@ import { Dashboard } from './Dashboard'
 import { ToolPage } from './ToolPage'
 import { NotFound } from './NotFound'
 
+const SIDEBAR_STORAGE_KEY = 'nymbx:sidebar-collapsed'
+
 function Shell() {
   const [navOpen, setNavOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem(SIDEBAR_STORAGE_KEY) === 'true'
+    } catch {
+      return false
+    }
+  })
   const navigate = useNavigate()
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(SIDEBAR_STORAGE_KEY, String(sidebarCollapsed))
+    } catch {
+      /* Storage unavailable — keep the preference for this session. */
+    }
+  }, [sidebarCollapsed])
+
+  const onCloseNav = useCallback(() => setNavOpen(false), [])
 
   const onFocusSearch = useCallback(() => {
     const input = document.getElementById('tool-search')
@@ -31,9 +50,14 @@ function Shell() {
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <Header onOpenNav={() => setNavOpen(true)} onOpenShortcuts={onOpenHelp} />
+      <Header
+        onOpenNav={() => setNavOpen(true)}
+        onOpenShortcuts={onOpenHelp}
+        sidebarCollapsed={sidebarCollapsed}
+        onToggleSidebar={() => setSidebarCollapsed((collapsed) => !collapsed)}
+      />
       <div className="flex w-full flex-1">
-        <Sidebar open={navOpen} onClose={() => setNavOpen(false)} />
+        <Sidebar open={navOpen} onClose={onCloseNav} collapsed={sidebarCollapsed} />
         <main id="main-content" tabIndex={-1} className="flex min-w-0 flex-1 flex-col">
           <Outlet />
         </main>
