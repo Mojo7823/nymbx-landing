@@ -8,18 +8,41 @@
  * by a background update.
  */
 import { registerSW } from 'virtual:pwa-register'
-import { toast } from '../lib/toast'
+import { getToasts, toast } from '../lib/toast'
 
 /** How often an open tab re-checks for a new deployment. */
 const UPDATE_INTERVAL_MS = 60 * 60 * 1000
 
 export function registerPwa(): void {
+  let refreshToast: number | undefined
+  let reloading = false
+  const reloadPage = () => {
+    if (reloading) return
+    reloading = true
+    window.location.reload()
+  }
   const updateSW = registerSW({
     immediate: true,
+    onNeedReload: reloadPage,
     onNeedRefresh() {
-      toast('A new version is ready.', {
+      // Workbox can report the same waiting worker again after an update check.
+      if (getToasts().some(({ id }) => id === refreshToast)) return
+      refreshToast = toast('A new version is ready.', {
         duration: 0,
-        action: { label: 'Reload', onClick: () => void updateSW(true) },
+        action: {
+          label: 'Reload',
+          onClick: async () => {
+            const registration = await navigator.serviceWorker.getRegistration()
+            if (!registration?.waiting) {
+              reloadPage()
+              return
+            }
+            // Workbox's isUpdate flag stays false in a first-visit tab. Observe
+            // the real controller change so its consented update also reloads.
+            navigator.serviceWorker.addEventListener('controllerchange', reloadPage, { once: true })
+            await updateSW(true)
+          },
+        },
       })
     },
     onOfflineReady() {
