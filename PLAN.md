@@ -8,7 +8,7 @@ A privacy-first, browser-based all-in-one toolbox. **All processing happens clie
 
 - The homepage `/` renders the tools catalog directly, without a React or Caddy redirect. Search/category parameters and bookmarked hashes work on the root route. Internal toolbox home/category links and the global search shortcut target `/tools`; individual tools remain at `/tools/<slug>`.
 - `/tools` still renders the catalog for existing bookmarks, with `/` as its canonical URL. The PWA launches at `/`; its existing manifest `id: '/tools'` stays unchanged to preserve installed-app identity.
-- All **55 tools across 7 categories** are marked available and have a matching lazy-loaded implementation; there are no missing or unregistered tool implementations. Phases 59 and 60 are shipped extensions, not additional tools. Phase 62 adds the JSON Schema validator.
+- All **56 tools across 7 categories** are marked available and have a matching lazy-loaded implementation; there are no missing or unregistered tool implementations. Phases 59 and 60 are shipped extensions, not additional tools. Phase 62 adds the JSON Schema validator; Phase 63 adds the PDF form filler & flattener.
 - Phases **29, 33, 35 and 50 were intentionally dropped**, not left unfinished. The old background-remover fine-tune plan still has unchecked boxes, but `FineTuneEditor`, mask/history helpers, canvas adapters and the result-view integration exist; those boxes are not a reliable implementation backlog. SAM-guided refinement remains explicitly deferred in its design.
 - Homepage verification: fresh production build served by the actual Caddy configuration; `/` responds with HTTP 200 and no redirect; desktop/light and mobile/dark browser smoke showed all 54 cards with no horizontal overflow or page errors. Affected homepage, navigation/shortcut and offline contract checks: **13 passed**, with 3 existing non-Chromium offline skips.
 - Mobile Lighthouse 13 on the rebuilt Docker image: homepage **97**, Markdown editor **91**, password strength **96**, PDF sign/annotate **94**; accessibility **100** on all four. A separate fresh Markdown run also scored **91** (baseline **63**, 971,649 B transferred; final image **196,988 B**). The primary shell no longer adds a lazy-route waterfall; editing, preview, autosave, export, XSS protection and CJK annotation were exercised with real modules.
@@ -30,13 +30,13 @@ A privacy-first, browser-based all-in-one toolbox. **All processing happens clie
 | Task | Evidence / status | Priority |
 |---|---|---|
 | Real-device Safari/WebKit | Chromium/Firefox/WebKit/mobile-WebKit automation exists; Linux has no configured Safari device or device-cloud connection. Physical-device verification remains open. | Blocked |
-| New tools and extensions | The 12 remaining ideas in the Tier 2/Tier 3 backlog below are unscheduled; JSON Schema validation was promoted to Phase 62. The production Gotenberg prerequisite for PPTX/XLSX → PDF is satisfied; those formats are not implemented. | Unscheduled |
+| New tools and extensions | The 11 remaining ideas in the Tier 2/Tier 3 backlog below are unscheduled; JSON Schema validation and PDF form filling were promoted to Phases 62–63. The production Gotenberg prerequisite for PPTX/XLSX → PDF is satisfied; those formats are not implemented. | Unscheduled |
 
 ### Next verification: real-device Safari
 
 The remaining verification prerequisite is a physical Safari device or device-cloud connection. Check the root catalog, demand-loaded tools, document downloads and installed-PWA update/offline behavior on actual Safari. Automated WebKit coverage is complete but is not physical-device evidence.
 
-Phase 15's production deployment is closed. Phase 62 is separate, explicitly requested feature work; the 12 remaining ideas and additional conversion directions are not part of that repair.
+Phase 15's production deployment is closed. Phases 62–63 are separate, explicitly requested feature work; the 11 remaining ideas and additional conversion directions are not part of that repair.
 
 ## Stack
 
@@ -473,13 +473,29 @@ Promoted from Tier 2 on 2026-10-06: a companion to the JSON formatter, using the
 
 ---
 
+## Phase 63 — PDF form filler & flattener
+
+Promoted from Tier 2 on 2026-10-07. Route: `/tools/pdf-form-filler`; category: PDF & Office. Uses the existing `pdf-lib`, `pdf.js`, Comlink and bundled Noto Sans TC dependencies; no dependencies added.
+
+- **Implementation:** open a PDF up to 50 MiB; list AcroForm text/multiline/password fields, checkboxes, radio groups, dropdowns (including editable choices) and single/multi-select lists. Retain initial values, alternate labels, required/read-only flags and maximum lengths. Required flags do not block partial saves. Update a paginated canvas preview, reset to original values, and download either a filled/editable or flattened/static PDF. Every export starts from the untouched original; inputs/files are not persisted or uploaded.
+- **Safe boundaries:** reject encrypted, digitally signed, corrupt, no-form and XFA PDFs; XFA is checked before `getForm()` can discard it. Rich-text, file-selection, unsigned-signature, push-button and unknown/ambiguous fields are listed and preserved in editable output; unsupported or non-visual widgets disable flattening. Scripts/calculations are not run; existing actions remain in editable copies. Flattening is not redaction.
+- **Appearance handling:** regenerate text/choice/check/radio appearances, including export-value/display-label choice pairs. Preserve a declared text size when it fits; shrink overflowing text, and refuse text that would still clip at 4pt. Missing font glyphs fail explicitly instead of becoming blank output. Editable copies embed the full multilingual font so later edits can use unused characters (larger output); flattened copies subset it. Read-only values remain unchanged.
+- **Confirmed library defects repaired:** `pdf-lib` 1.17 removes appearance references rather than widget references from page annotations during flattening. Capture surviving annotations before flattening removes widget objects, then restore only unrelated annotations; a regression preserves a real link. Reusing a Helvetica-derived multiline size with Noto also clipped a second baseline at −57.81pt; fitted text appearances and a failing-before/passing-after regression keep both lines inside the widget.
+- **Browser recovery:** reproduced WebKit failing to load a worker that entered the HTTP cache before service-worker takeover. On a hashed-asset Cache Storage miss, remove HTTP validators and fetch unconditional bytes; subsequent loads still use Cache Storage. A real browser regression controls first-visit registration timing and verifies invalid-file rejection followed by a valid form, without increasing assertion deadlines.
+- **Library research:** Context7 consulted the [pdf-lib form/font examples](https://github.com/Hopding/pdf-lib#fill-form), [Workbox runtime caching contracts](https://github.com/GoogleChrome/workbox/blob/v7/packages/workbox-build/src/types.ts) and installed form/appearance/fetch implementations.
+- **T1 — Implementation:** complete; lazy catalog/route integration and client-side worker/preview are implemented. Lint/typecheck passed.
+- **T2 — Functional verification:** complete; 27 focused regressions, the full 120-file/1,449-test unit suite and eight production browser workflows passed across Chromium, Firefox, WebKit and mobile WebKit. Editable field values, changed multi-select choices, current-input flattened downloads, initial-value reset and XFA/no-form/corrupt recovery across service-worker takeover were exercised. Extended smoke also checked a genuinely encrypted PDF, ignored PDF scripts, CJK glyphs, missing-glyph failure/recovery, both pages, native downloads and Focus/Escape; requests contained no file payloads.
+- **T3 — Visual inspection:** complete; animation-free screenshots inspected at 1280px and 390px in light/dark themes, covering empty, error and populated surfaces. Mobile file-header wrapping and clipped multiline output were corrected; both text lines and CJK characters are visibly rendered.
+- **T4 — Production verification:** complete; fresh build, repeated 1280px/390px light/dark screenshot inspection and extended production smoke pass. The dashboard does not load the form tool; offline reload plus local file editing/export succeeds. Network capture: 69 same-origin GETs, zero upload bytes and no page errors. The full production browser suite passes 89 tests with three pre-existing non-Chromium PWA skips. Lint/typecheck and the full unit suite pass. UI chunk: 13.36 kB (4.61 kB gzip); lazy form worker: 795.25 kB. Physical Safari remains the existing external verification prerequisite; no cloud deployment is claimed.
+
+---
+
 ## Backlog (unscheduled ideas)
 
 Add future tool ideas here; promote to a numbered extension phase when scheduled. Every entry must keep the privacy invariant (client-side unless explicitly server-assisted) and reuse existing plumbing where noted. Ordered roughly by value-for-effort for this site's audience (compliance / security-assessment work, CJK users). Added 2026-09-05 as a review of the roadmap after Phase 49; the Tier 1 items from that review were promoted to Phases 53–60 and the remaining tiers below are not scheduled.
 
 ### Tier 2 — moderate effort, clear gap
 - **PDF annotation objects & shapes** (PDF & Office). Deferred from Phase 52: rectangle/ellipse/arrow tools and an export mode that writes real, editable PDF annotation objects instead of flattening. Libraries: `pdf-lib` low-level API. Why: only worth it once the flattened sign-and-annotate flow has proven itself and cross-viewer fidelity can be tested properly.
-- **PDF form filler & flattener** (PDF & Office). List AcroForm fields, fill text/checkbox/radio/dropdown, flatten to static content, download. Libraries: `pdf-lib` form API + `pdf.js` preview. Why: compliance paperwork is largely PDF forms.
 - **PDF unlock / protect** (PDF & Office). Remove a known user password, or add owner/user passwords and permission flags. Libraries: `pdf-lib` cannot encrypt or decrypt; needs a WASM engine (`qpdf-wasm` or `mupdf.js`, several MB, lazy). Why: every current PDF tool rejects encrypted input with "remove the password first" and nothing on the site can do that.
 - **SSH / public key inspector** (Security). Paste an OpenSSH, PEM, or JWK public key → algorithm, size/curve, SHA-256 and MD5 fingerprints, `authorized_keys` line, and format conversion between the three. Libraries: Web Crypto + small parsers (reuses Phase 38 PEM handling). Why: pairs with the certificate decoder; fingerprint checks are a routine security-review step.
 - **Image watermark** (Image). Text or logo stamp with opacity, tiling, position presets; batch + zip. Libraries: canvas, `pica` for output scaling. Why: same UX as PDF watermark (Phase 18); frequently requested for shared evidence images.

@@ -139,6 +139,20 @@ const pwaPlugin = VitePWA({
         options: {
           cacheName: ASSET_CACHE,
           matchOptions: IGNORE_VARY,
+          // A worker loaded before SW takeover can arrive with HTTP-cache
+          // validators. WebKit cannot replay that conditional worker response
+          // through fetch(); on a Cache Storage miss, fetch the immutable bytes.
+          fetchOptions: { cache: 'reload' },
+          plugins: [
+            {
+              requestWillFetch: async ({ request }) => {
+                const headers = new Headers(request.headers)
+                headers.delete('if-none-match')
+                headers.delete('if-modified-since')
+                return new Request(request, { headers })
+              },
+            },
+          ],
           // Older deployments must not crowd a complete current download out of a count cap.
           expiration: { maxAgeSeconds: 90 * DAY, purgeOnQuotaError: true },
           cacheableResponse: { statuses: [0, 200] },

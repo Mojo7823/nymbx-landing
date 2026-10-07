@@ -455,6 +455,17 @@ export const tools: ToolMeta[] = [
     phase: 58,
     icon: FileSearch,
   },
+  {
+    slug: 'pdf-form-filler',
+    name: 'PDF form filler & flattener',
+    description: 'Fill PDF forms and keep fields editable or flatten',
+    keywords: ['acroform', 'checkbox', 'radio', 'dropdown', 'fillable', 'paperwork'],
+    category: 'pdf-office',
+    badge: client,
+    status: 'available',
+    phase: 63,
+    icon: FileSignature,
+  },
 
   // ── Converters ────────────────────────────────────────────────────────
   {
