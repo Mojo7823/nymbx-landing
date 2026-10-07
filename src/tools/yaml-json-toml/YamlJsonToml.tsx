@@ -78,12 +78,8 @@ export default function YamlJsonToml() {
   const result = conversion?.result ?? null
 
   return (
-    <ToolLayout
-      title="YAML ↔ JSON ↔ TOML"
-      description="Convert between the three config formats with auto-detected input. Everything stays in your browser."
-      badge="client-side"
-    >
-      <div className="mb-3 flex flex-wrap items-center gap-2">
+    <ToolLayout workspace>
+      <div className="mb-3 flex shrink-0 flex-wrap items-center gap-2">
         <Button variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
           <FileUp className="size-3.5" />
           Open file
@@ -113,18 +109,20 @@ export default function YamlJsonToml() {
         )}
       </div>
 
-      <div className="flex flex-col gap-3 lg:flex-row">
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Paste JSON, YAML or TOML here. The format is detected automatically…"
-          aria-label="Input"
-          spellCheck={false}
-          className="h-64 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none lg:h-96 lg:w-1/2"
-        />
+      <div className="grid flex-1 auto-rows-[minmax(min-content,1fr)] gap-3 lg:grid-cols-2">
+        <div className="flex min-w-0 flex-col">
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Paste JSON, YAML or TOML here. The format is detected automatically…"
+            aria-label="Input"
+            spellCheck={false}
+            className="h-0 min-h-32 w-full flex-1 resize-none overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
+          />
+        </div>
 
-        <div className="flex w-full flex-col gap-2 lg:w-1/2">
-          <div className="flex flex-wrap items-center gap-2">
+        <div className="flex min-w-0 flex-col gap-2">
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
             <div
               role="radiogroup"
               aria-label="Output format"
@@ -167,13 +165,13 @@ export default function YamlJsonToml() {
           </div>
 
           {conversion === null ? (
-            <p className="flex flex-1 items-center justify-center rounded-lg border border-line bg-card p-6 text-center text-xs text-faint">
+            <p className="flex min-h-32 flex-1 items-center justify-center rounded-lg border border-line bg-card p-6 text-center text-xs text-faint">
               The converted output appears here.
             </p>
           ) : detectedFormat === null ? (
             <div
               role="alert"
-              className="flex flex-col gap-1.5 rounded-lg border border-line bg-card p-4"
+              className="flex shrink-0 flex-col gap-1.5 rounded-lg border border-line bg-card p-4"
             >
               <p className="mb-1 text-sm font-medium text-ink">
                 The input is not valid JSON, TOML or YAML:
@@ -190,17 +188,21 @@ export default function YamlJsonToml() {
                 ))}
             </div>
           ) : result && !result.ok ? (
-            <div role="alert" className="rounded-lg border border-line bg-card p-4">
+            <div role="alert" className="shrink-0 rounded-lg border border-line bg-card p-4">
               <ErrorLine error={{ message: result.error ?? 'Conversion failed.' }} />
             </div>
           ) : (
-            <pre className="max-h-96 min-h-32 flex-1 overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed whitespace-pre text-ink">
+            <pre className="h-0 min-h-32 flex-1 overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed whitespace-pre text-ink">
               {result?.output}
             </pre>
           )}
 
           {result?.warnings.map((w) => (
-            <p key={w} className="flex items-start gap-1.5 text-xs text-amber-badge" role="status">
+            <p
+              key={w}
+              className="flex shrink-0 items-start gap-1.5 text-xs text-amber-badge"
+              role="status"
+            >
               <FileWarning className="mt-0.5 size-3.5 shrink-0" />
               {w}
             </p>
@@ -208,7 +210,7 @@ export default function YamlJsonToml() {
         </div>
       </div>
 
-      <p className="mt-3 flex items-start gap-1.5 text-xs text-muted">
+      <p className="mt-3 flex shrink-0 items-start gap-1.5 text-xs text-muted">
         <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden />
         Comments and original formatting are not preserved; conversion works on the parsed data.
         YAML anchors and aliases are expanded into plain values.

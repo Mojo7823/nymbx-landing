@@ -172,11 +172,7 @@ export default function BackgroundRemover() {
   const busy = phase === 'working'
 
   return (
-    <ToolLayout
-      title="Background remover"
-      description="Remove the background from a photo with an AI model that runs entirely in your browser; the image never leaves this device."
-      badge="client-side"
-    >
+    <ToolLayout>
       <div className="mb-6 flex flex-wrap items-center gap-x-6 gap-y-3 rounded-lg border border-line bg-card p-4">
         <fieldset className="flex items-center gap-3">
           <legend className="sr-only">Model quality</legend>

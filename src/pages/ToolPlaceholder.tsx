@@ -28,7 +28,7 @@ function PlaceholderBox({
  */
 export function ToolPlaceholder({ tool }: { tool: ToolMeta }) {
   return (
-    <ToolLayout title={tool.name} description={tool.description} badge={tool.badge}>
+    <ToolLayout>
       <div
         role="note"
         className="mb-6 flex items-start gap-3 rounded-lg border border-line bg-mint/60 p-4"

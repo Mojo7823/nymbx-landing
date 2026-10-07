@@ -138,12 +138,8 @@ export default function Base64() {
         : ''
 
   return (
-    <ToolLayout
-      title="Base64 encode / decode"
-      description="Encode text or any file to base64 (standard or URL-safe, optionally as a data URI) and decode base64 back to text or a binary download. Everything runs in your browser."
-      badge="client-side"
-    >
-      <div role="tablist" aria-label="Direction" className="mb-4 flex gap-1">
+    <ToolLayout workspace>
+      <div role="tablist" aria-label="Direction" className="mb-4 flex shrink-0 flex-wrap gap-1">
         {(
           [
             ['encode', 'Encode'],
@@ -166,7 +162,7 @@ export default function Base64() {
       </div>
 
       {direction === 'encode' ? (
-        <div className="mb-4 flex flex-wrap items-center gap-4 rounded-lg border border-line bg-soft p-3">
+        <div className="mb-4 flex shrink-0 flex-wrap items-center gap-4 rounded-lg border border-line bg-soft p-3">
           <label
             className={cx(
               'flex items-center gap-2 text-xs font-medium text-muted',
@@ -195,13 +191,13 @@ export default function Base64() {
           </label>
         </div>
       ) : (
-        <p className="mb-4 rounded-lg border border-line bg-soft p-3 text-xs text-muted">
+        <p className="mb-4 shrink-0 rounded-lg border border-line bg-soft p-3 text-xs text-muted">
           Standard and URL-safe alphabets, wrapped lines, and full data URIs are all detected
           automatically.
         </p>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid flex-1 grid-rows-[minmax(min-content,1fr)_auto] gap-4 lg:grid-cols-2 lg:grid-rows-1">
         <div className="flex min-w-0 flex-col gap-3">
           <textarea
             name="input"
@@ -216,9 +212,9 @@ export default function Base64() {
             }
             aria-label={direction === 'encode' ? 'Text input' : 'Base64 input'}
             spellCheck={false}
-            className="h-56 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
+            className="h-0 min-h-32 w-full flex-1 resize-none overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
           />
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
             <Button onClick={convert} disabled={!text.trim() || busy}>
               <ArrowLeftRight className="size-4" />
               {direction === 'encode' ? 'Encode' : 'Decode'}
@@ -266,15 +262,21 @@ export default function Base64() {
       {error && (
         <p
           role="alert"
-          className="mt-4 rounded-lg border border-line bg-rose-soft p-3 text-sm text-rose"
+          className="mt-4 shrink-0 rounded-lg border border-line bg-rose-soft p-3 text-sm text-rose"
         >
           {error}
         </p>
       )}
 
       {output && (
-        <section className="mt-6 border-t border-line pt-5" aria-labelledby="output-heading">
-          <div className="mb-3 flex flex-wrap items-center gap-2">
+        <section
+          className={cx(
+            'mt-4 flex flex-col border-t border-line pt-3',
+            output.kind === 'decoded-binary' ? 'shrink-0' : 'flex-1',
+          )}
+          aria-labelledby="output-heading"
+        >
+          <div className="mb-3 flex shrink-0 flex-wrap items-center gap-2">
             <h2 id="output-heading" className="mr-auto text-sm font-semibold text-ink">
               {output.kind === 'encoded'
                 ? 'Encoded output'
@@ -328,7 +330,7 @@ export default function Base64() {
           </div>
 
           {output.kind === 'decoded-binary' ? (
-            <p className="rounded-lg border border-line bg-card p-4 text-sm text-muted">
+            <p className="shrink-0 rounded-lg border border-line bg-card p-4 text-sm text-muted">
               The decoded bytes are not valid UTF-8 text, so there is nothing to preview. Use the
               binary download above.
             </p>
@@ -344,10 +346,10 @@ export default function Base64() {
                 }
                 aria-label="Output"
                 spellCheck={false}
-                className="h-56 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed break-all text-ink focus:border-pine focus:outline-none"
+                className="h-0 min-h-32 w-full flex-1 resize-none overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed break-all text-ink focus:border-pine focus:outline-none"
               />
               {textValue !== undefined && textValue.length > DISPLAY_LIMIT && (
-                <p className="mt-2 text-xs text-muted">
+                <p className="mt-2 shrink-0 text-xs text-muted">
                   Showing the first {formatBytes(DISPLAY_LIMIT)} of {formatBytes(textValue.length)};
                   copy and download include everything.
                 </p>

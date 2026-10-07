@@ -266,12 +266,8 @@ export default function HtmlToMarkdown() {
   const editorValue = truncatedEditor ? html.slice(0, EDITOR_LIMIT) : html
 
   return (
-    <ToolLayout
-      title="HTML → Markdown"
-      description="Turn any HTML page or snippet into clean Markdown, in your browser"
-      badge="client-side"
-    >
-      <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-line bg-card p-3">
+    <ToolLayout workspace>
+      <div className="mb-4 flex shrink-0 flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-line bg-card p-3">
         <Select
           label="Headings"
           value={options.headingStyle}
@@ -363,7 +359,7 @@ export default function HtmlToMarkdown() {
       </div>
 
       {converting && (
-        <div className="mb-4 flex items-center gap-3">
+        <div className="mb-4 flex shrink-0 items-center gap-3">
           <ProgressBar
             className="min-w-0 flex-1"
             value={percent}
@@ -377,10 +373,11 @@ export default function HtmlToMarkdown() {
       )}
 
       <SplitPane
+        className="min-h-[28rem] flex-1 lg:min-h-0"
         label="Resize input and output panels"
         first={
-          <section aria-label="HTML input">
-            <div className="mb-2 flex h-8 items-center justify-between gap-2">
+          <section aria-label="HTML input" className="flex h-full min-h-0 flex-col overflow-auto">
+            <div className="mb-2 flex h-8 shrink-0 items-center justify-between gap-2">
               <h2 className="text-xs font-semibold tracking-wide text-muted uppercase">HTML</h2>
               <div className="flex gap-2">
                 <Button variant="secondary" size="sm" onClick={() => void pasteFromClipboard()}>
@@ -405,11 +402,11 @@ export default function HtmlToMarkdown() {
               aria-label="HTML to convert"
               spellCheck={false}
               className={cx(
-                'h-64 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-[13px] leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none sm:h-80',
+                'min-h-0 w-full flex-1 resize-none overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-[13px] leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none',
                 truncatedEditor && 'bg-page',
               )}
             />
-            <p className="mt-1 font-mono text-[11px] text-muted tabular-nums">
+            <p className="mt-1 shrink-0 font-mono text-[11px] text-muted tabular-nums">
               {html === ''
                 ? 'No input yet.'
                 : `${html.length.toLocaleString()} characters · ${formatBytes(byteLength(html))}`}
@@ -417,7 +414,7 @@ export default function HtmlToMarkdown() {
                 ' · large file — the editor shows the first 200 KB; conversion uses the whole file'}
             </p>
             <FileDropzone
-              className="mt-3"
+              className="mt-3 shrink-0 [&>[role=button]]:flex-row [&>[role=button]]:flex-wrap [&>[role=button]]:gap-1 [&>[role=button]]:px-3 [&>[role=button]]:py-3 [&>[role=button]>svg]:size-5"
               accept={ACCEPT}
               maxSize={MAX_FILE_SIZE}
               onFiles={(files) => void loadFile(files)}
@@ -426,8 +423,8 @@ export default function HtmlToMarkdown() {
           </section>
         }
         second={
-          <section aria-label="Markdown output">
-            <div className="mb-2 flex min-h-8 flex-wrap items-center justify-between gap-2">
+          <section aria-label="Markdown output" className="flex h-full min-h-0 flex-col">
+            <div className="mb-2 flex min-h-8 shrink-0 flex-wrap items-center justify-between gap-2">
               <div role="tablist" aria-label="Output view" className="flex gap-1">
                 {(
                   [
@@ -467,16 +464,16 @@ export default function HtmlToMarkdown() {
                 placeholder="The Markdown appears here."
                 aria-label="Converted Markdown"
                 spellCheck={false}
-                className="h-64 w-full resize-y rounded-lg border border-line bg-page p-3 font-mono text-[13px] leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none sm:h-80"
+                className="min-h-0 w-full flex-1 resize-none overflow-auto rounded-lg border border-line bg-page p-3 font-mono text-[13px] leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
               />
             ) : previewHtml ? (
               <div
-                className="md-preview h-64 overflow-auto rounded-lg border border-line bg-card p-4 sm:h-80"
+                className="md-preview min-h-0 flex-1 overflow-auto rounded-lg border border-line bg-card p-4"
                 // Safe: renderMarkdown passes all output through DOMPurify.
                 dangerouslySetInnerHTML={{ __html: previewHtml }}
               />
             ) : (
-              <div className="flex h-64 items-center justify-center rounded-lg border border-dashed border-line-strong text-sm text-muted sm:h-80">
+              <div className="flex min-h-0 flex-1 items-center justify-center overflow-auto rounded-lg border border-dashed border-line-strong p-4 text-sm text-muted">
                 The rendered Markdown appears here.
               </div>
             )}
@@ -485,7 +482,7 @@ export default function HtmlToMarkdown() {
       />
 
       {currentFailure?.message === null && (
-        <div className="mt-4 flex items-center gap-3">
+        <div className="mt-4 flex shrink-0 items-center gap-3">
           <p className="text-xs text-muted">Conversion cancelled.</p>
           <Button variant="secondary" size="sm" onClick={() => setRunId((n) => n + 1)}>
             <RotateCw className="size-3.5" />
@@ -495,12 +492,12 @@ export default function HtmlToMarkdown() {
       )}
 
       {currentFailure?.message != null && (
-        <p role="alert" className="mt-4 text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="mt-4 shrink-0 text-sm text-red-600 dark:text-red-400">
           {currentFailure.message}
         </p>
       )}
 
-      <p aria-live="polite" className="mt-4 font-mono text-xs text-muted tabular-nums">
+      <p aria-live="polite" className="mt-4 shrink-0 font-mono text-xs text-muted tabular-nums">
         {shownResult
           ? formatStatsLine(
               shownResult.htmlBytes,
@@ -510,7 +507,7 @@ export default function HtmlToMarkdown() {
           : 'Paste HTML or drop a file to convert.'}
       </p>
 
-      <p className="mt-2 text-xs text-muted">
+      <p className="mt-2 shrink-0 text-xs text-muted">
         Nothing is uploaded. Scripts, styles and event handlers are stripped before conversion, and
         the preview never loads remote images.
       </p>

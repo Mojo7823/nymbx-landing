@@ -54,7 +54,7 @@ Show sub-scores in the UI: Impact, Exploitability (and Modified Impact / Modifie
 
 ## 5. UX specification
 
-Use `ToolLayout` (`title="CVSS calculator"`, `description="Score vulnerabilities with CVSS v3.1 and v4.0 — exact FIRST equations, shareable by link"`, `badge="client-side"`). Conventions: `src/tools/uuid-password-generator/` and `src/tools/timestamp-converter/` (control-heavy tools with result cards and copy buttons), `src/tools/pdf-sign-annotate/` (tabs), `src/components/CopyButton.tsx`.
+Use the content-only `ToolLayout`; tool identity and server-assisted status come from the registry/shared header, not layout props. Conventions: `src/tools/uuid-password-generator/` and `src/tools/timestamp-converter/` (control-heavy tools with result cards and copy buttons), `src/tools/pdf-sign-annotate/` (tabs), `src/components/CopyButton.tsx`.
 
 1. **Version tabs**: `CVSS v4.0` (default) and `CVSS v3.1`. Switching versions keeps its own state per version; the hash reflects the active one.
 2. **Vector bar** at the top: a monospace text input holding the canonical vector, editable — typing/pasting a valid vector updates every picker (debounced 200 ms); an invalid string shows the parse error under the field without touching the pickers; `Copy vector`, `Copy score` and `Reset` buttons; a `Share link` button that copies `location.href` (with the hash) and toasts.

@@ -47,8 +47,8 @@ export function MarkdownPreview({
   )
 
   return (
-    <section aria-label="Rendered preview">
-      <div className="mb-3 flex min-h-8 flex-wrap items-center justify-between gap-2">
+    <section aria-label="Rendered preview" className="flex h-full min-h-0 flex-col">
+      <div className="mb-3 flex min-h-8 shrink-0 flex-wrap items-center justify-between gap-2">
         <h2 className="text-xs font-semibold tracking-wide text-muted uppercase">Preview</h2>
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="secondary" size="sm" onClick={() => setFocused(true)}>
@@ -57,7 +57,7 @@ export function MarkdownPreview({
           </Button>
         </div>
       </div>
-      <div className="markdown-preview-pane h-[36rem] overflow-auto rounded-xl border border-line bg-card p-5">
+      <div className="markdown-preview-pane min-h-0 flex-1 overflow-auto rounded-xl border border-line bg-card p-5">
         {!focused && renderedDocument}
       </div>
       <dialog

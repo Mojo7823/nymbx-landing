@@ -142,11 +142,7 @@ export default function ImagesToPdf() {
   const activeMode = PAGE_MODES.find((m) => m.value === pageMode) ?? PAGE_MODES[0]
 
   return (
-    <ToolLayout
-      title="Images → PDF"
-      description="Turn photos and screenshots into a single PDF, one image per page. Drag the images into the order you want. Everything stays in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       {items.length === 0 ? (
         <>
           {error && (

@@ -39,82 +39,86 @@ function Row({ label, value, mono = true }: { label: string; value: string; mono
 
 function ParseResult({ parsed }: { parsed: ParsedUrl }) {
   return (
-    <section className="mt-6 border-t border-line pt-5" aria-labelledby="parse-heading">
-      <div className="mb-3 flex flex-wrap items-center gap-2">
+    <section
+      className="mt-4 flex flex-1 flex-col border-t border-line pt-3"
+      aria-labelledby="parse-heading"
+    >
+      <div className="mb-3 flex shrink-0 flex-wrap items-center gap-2">
         <h2 id="parse-heading" className="mr-auto text-sm font-semibold text-ink">
           URL breakdown
         </h2>
         <CopyButton text={parsed.href} label="Copy normalized URL" />
       </div>
-
-      {parsed.assumedProtocol && (
-        <p className="mb-3 rounded-lg border border-line bg-soft p-3 text-xs text-muted">
-          The input has no scheme, so <span className="font-mono">https://</span> was assumed.
-        </p>
-      )}
-
-      <dl className="divide-y divide-line rounded-lg border border-line bg-card px-4 py-1">
-        <Row label="Normalized" value={parsed.href} />
-        <Row label="Protocol" value={parsed.protocol} />
-        {parsed.username !== undefined && <Row label="Username" value={parsed.username} />}
-        {parsed.password !== undefined && <Row label="Password" value={parsed.password} />}
-        <Row label="Host" value={parsed.hostname} />
-        {parsed.unicodeHostname !== undefined && (
-          <Row label="Host (unicode)" value={parsed.unicodeHostname} />
+      <div className="h-0 min-h-32 flex-1 overflow-auto">
+        {parsed.assumedProtocol && (
+          <p className="mb-3 rounded-lg border border-line bg-soft p-3 text-xs text-muted">
+            The input has no scheme, so <span className="font-mono">https://</span> was assumed.
+          </p>
         )}
-        {parsed.port !== undefined && <Row label="Port" value={parsed.port} />}
-        <Row label="Path" value={parsed.pathname} />
-        {parsed.decodedPathname !== undefined && (
-          <Row label="Path (decoded)" value={parsed.decodedPathname} />
-        )}
-        {parsed.hash !== undefined && <Row label="Fragment" value={parsed.hash} />}
-        {parsed.decodedHash !== undefined && (
-          <Row label="Fragment (decoded)" value={parsed.decodedHash} />
-        )}
-      </dl>
 
-      <h3 className="mt-5 mb-2 text-sm font-semibold text-ink">
-        Query parameters{' '}
-        <span className="font-normal text-muted">
-          ({parsed.params.length}
-          {parsed.params.length !== new Set(parsed.params.map((p) => p.key)).size
-            ? ', repeated keys listed separately'
-            : ''}
-          )
-        </span>
-      </h3>
-      {parsed.params.length === 0 ? (
-        <p className="rounded-lg border border-line bg-card p-4 text-sm text-muted">
-          This URL has no query parameters.
-        </p>
-      ) : (
-        <div className="overflow-x-auto rounded-lg border border-line">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="border-b border-line bg-soft text-muted">
-                <th scope="col" className="w-10 px-3 py-2 font-semibold">
-                  #
-                </th>
-                <th scope="col" className="px-3 py-2 font-semibold">
-                  Key (decoded)
-                </th>
-                <th scope="col" className="px-3 py-2 font-semibold">
-                  Value (decoded)
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-line bg-card">
-              {parsed.params.map((param, index) => (
-                <tr key={index}>
-                  <td className="px-3 py-2 text-muted tabular-nums">{index + 1}</td>
-                  <td className="px-3 py-2 font-mono break-all text-ink">{param.key}</td>
-                  <td className="px-3 py-2 font-mono break-all text-ink">{param.value}</td>
+        <dl className="divide-y divide-line rounded-lg border border-line bg-card px-4 py-1">
+          <Row label="Normalized" value={parsed.href} />
+          <Row label="Protocol" value={parsed.protocol} />
+          {parsed.username !== undefined && <Row label="Username" value={parsed.username} />}
+          {parsed.password !== undefined && <Row label="Password" value={parsed.password} />}
+          <Row label="Host" value={parsed.hostname} />
+          {parsed.unicodeHostname !== undefined && (
+            <Row label="Host (unicode)" value={parsed.unicodeHostname} />
+          )}
+          {parsed.port !== undefined && <Row label="Port" value={parsed.port} />}
+          <Row label="Path" value={parsed.pathname} />
+          {parsed.decodedPathname !== undefined && (
+            <Row label="Path (decoded)" value={parsed.decodedPathname} />
+          )}
+          {parsed.hash !== undefined && <Row label="Fragment" value={parsed.hash} />}
+          {parsed.decodedHash !== undefined && (
+            <Row label="Fragment (decoded)" value={parsed.decodedHash} />
+          )}
+        </dl>
+
+        <h3 className="mt-5 mb-2 text-sm font-semibold text-ink">
+          Query parameters{' '}
+          <span className="font-normal text-muted">
+            ({parsed.params.length}
+            {parsed.params.length !== new Set(parsed.params.map((p) => p.key)).size
+              ? ', repeated keys listed separately'
+              : ''}
+            )
+          </span>
+        </h3>
+        {parsed.params.length === 0 ? (
+          <p className="rounded-lg border border-line bg-card p-4 text-sm text-muted">
+            This URL has no query parameters.
+          </p>
+        ) : (
+          <div className="overflow-x-auto rounded-lg border border-line">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-line bg-soft text-muted">
+                  <th scope="col" className="w-10 px-3 py-2 font-semibold">
+                    #
+                  </th>
+                  <th scope="col" className="px-3 py-2 font-semibold">
+                    Key (decoded)
+                  </th>
+                  <th scope="col" className="px-3 py-2 font-semibold">
+                    Value (decoded)
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody className="divide-y divide-line bg-card">
+                {parsed.params.map((param, index) => (
+                  <tr key={index}>
+                    <td className="px-3 py-2 text-muted tabular-nums">{index + 1}</td>
+                    <td className="px-3 py-2 font-mono break-all text-ink">{param.key}</td>
+                    <td className="px-3 py-2 font-mono break-all text-ink">{param.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </section>
   )
 }
@@ -136,12 +140,8 @@ export default function UrlEncode() {
   }, [tab, text, mode])
 
   return (
-    <ToolLayout
-      title="URL encode / decode / parse"
-      description="Percent-encode or decode text (component or full-URL mode) and break any URL into protocol, host, path, query parameters and fragment. Everything runs in your browser."
-      badge="client-side"
-    >
-      <div role="tablist" aria-label="Operation" className="mb-4 flex gap-1">
+    <ToolLayout workspace>
+      <div role="tablist" aria-label="Operation" className="mb-4 flex shrink-0 flex-wrap gap-1">
         {TABS.map(([value, label]) => (
           <button
             key={value}
@@ -159,7 +159,7 @@ export default function UrlEncode() {
       </div>
 
       {tab !== 'parse' && (
-        <div className="mb-4 rounded-lg border border-line bg-soft p-3">
+        <div className="mb-4 shrink-0 rounded-lg border border-line bg-soft p-3">
           <div className="flex flex-wrap items-center gap-4">
             {(
               [
@@ -187,7 +187,7 @@ export default function UrlEncode() {
         </div>
       )}
 
-      <div className="flex min-w-0 flex-col gap-3">
+      <div className={cx('flex min-w-0 flex-col gap-3', tab === 'parse' ? 'shrink-0' : 'flex-1')}>
         <textarea
           name="input"
           value={text}
@@ -202,11 +202,11 @@ export default function UrlEncode() {
           aria-label={tab === 'parse' ? 'URL input' : 'Text input'}
           spellCheck={false}
           className={cx(
-            'w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none',
-            tab === 'parse' ? 'h-24' : 'h-40',
+            'w-full overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none',
+            tab === 'parse' ? 'h-24 resize-y' : 'h-0 min-h-32 flex-1 resize-none',
           )}
         />
-        <div>
+        <div className="shrink-0">
           <Button variant="ghost" size="sm" onClick={() => setText(SAMPLES[tab])}>
             <Sparkles className="size-3.5" />
             Load sample
@@ -217,15 +217,18 @@ export default function UrlEncode() {
       {result.error && (
         <p
           role="alert"
-          className="mt-4 rounded-lg border border-line bg-rose-soft p-3 text-sm text-rose"
+          className="mt-4 shrink-0 rounded-lg border border-line bg-rose-soft p-3 text-sm text-rose"
         >
           {result.error}
         </p>
       )}
 
       {result.output !== undefined && (
-        <section className="mt-6 border-t border-line pt-5" aria-labelledby="output-heading">
-          <div className="mb-3 flex flex-wrap items-center gap-2">
+        <section
+          className="mt-4 flex flex-1 flex-col border-t border-line pt-3"
+          aria-labelledby="output-heading"
+        >
+          <div className="mb-3 flex shrink-0 flex-wrap items-center gap-2">
             <h2 id="output-heading" className="mr-auto text-sm font-semibold text-ink">
               {tab === 'encode' ? 'Encoded output' : 'Decoded output'}
             </h2>
@@ -237,7 +240,7 @@ export default function UrlEncode() {
             value={result.output}
             aria-label="Output"
             spellCheck={false}
-            className="h-40 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed break-all text-ink focus:border-pine focus:outline-none"
+            className="h-0 min-h-32 w-full flex-1 resize-none overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed break-all text-ink focus:border-pine focus:outline-none"
           />
         </section>
       )}

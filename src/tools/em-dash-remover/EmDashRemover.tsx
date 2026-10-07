@@ -15,7 +15,7 @@ const modes: { id: DashMode; label: string; hint: string }[] = [
 ]
 
 const textareaClasses =
-  'h-64 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-[13px] leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none sm:h-80'
+  'min-h-0 w-full flex-1 resize-none rounded-lg border border-line bg-card p-3 font-mono text-[13px] leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none'
 
 export default function EmDashRemover() {
   const [input, setInput] = useState('')
@@ -38,12 +38,8 @@ export default function EmDashRemover() {
   }
 
   return (
-    <ToolLayout
-      title="Em-dash remover"
-      description="Replace em-dashes (and optionally en-dashes) with a hyphen or comma, or remove them. Everything runs in your browser."
-      badge="client-side"
-    >
-      <div className="mb-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+    <ToolLayout workspace>
+      <div className="mb-3 flex shrink-0 flex-wrap items-center gap-x-6 gap-y-3">
         <fieldset className="flex items-center gap-3">
           <legend className="sr-only">Replacement mode</legend>
           <span className="text-xs font-medium text-muted">Replace with</span>
@@ -84,10 +80,11 @@ export default function EmDashRemover() {
       </div>
 
       <SplitPane
+        className="min-h-[24rem] flex-1 lg:min-h-0"
         label="Resize input and result panels"
         first={
-          <section aria-label="Input text">
-            <div className="mb-2 flex h-8 items-center justify-between gap-2">
+          <section aria-label="Input text" className="flex h-full min-h-0 flex-col">
+            <div className="mb-2 flex h-8 shrink-0 items-center justify-between gap-2">
               <h2 className="text-xs font-semibold tracking-wide text-muted uppercase">Input</h2>
               <div className="flex gap-2">
                 <Button variant="secondary" size="sm" onClick={pasteFromClipboard}>
@@ -113,8 +110,8 @@ export default function EmDashRemover() {
           </section>
         }
         second={
-          <section aria-label="Result text">
-            <div className="mb-2 flex h-8 items-center justify-between gap-2">
+          <section aria-label="Result text" className="flex h-full min-h-0 flex-col">
+            <div className="mb-2 flex h-8 shrink-0 items-center justify-between gap-2">
               <h2 className="text-xs font-semibold tracking-wide text-muted uppercase">Result</h2>
               <CopyButton text={output} disabled={!output} />
             </div>
@@ -131,7 +128,7 @@ export default function EmDashRemover() {
         }
       />
 
-      <p aria-live="polite" className="mt-4 font-mono text-xs text-muted tabular-nums">
+      <p aria-live="polite" className="mt-3 shrink-0 font-mono text-xs text-muted tabular-nums">
         {input === ''
           ? 'Waiting for input.'
           : count === 0

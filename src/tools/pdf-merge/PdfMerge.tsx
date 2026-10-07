@@ -175,11 +175,7 @@ export default function PdfMerge() {
   const totalBytes = items.reduce((n, i) => n + i.size, 0)
 
   return (
-    <ToolLayout
-      title="PDF merge"
-      description="Combine several PDFs into one. Drag the documents into the order you want. The merged file follows it exactly. Everything stays in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       {items.length === 0 ? (
         <>
           {error && (

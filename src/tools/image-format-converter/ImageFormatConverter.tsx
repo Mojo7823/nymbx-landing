@@ -234,11 +234,7 @@ export default function ImageFormatConverter() {
   const queuedCount = items.filter((item) => needsConvert(item, settings)).length
 
   return (
-    <ToolLayout
-      title="Image format converter"
-      description="Convert between PNG, JPEG, WebP, and AVIF with per-format quality control. Encoded locally with professional codecs; your photos never leave this device."
-      badge="client-side"
-    >
+    <ToolLayout>
       <div className="mb-6 flex flex-col gap-4 rounded-lg border border-line bg-card p-4">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           <div className="flex items-center gap-2">

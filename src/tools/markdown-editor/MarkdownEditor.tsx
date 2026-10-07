@@ -359,12 +359,8 @@ export default function MarkdownEditor() {
   if (editorError) throw editorError
 
   return (
-    <ToolLayout
-      title="Markdown editor"
-      description="A full markdown editor with formatting toolbar, image embedding, mermaid diagrams and autosaved drafts. Everything stays in your browser."
-      badge="client-side"
-    >
-      <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+    <ToolLayout workspace>
+      <div className="mb-4 flex shrink-0 flex-wrap items-center gap-x-4 gap-y-2">
         {toolbarGroups.map((group, gi) => (
           <div
             key={gi}
@@ -446,14 +442,15 @@ export default function MarkdownEditor() {
 
       <SplitPane
         label="Resize editor and preview"
+        className="min-h-0 flex-1"
         first={
-          <section aria-label="Markdown editor">
-            <div className="mb-3 flex min-h-8 flex-wrap items-center justify-between gap-2">
+          <section aria-label="Markdown editor" className="flex h-full min-h-0 flex-col">
+            <div className="mb-3 flex min-h-8 shrink-0 flex-wrap items-center justify-between gap-2">
               <h2 className="text-xs font-semibold tracking-wide text-muted uppercase">Editor</h2>
             </div>
             <div
               aria-busy={!editorReady}
-              className="relative h-[36rem] overflow-hidden rounded-lg border border-line bg-card focus-within:border-pine"
+              className="relative min-h-0 flex-1 overflow-hidden rounded-lg border border-line bg-card focus-within:border-pine"
             >
               <div ref={editorHost} className="h-full" />
               {!editorReady && (
@@ -465,7 +462,11 @@ export default function MarkdownEditor() {
           </section>
         }
         second={
-          <div ref={previewHost} onFocusCapture={() => setPreviewVisible(true)}>
+          <div
+            ref={previewHost}
+            className="h-full min-h-0"
+            onFocusCapture={() => setPreviewVisible(true)}
+          >
             <MarkdownPreview
               html={html}
               loading={previewVisible && !previewPipeline && !previewLoadError}
@@ -479,7 +480,7 @@ export default function MarkdownEditor() {
         }
       />
 
-      <p aria-live="polite" className="mt-4 font-mono text-xs text-muted tabular-nums">
+      <p aria-live="polite" className="mt-4 shrink-0 font-mono text-xs text-muted tabular-nums">
         {!ready
           ? 'Loading draft…'
           : savedAt

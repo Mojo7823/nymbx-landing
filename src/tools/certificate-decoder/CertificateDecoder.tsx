@@ -295,11 +295,7 @@ export default function CertificateDecoder() {
   }
 
   return (
-    <ToolLayout
-      title="Certificate decoder"
-      description="Inspect X.509 certificates, certificate chains, and PKCS #10 signing requests. Paste PEM or drop a PEM/DER file; decoding and fingerprinting happen entirely in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       <div
         role="note"
         className="mb-5 flex items-start gap-2 rounded-lg border border-pine/25 bg-mint/30 px-3 py-2.5 text-xs text-pine"

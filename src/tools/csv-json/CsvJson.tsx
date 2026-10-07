@@ -91,12 +91,12 @@ export default function CsvJson() {
   const shownHeaders = result?.preview.headers.slice(0, 20) ?? []
 
   return (
-    <ToolLayout
-      title="CSV ↔ JSON"
-      description="Convert tabular data in either direction with delimiter detection and a live preview. CSV files stream in chunks; nothing leaves your browser."
-      badge="client-side"
-    >
-      <div role="tablist" aria-label="Conversion direction" className="mb-4 flex gap-1">
+    <ToolLayout workspace>
+      <div
+        role="tablist"
+        aria-label="Conversion direction"
+        className="mb-4 flex shrink-0 flex-wrap gap-1"
+      >
         {(
           [
             ['csv-json', 'CSV → JSON'],
@@ -118,7 +118,7 @@ export default function CsvJson() {
         ))}
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-line bg-soft p-3">
+      <div className="mb-4 flex shrink-0 flex-wrap items-center gap-3 rounded-lg border border-line bg-soft p-3">
         <label className="flex items-center gap-1.5 text-xs font-medium text-muted">
           Delimiter
           <select
@@ -148,7 +148,7 @@ export default function CsvJson() {
         </label>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid flex-1 grid-rows-[minmax(min-content,1fr)_auto] gap-4 lg:grid-cols-2 lg:grid-rows-1">
         <div className="flex min-w-0 flex-col gap-3">
           <textarea
             name="input"
@@ -161,9 +161,9 @@ export default function CsvJson() {
             placeholder={`Paste ${direction === 'csv-json' ? 'CSV' : 'a JSON array'} here…`}
             aria-label={inputLabel}
             spellCheck={false}
-            className="h-64 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
+            className="h-0 min-h-32 w-full flex-1 resize-none overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
           />
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
             <Button onClick={convert} disabled={!text.trim() || busy}>
               <ArrowLeftRight className="size-4" />
               Convert
@@ -215,15 +215,18 @@ export default function CsvJson() {
       {error && (
         <p
           role="alert"
-          className="mt-4 rounded-lg border border-line bg-rose-soft p-3 text-sm text-rose"
+          className="mt-4 shrink-0 rounded-lg border border-line bg-rose-soft p-3 text-sm text-rose"
         >
           {error}
         </p>
       )}
 
       {result && (
-        <section className="mt-6 border-t border-line pt-5" aria-labelledby="preview-heading">
-          <div className="mb-3 flex flex-wrap items-center gap-2">
+        <section
+          className="mt-4 flex flex-1 flex-col border-t border-line pt-3"
+          aria-labelledby="preview-heading"
+        >
+          <div className="mb-3 flex shrink-0 flex-wrap items-center gap-2">
             <h2 id="preview-heading" className="mr-auto text-sm font-semibold text-ink">
               Preview
             </h2>
@@ -237,7 +240,7 @@ export default function CsvJson() {
               Download {outputName.endsWith('json') ? 'JSON' : 'CSV'}
             </Button>
           </div>
-          <div className="max-h-96 overflow-auto rounded-lg border border-line bg-card">
+          <div className="h-0 min-h-32 flex-1 overflow-auto rounded-lg border border-line bg-card">
             <table className="w-max min-w-full border-collapse text-left font-mono text-xs">
               <thead className="sticky top-0 bg-soft text-ink">
                 <tr>
@@ -268,7 +271,7 @@ export default function CsvJson() {
             </table>
           </div>
           {(result.preview.totalRows > 20 || result.preview.headers.length > 20) && (
-            <p className="mt-2 text-xs text-muted">
+            <p className="mt-2 shrink-0 text-xs text-muted">
               Preview is limited to the first 20 rows and columns; the download contains everything.
             </p>
           )}

@@ -88,12 +88,8 @@ export default function MarkdownToDocx() {
   }
 
   return (
-    <ToolLayout
-      title="Markdown → DOCX"
-      description="Turn markdown into a Word document: headings map to Word styles, plus lists, tables, code blocks, links and images. Everything stays in your browser."
-      badge="client-side"
-    >
-      <div className="mb-3 flex flex-wrap items-center gap-2">
+    <ToolLayout workspace>
+      <div className="mb-3 flex shrink-0 flex-wrap items-center gap-2">
         <Button variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
           <FileUp className="size-3.5" />
           Open .md file
@@ -127,10 +123,10 @@ export default function MarkdownToDocx() {
         placeholder="Paste or type markdown here, or open a .md file…"
         aria-label="Markdown input"
         spellCheck={false}
-        className="h-72 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none md:h-96"
+        className="h-0 min-h-32 w-full flex-1 resize-none overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
       />
 
-      <label className="mt-3 flex cursor-pointer items-start gap-2 text-xs text-muted">
+      <label className="mt-3 flex shrink-0 cursor-pointer items-start gap-2 text-xs text-muted">
         <input
           type="checkbox"
           checked={fetchRemote}
@@ -147,12 +143,12 @@ export default function MarkdownToDocx() {
       </label>
 
       {error && (
-        <p role="alert" className="mt-4 text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="mt-4 shrink-0 text-sm text-red-600 dark:text-red-400">
           {error}
         </p>
       )}
 
-      <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-line pt-4">
+      <div className="mt-4 flex shrink-0 flex-wrap items-center gap-3 border-t border-line pt-4">
         <Button onClick={() => void convert()} disabled={!text.trim() || converting}>
           <FileDown className="size-4" />
           Convert to DOCX
@@ -166,7 +162,7 @@ export default function MarkdownToDocx() {
       </div>
 
       {warnings && warnings.length > 0 && (
-        <ul className="mt-4 flex flex-col gap-1.5 rounded-lg border border-line bg-card p-4">
+        <ul className="mt-4 flex shrink-0 flex-col gap-1.5 rounded-lg border border-line bg-card p-4">
           {warnings.map((w) => (
             <li key={w} className="flex items-start gap-1.5 text-xs text-amber-badge">
               <FileWarning className="mt-0.5 size-3.5 shrink-0" />

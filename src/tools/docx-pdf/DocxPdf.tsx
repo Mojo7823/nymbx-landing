@@ -62,11 +62,7 @@ export default function DocxPdf() {
   const online = useOnline()
 
   return (
-    <ToolLayout
-      title="DOCX → PDF"
-      description="High-fidelity Word-to-PDF conversion using LibreOffice on our server. This is the one tool here that can't run in your browser."
-      badge="server-assisted"
-    >
+    <ToolLayout>
       <div
         className="mb-6 flex items-start gap-2.5 rounded-lg border border-amber-badge/30 bg-amber-soft p-4 text-sm text-amber-badge"
         role="note"

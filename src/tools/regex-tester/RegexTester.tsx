@@ -63,7 +63,7 @@ function Highlighted({ text, result }: { text: string; result: RegexRunResult })
   }
   if (cursor < text.length) parts.push(text.slice(cursor))
   return (
-    <div className="max-h-56 overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed break-all whitespace-pre-wrap text-ink">
+    <div className="rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed break-all whitespace-pre-wrap text-ink">
       {parts}
     </div>
   )
@@ -133,222 +133,236 @@ export default function RegexTester() {
   const uniqueMatches = result?.matches ?? []
 
   return (
-    <ToolLayout
-      title="Regex tester"
-      description="Try a JavaScript regular expression against test text: live match highlighting, capture groups per match, and a replace preview. Patterns run in a worker with a timeout, so a catastrophic pattern can't freeze the page."
-      badge="client-side"
-    >
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-start gap-3">
-          <label className="flex min-w-0 grow flex-col gap-1">
-            <span className="text-xs font-semibold text-muted">Pattern</span>
-            <div className="flex items-center gap-1 rounded-lg border border-line bg-card px-3 focus-within:border-pine">
-              <span aria-hidden className="font-mono text-sm text-faint">
-                /
-              </span>
-              <input
-                name="pattern"
-                value={pattern}
-                onChange={(event) => setPattern(event.target.value)}
-                placeholder="(?<name>pattern)"
-                aria-label="Pattern"
-                spellCheck={false}
-                autoComplete="off"
-                className="min-w-0 grow bg-transparent py-2 font-mono text-sm text-ink placeholder:text-faint focus:outline-none"
-              />
-              <span aria-hidden className="font-mono text-sm text-faint">
-                /{flags}
-              </span>
-            </div>
-          </label>
-          <fieldset className="flex flex-col gap-1">
-            <legend className="mb-1 text-xs font-semibold text-muted">Flags</legend>
-            <div className="flex flex-wrap gap-1">
-              {FLAGS.map(([flag, title]) => (
-                <label
-                  key={flag}
-                  title={title}
-                  className={cx(
-                    'flex cursor-pointer items-center justify-center rounded-md border px-2.5 py-1.5 font-mono text-xs font-semibold transition-colors',
-                    flags.includes(flag)
-                      ? 'border-pine bg-mint text-pine'
-                      : 'border-line bg-card text-muted hover:text-ink',
-                  )}
-                >
-                  <input
-                    type="checkbox"
-                    name={`flag-${flag}`}
-                    checked={flags.includes(flag)}
-                    onChange={() => toggleFlag(flag)}
-                    className="sr-only"
-                  />
-                  {flag}
-                </label>
-              ))}
-            </div>
-          </fieldset>
-        </div>
-
-        <label className="flex flex-col gap-1">
-          <span className="text-xs font-semibold text-muted">Test text</span>
-          <textarea
-            name="text"
-            value={text}
-            onChange={(event) => setText(event.target.value)}
-            placeholder="Paste text to test the pattern against…"
-            aria-label="Test text"
-            spellCheck={false}
-            className="h-40 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
-          />
-        </label>
-
-        <div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              setPattern(SAMPLE.pattern)
-              setFlags(SAMPLE.flags)
-              setText(SAMPLE.text)
-              setReplacement(SAMPLE.replacement)
-            }}
-          >
-            <Sparkles className="size-3.5" />
-            Load sample
-          </Button>
-        </div>
-      </div>
-
-      {error && (
-        <p
-          role="alert"
-          className="mt-4 rounded-lg border border-line bg-rose-soft p-3 text-sm text-rose"
-        >
-          {error}
-        </p>
-      )}
-
-      {result && !error && (
-        <section className="mt-6 border-t border-line pt-5" aria-labelledby="matches-heading">
-          <h2 id="matches-heading" className="mb-3 text-sm font-semibold text-ink">
-            Matches{' '}
-            <span className="font-normal text-muted">
-              ({uniqueMatches.length}
-              {result.truncated ? `, showing the first ${uniqueMatches.length}` : ''})
-            </span>
-            {busy && <span className="ml-2 font-normal text-faint">running…</span>}
-          </h2>
-
-          {uniqueMatches.length === 0 ? (
-            <p className="rounded-lg border border-line bg-card p-4 text-sm text-muted">
-              No matches in the test text.
-            </p>
-          ) : (
-            <>
-              <Highlighted text={text} result={result} />
-
-              <div className="mt-4 overflow-x-auto rounded-lg border border-line">
-                <table className="w-full text-left text-xs">
-                  <thead>
-                    <tr className="border-b border-line bg-soft text-muted">
-                      <th scope="col" className="w-10 px-3 py-2 font-semibold">
-                        #
-                      </th>
-                      <th scope="col" className="px-3 py-2 font-semibold">
-                        Match
-                      </th>
-                      <th scope="col" className="px-3 py-2 font-semibold">
-                        Range
-                      </th>
-                      <th scope="col" className="px-3 py-2 font-semibold">
-                        Groups
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-line bg-card">
-                    {uniqueMatches.map((match, index) => (
-                      <tr key={index}>
-                        <td className="px-3 py-2 align-top text-muted tabular-nums">{index + 1}</td>
-                        <td className="px-3 py-2 align-top font-mono break-all text-ink">
-                          {match.value === '' ? (
-                            <span className="text-faint italic">(empty)</span>
-                          ) : (
-                            match.value
-                          )}
-                        </td>
-                        <td className="px-3 py-2 align-top font-mono text-muted tabular-nums">
-                          {match.index}–{match.end}
-                        </td>
-                        <td className="px-3 py-2 align-top font-mono break-all text-ink">
-                          {match.groups.length === 0 ? (
-                            <span className="text-faint">–</span>
-                          ) : (
-                            match.groups.map((group) => (
-                              <div key={group.number}>
-                                <span className="text-muted">
-                                  ${group.number}
-                                  {group.name !== undefined && ` (${group.name})`}
-                                </span>
-                                {group.value === undefined ? (
-                                  <span className="text-faint italic"> not matched</span>
-                                ) : (
-                                  <> = {group.value === '' ? '(empty)' : group.value}</>
-                                )}
-                              </div>
-                            ))
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+    <ToolLayout workspace>
+      <div
+        className={cx(
+          'grid min-h-0 flex-1 gap-4',
+          (result || error) && 'lg:grid-cols-2 lg:grid-rows-[minmax(0,1fr)]',
+        )}
+      >
+        <div className="flex min-h-64 min-w-0 flex-col gap-4">
+          <div className="flex shrink-0 flex-wrap items-start gap-3">
+            <label className="flex min-w-0 grow flex-col gap-1">
+              <span className="text-xs font-semibold text-muted">Pattern</span>
+              <div className="flex items-center gap-1 rounded-lg border border-line bg-card px-3 focus-within:border-pine">
+                <span aria-hidden className="font-mono text-sm text-faint">
+                  /
+                </span>
+                <input
+                  name="pattern"
+                  value={pattern}
+                  onChange={(event) => setPattern(event.target.value)}
+                  placeholder="(?<name>pattern)"
+                  aria-label="Pattern"
+                  spellCheck={false}
+                  autoComplete="off"
+                  className="min-w-0 grow bg-transparent py-2 font-mono text-sm text-ink placeholder:text-faint focus:outline-none"
+                />
+                <span aria-hidden className="font-mono text-sm text-faint">
+                  /{flags}
+                </span>
               </div>
-              {result.truncated && (
-                <p className="mt-2 text-xs text-muted">
-                  Match list capped. Refine the pattern to see the rest.
-                </p>
-              )}
-            </>
-          )}
-        </section>
-      )}
+            </label>
+            <fieldset className="flex flex-col gap-1">
+              <legend className="mb-1 text-xs font-semibold text-muted">Flags</legend>
+              <div className="flex flex-wrap gap-1">
+                {FLAGS.map(([flag, title]) => (
+                  <label
+                    key={flag}
+                    title={title}
+                    className={cx(
+                      'flex cursor-pointer items-center justify-center rounded-md border px-2.5 py-1.5 font-mono text-xs font-semibold transition-colors',
+                      flags.includes(flag)
+                        ? 'border-pine bg-mint text-pine'
+                        : 'border-line bg-card text-muted hover:text-ink',
+                    )}
+                  >
+                    <input
+                      type="checkbox"
+                      name={`flag-${flag}`}
+                      checked={flags.includes(flag)}
+                      onChange={() => toggleFlag(flag)}
+                      className="sr-only"
+                    />
+                    {flag}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          </div>
 
-      {result && !error && (
-        <section className="mt-6 border-t border-line pt-5" aria-labelledby="replace-heading">
-          <h2 id="replace-heading" className="mb-3 text-sm font-semibold text-ink">
-            Replace preview
-          </h2>
-          <label className="flex flex-col gap-1">
-            <span className="text-xs font-semibold text-muted">
-              Replacement{' '}
-              <span className="font-normal text-faint">
-                ($1, $&lt;name&gt;, $&amp; supported; empty deletes matches)
-              </span>
-            </span>
-            <input
-              name="replacement"
-              value={replacement}
-              onChange={(event) => setReplacement(event.target.value)}
-              placeholder="Replacement string…"
-              aria-label="Replacement"
+          <label className="flex min-h-32 flex-1 flex-col gap-1">
+            <span className="shrink-0 text-xs font-semibold text-muted">Test text</span>
+            <textarea
+              name="text"
+              value={text}
+              onChange={(event) => setText(event.target.value)}
+              placeholder="Paste text to test the pattern against…"
+              aria-label="Test text"
               spellCheck={false}
-              autoComplete="off"
-              className="w-full rounded-lg border border-line bg-card px-3 py-2 font-mono text-sm text-ink placeholder:text-faint focus:border-pine focus:outline-none"
+              className="min-h-0 w-full flex-1 resize-none overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
             />
           </label>
-          {result.replaced !== undefined && (
-            <div className="mt-3">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-xs font-semibold text-muted">Result</span>
-                <CopyButton text={result.replaced} />
-              </div>
-              <div className="max-h-56 overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed break-all whitespace-pre-wrap text-ink">
-                {result.replaced}
-              </div>
-            </div>
-          )}
-        </section>
-      )}
+
+          <div className="shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setPattern(SAMPLE.pattern)
+                setFlags(SAMPLE.flags)
+                setText(SAMPLE.text)
+                setReplacement(SAMPLE.replacement)
+              }}
+            >
+              <Sparkles className="size-3.5" />
+              Load sample
+            </Button>
+          </div>
+        </div>
+        {(result || error) && (
+          <div className="flex min-h-0 min-w-0 flex-col gap-4">
+            {error && (
+              <p
+                role="alert"
+                className="shrink-0 rounded-lg border border-line bg-rose-soft p-3 text-sm text-rose"
+              >
+                {error}
+              </p>
+            )}
+
+            {result && !error && (
+              <section
+                className="min-h-48 flex-1 overflow-auto border-t border-line pt-4"
+                aria-labelledby="matches-heading"
+              >
+                <h2 id="matches-heading" className="mb-3 text-sm font-semibold text-ink">
+                  Matches{' '}
+                  <span className="font-normal text-muted">
+                    ({uniqueMatches.length}
+                    {result.truncated ? `, showing the first ${uniqueMatches.length}` : ''})
+                  </span>
+                  {busy && <span className="ml-2 font-normal text-faint">running…</span>}
+                </h2>
+
+                {uniqueMatches.length === 0 ? (
+                  <p className="rounded-lg border border-line bg-card p-4 text-sm text-muted">
+                    No matches in the test text.
+                  </p>
+                ) : (
+                  <>
+                    <Highlighted text={text} result={result} />
+
+                    <div className="mt-4 overflow-x-auto rounded-lg border border-line">
+                      <table className="w-full text-left text-xs">
+                        <thead>
+                          <tr className="border-b border-line bg-soft text-muted">
+                            <th scope="col" className="w-10 px-3 py-2 font-semibold">
+                              #
+                            </th>
+                            <th scope="col" className="px-3 py-2 font-semibold">
+                              Match
+                            </th>
+                            <th scope="col" className="px-3 py-2 font-semibold">
+                              Range
+                            </th>
+                            <th scope="col" className="px-3 py-2 font-semibold">
+                              Groups
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-line bg-card">
+                          {uniqueMatches.map((match, index) => (
+                            <tr key={index}>
+                              <td className="px-3 py-2 align-top text-muted tabular-nums">
+                                {index + 1}
+                              </td>
+                              <td className="px-3 py-2 align-top font-mono break-all text-ink">
+                                {match.value === '' ? (
+                                  <span className="text-faint italic">(empty)</span>
+                                ) : (
+                                  match.value
+                                )}
+                              </td>
+                              <td className="px-3 py-2 align-top font-mono text-muted tabular-nums">
+                                {match.index}–{match.end}
+                              </td>
+                              <td className="px-3 py-2 align-top font-mono break-all text-ink">
+                                {match.groups.length === 0 ? (
+                                  <span className="text-faint">–</span>
+                                ) : (
+                                  match.groups.map((group) => (
+                                    <div key={group.number}>
+                                      <span className="text-muted">
+                                        ${group.number}
+                                        {group.name !== undefined && ` (${group.name})`}
+                                      </span>
+                                      {group.value === undefined ? (
+                                        <span className="text-faint italic"> not matched</span>
+                                      ) : (
+                                        <> = {group.value === '' ? '(empty)' : group.value}</>
+                                      )}
+                                    </div>
+                                  ))
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {result.truncated && (
+                      <p className="mt-2 text-xs text-muted">
+                        Match list capped. Refine the pattern to see the rest.
+                      </p>
+                    )}
+                  </>
+                )}
+              </section>
+            )}
+
+            {result && !error && (
+              <section
+                className="flex min-h-48 flex-1 flex-col border-t border-line pt-4"
+                aria-labelledby="replace-heading"
+              >
+                <h2 id="replace-heading" className="mb-3 shrink-0 text-sm font-semibold text-ink">
+                  Replace preview
+                </h2>
+                <label className="flex shrink-0 flex-col gap-1">
+                  <span className="text-xs font-semibold text-muted">
+                    Replacement{' '}
+                    <span className="font-normal text-faint">
+                      ($1, $&lt;name&gt;, $&amp; supported; empty deletes matches)
+                    </span>
+                  </span>
+                  <input
+                    name="replacement"
+                    value={replacement}
+                    onChange={(event) => setReplacement(event.target.value)}
+                    placeholder="Replacement string…"
+                    aria-label="Replacement"
+                    spellCheck={false}
+                    autoComplete="off"
+                    className="w-full rounded-lg border border-line bg-card px-3 py-2 font-mono text-sm text-ink placeholder:text-faint focus:border-pine focus:outline-none"
+                  />
+                </label>
+                {result.replaced !== undefined && (
+                  <div className="mt-3 flex min-h-0 flex-1 flex-col">
+                    <div className="mb-2 flex shrink-0 items-center justify-between">
+                      <span className="text-xs font-semibold text-muted">Result</span>
+                      <CopyButton text={result.replaced} />
+                    </div>
+                    <div className="min-h-0 flex-1 overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed break-all whitespace-pre-wrap text-ink">
+                      {result.replaced}
+                    </div>
+                  </div>
+                )}
+              </section>
+            )}
+          </div>
+        )}
+      </div>
     </ToolLayout>
   )
 }

@@ -121,12 +121,8 @@ export default function JsonFormatter() {
   const excerpt = result?.error ? errorExcerpt(text, result.error) : null
 
   return (
-    <ToolLayout
-      title="JSON formatter"
-      description="Format, minify and validate JSON with exact error positions. Big integers are preserved byte-for-byte, not rounded. Everything stays in your browser."
-      badge="client-side"
-    >
-      <div className="mb-3 flex flex-wrap items-center gap-2">
+    <ToolLayout workspace>
+      <div className="mb-3 flex shrink-0 flex-wrap items-center gap-2">
         <Button variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
           <FileUp className="size-3.5" />
           Open .json file
@@ -152,7 +148,7 @@ export default function JsonFormatter() {
       </div>
 
       {bigFile ? (
-        <div className="flex items-center gap-3 rounded-lg border border-line bg-card p-4">
+        <div className="flex shrink-0 items-center gap-3 rounded-lg border border-line bg-card p-4">
           <Braces className="size-5 shrink-0 text-pine" aria-hidden />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-ink">{bigFile.name}</p>
@@ -176,11 +172,11 @@ export default function JsonFormatter() {
           placeholder='Paste JSON here, e.g. {"hello": "world"}, or open a file…'
           aria-label="JSON input"
           spellCheck={false}
-          className="h-56 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none md:h-72"
+          className="min-h-32 w-full flex-1 resize-none rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
         />
       )}
 
-      <div className="mt-3 flex flex-wrap items-center gap-2">
+      <div className="mt-3 flex shrink-0 flex-wrap items-center gap-2">
         <label className="flex items-center gap-1.5 text-xs font-medium text-muted">
           Indent
           <select
@@ -217,7 +213,7 @@ export default function JsonFormatter() {
       </div>
 
       {result?.error && excerpt && (
-        <div role="alert" className="mt-4 rounded-lg border border-line bg-card p-4">
+        <div role="alert" className="mt-3 shrink-0 rounded-lg border border-line bg-card p-4">
           <p className="text-sm font-medium text-red-600 dark:text-red-400">
             {result.error.message} · line {result.error.line}, column {result.error.col}
           </p>
@@ -230,8 +226,8 @@ export default function JsonFormatter() {
       )}
 
       {result && !result.error && (
-        <div className="mt-4 flex flex-col gap-3 border-t border-line pt-4">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <div className="mt-3 flex min-h-48 flex-1 flex-col gap-3 border-t border-line pt-3 lg:min-h-0">
+          <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2">
             <p className="flex items-center gap-1.5 text-sm font-medium text-pine" role="status">
               <CheckCircle2 className="size-4" aria-hidden />
               Valid JSON
@@ -284,7 +280,7 @@ export default function JsonFormatter() {
           </div>
 
           {result.riskyNumbers > 0 && (
-            <p className="flex items-start gap-1.5 text-xs text-amber-badge" role="status">
+            <p className="flex shrink-0 items-start gap-1.5 text-xs text-amber-badge" role="status">
               <FileWarning className="mt-0.5 size-3.5 shrink-0" />
               {result.riskyNumbers}{' '}
               {result.riskyNumbers === 1 ? 'integer exceeds' : 'integers exceed'} JavaScript's safe
@@ -300,7 +296,7 @@ export default function JsonFormatter() {
                 Output is {formatBytes(outputBytes)}, too large to display; use Download.
               </p>
             ) : (
-              <pre className="max-h-96 overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed whitespace-pre text-ink">
+              <pre className="min-h-0 flex-1 overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed whitespace-pre text-ink">
                 {output}
               </pre>
             ))}
@@ -312,7 +308,11 @@ export default function JsonFormatter() {
                 Tree view is disabled for documents over {formatBytes(TREE_LIMIT)}.
               </p>
             ) : (
-              tree !== null && <JsonTree value={tree} />
+              tree !== null && (
+                <div className="min-h-0 flex-1 overflow-auto">
+                  <JsonTree value={tree} />
+                </div>
+              )
             ))}
         </div>
       )}

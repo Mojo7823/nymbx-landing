@@ -181,11 +181,7 @@ export default function PdfResize() {
   const firstPage = pdf?.info.pages[0]
 
   return (
-    <ToolLayout
-      title="PDF resize"
-      description="Change a PDF's page size to a standard format or custom dimensions, scaling content to fit or cropping/padding around it, or shrink the file by re-rendering pages. All in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       {!pdf ? (
         <>
           {error && (

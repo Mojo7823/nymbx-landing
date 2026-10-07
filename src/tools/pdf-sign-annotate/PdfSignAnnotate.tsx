@@ -494,11 +494,7 @@ export default function PdfSignAnnotate() {
   ]
 
   return (
-    <ToolLayout
-      title="PDF sign & annotate"
-      description="Place a signature, text, dates and checkmarks on a PDF — flattened into a copy, in your browser"
-      badge="client-side"
-    >
+    <ToolLayout>
       {!pdf || !Editor || !Thumbnails || !SignaturePad ? (
         <>
           {error && (

@@ -253,11 +253,7 @@ export default function ImageResize() {
   }
 
   return (
-    <ToolLayout
-      title="Image resize"
-      description="Resize images by pixels, percentage or preset, single or in batch, with format conversion. Everything runs in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       {/* Settings */}
       <div className="mb-6 flex flex-col gap-4 rounded-lg border border-line bg-card p-4">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">

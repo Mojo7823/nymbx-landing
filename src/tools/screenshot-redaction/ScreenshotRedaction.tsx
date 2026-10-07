@@ -274,11 +274,7 @@ export default function ScreenshotRedaction() {
   }
 
   return (
-    <ToolLayout
-      title="Screenshot redaction"
-      description="Black out or pixelate anything sensitive before you share a screenshot — the pixels are destroyed, not covered"
-      badge="client-side"
-    >
+    <ToolLayout>
       {!source ? (
         <div className="mx-auto max-w-2xl">
           <FileDropzone

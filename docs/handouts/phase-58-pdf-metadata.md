@@ -107,7 +107,7 @@ Required tests (`sanitize.test.ts`, `inspect.test.ts` on the committed fixtures,
 
 ## 4. UX specification
 
-Use `ToolLayout` (`title="PDF metadata sanitizer"`, `description="See exactly what a PDF says about you — edit the Info fields, or strip Info, XMP, PieceInfo and document IDs"`, `badge="client-side"`). Conventions: `src/tools/pdf-compress/PdfCompress.tsx` (PDF drop + error wording + result card with sizes), `src/tools/text-encoding-converter/` (summary card, worker keeping the file, `ProgressBar`), `src/components/CopyButton.tsx`, `src/lib/download.ts` (`downloadBlob`), `src/lib/format.ts` (`formatBytes`), `src/lib/worker.ts` (`wrapWorker`).
+Use the content-only `ToolLayout`; tool identity and server-assisted status come from the registry/shared header, not layout props. Conventions: `src/tools/pdf-compress/PdfCompress.tsx` (PDF drop + error wording + result card with sizes), `src/tools/text-encoding-converter/` (summary card, worker keeping the file, `ProgressBar`), `src/components/CopyButton.tsx`, `src/lib/download.ts` (`downloadBlob`), `src/lib/format.ts` (`formatBytes`), `src/lib/worker.ts` (`wrapWorker`).
 
 1. **Dropzone**: `accept="application/pdf,.pdf"`, `maxSize` 256 MiB, hint `PDF up to 256 MB`, default privacy note. One file; a new drop replaces it; `Clear`.
 2. **Summary card** (like the hex viewer's three cells, wrapping on mobile): file name · size · pages; chips for what was found — `Info: 10 keys (2 custom)` / `Info: none`, `XMP: 1.3 KB` / `XMP: none`, `+2 XMP streams on pages/images`, `PieceInfo: 2`, `Document ID: set` / `none`, `Attachments: n (not modified)`. **Signature banner** (amber) when `hasSignature`: `This PDF contains a digital signature. Any change made here will invalidate it.`

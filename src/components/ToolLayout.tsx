@@ -1,47 +1,23 @@
-import { useEffect, type ReactNode } from 'react'
-import { Link } from 'react-router'
-import { ArrowLeft } from 'lucide-react'
-import type { ToolBadge } from '../tools/registry'
-import { PrivacyBadge } from './PrivacyBadge'
+import type { ReactNode } from 'react'
+import { cx } from '../lib/cx'
 
 export interface ToolLayoutProps {
-  title: string
-  description: string
-  badge: ToolBadge
   children: ReactNode
+  /** Fill the available viewport; editors scroll inside their panes. */
+  workspace?: boolean
 }
 
-/** Standard frame for every tool page: back link, title, privacy badge, body. */
-export function ToolLayout({ title, description, badge, children }: ToolLayoutProps) {
-  useEffect(() => {
-    const previous = document.title
-    document.title = `${title} · NYMBX Toolbox`
-    return () => {
-      document.title = previous
-    }
-  }, [title])
-
+/** Tool content only; identity and navigation live in the shared top bar. */
+export function ToolLayout({ children, workspace = false }: ToolLayoutProps) {
   return (
-    <article className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-      <Link
-        to="/"
-        className="inline-flex items-center gap-1.5 text-xs font-medium text-muted transition-colors hover:text-pine"
-      >
-        <ArrowLeft className="size-3.5" />
-        All tools
-      </Link>
-      <header className="mt-4 mb-6 border-b border-line pb-5">
-        <div className="flex flex-wrap items-center gap-3">
-          <h1
-            data-tool-title
-            className="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl"
-          >
-            {title}
-          </h1>
-          <PrivacyBadge badge={badge} />
-        </div>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">{description}</p>
-      </header>
+    <article
+      aria-labelledby="active-tool-title"
+      data-tool-workspace={workspace || undefined}
+      className={cx(
+        'flex w-full min-w-0 flex-col p-3 sm:p-4',
+        workspace ? 'h-full min-h-0 overflow-auto' : 'min-h-full',
+      )}
+    >
       {children}
     </article>
   )

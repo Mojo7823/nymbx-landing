@@ -70,11 +70,7 @@ export default function UuidPasswordGenerator() {
   const grade = strength(bits)
 
   return (
-    <ToolLayout
-      title="UUID / ULID / password generator"
-      description="Generate UUID v4s, sortable ULIDs, or random passwords with configurable character classes and an entropy readout, powered exclusively by the browser's cryptographic random generator."
-      badge="client-side"
-    >
+    <ToolLayout>
       <div role="tablist" aria-label="Generator" className="mb-4 flex gap-1">
         {TABS.map(([value, label]) => (
           <button

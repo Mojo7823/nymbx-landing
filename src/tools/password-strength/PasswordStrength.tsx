@@ -84,11 +84,7 @@ export default function PasswordStrength() {
   const filled = result ? result.score + 1 : 0
 
   return (
-    <ToolLayout
-      title="Password strength checker"
-      description="Estimate how long a password would survive real attacks, with concrete advice for making it stronger. The analysis runs offline in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       <div
         className="mb-6 flex items-start gap-2.5 rounded-lg border border-pine/25 bg-mint/30 px-3 py-2.5 text-sm text-pine"
         role="note"

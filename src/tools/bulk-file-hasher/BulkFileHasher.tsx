@@ -368,11 +368,7 @@ export default function BulkFileHasher() {
   const totalBytes = items.reduce((sum, i) => sum + i.file.size, 0)
 
   return (
-    <ToolLayout
-      title="Bulk file hasher"
-      description="Compute SHA-256, SHA-1, SHA-512, SHA-384, MD5, BLAKE2b and CRC32 checksums for any number of files, or verify a folder against a checksum manifest. Files are streamed in your browser; nothing is uploaded."
-      badge="client-side"
-    >
+    <ToolLayout>
       {/* Settings */}
       <div className="mb-6 flex flex-col gap-4 rounded-lg border border-line bg-card p-4">
         <fieldset className="flex flex-wrap items-center gap-x-4 gap-y-2">

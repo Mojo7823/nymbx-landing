@@ -231,11 +231,7 @@ export default function PdfSplit() {
   }
 
   return (
-    <ToolLayout
-      title="PDF split / extract"
-      description="Pick pages from a PDF by clicking thumbnails or typing ranges, extract them into a new file, or split every page into its own PDF. Everything stays in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       {!pdf ? (
         <>
           {error && (

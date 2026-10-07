@@ -396,11 +396,7 @@ export default function Ocr() {
     'h-8 rounded-md border border-line-strong bg-card px-2 text-xs text-ink focus:border-pine focus:outline-none'
 
   return (
-    <ToolLayout
-      title="OCR"
-      description="Extract text from images and scanned PDFs, in your browser"
-      badge="client-side"
-    >
+    <ToolLayout>
       <div className="mb-6 flex flex-col gap-4 rounded-lg border border-line bg-card p-4">
         <fieldset className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <legend className="sr-only">Languages</legend>

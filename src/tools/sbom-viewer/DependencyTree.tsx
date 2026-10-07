@@ -116,8 +116,8 @@ export function DependencyTree({ tree }: { tree: Tree }) {
   }
 
   return (
-    <div>
-      <div className="mb-3 flex flex-wrap items-center gap-2">
+    <div className="flex min-h-48 flex-1 flex-col">
+      <div className="mb-3 flex shrink-0 flex-wrap items-center gap-2">
         <Button
           variant="secondary"
           size="sm"
@@ -142,7 +142,7 @@ export function DependencyTree({ tree }: { tree: Tree }) {
       </div>
 
       {tree.unresolved.length > 0 && (
-        <p className="mb-3 flex items-start gap-2 rounded-md border border-amber-badge/40 bg-amber-soft px-3 py-2 text-xs text-amber-badge">
+        <p className="mb-3 flex shrink-0 items-start gap-2 rounded-md border border-amber-badge/40 bg-amber-soft px-3 py-2 text-xs text-amber-badge">
           <AlertTriangle className="mt-px size-3.5 shrink-0" />
           <span>
             {tree.unresolved.length.toLocaleString()} dependency{' '}
@@ -154,7 +154,7 @@ export function DependencyTree({ tree }: { tree: Tree }) {
         </p>
       )}
 
-      <div className="max-h-[60vh] overflow-auto rounded-lg border border-line bg-card p-3">
+      <div className="min-h-32 flex-1 overflow-auto rounded-lg border border-line bg-card p-3">
         <ul>
           {visibleRoots.map((root, i) => (
             <NodeRow

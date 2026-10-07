@@ -72,11 +72,7 @@ export default function SvgOptimizer() {
   }
 
   return (
-    <ToolLayout
-      title="SVG optimizer"
-      description="Minify SVG safely: smaller files that render exactly the same. Everything runs in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="flex min-w-0 flex-col gap-3">
           <div className="flex items-center justify-between">

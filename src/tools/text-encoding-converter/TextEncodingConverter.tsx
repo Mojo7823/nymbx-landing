@@ -232,11 +232,7 @@ export default function TextEncodingConverter() {
   const empty = file !== null && detection !== null && detection.candidates.length === 0
 
   return (
-    <ToolLayout
-      title="Text encoding converter"
-      description="Detect Big5, GBK, Shift_JIS, EUC-KR and other legacy encodings, convert to UTF-8, or undo mojibake"
-      badge="client-side"
-    >
+    <ToolLayout>
       <div role="tablist" aria-label="Mode" className="mb-4 flex gap-1">
         {(
           [

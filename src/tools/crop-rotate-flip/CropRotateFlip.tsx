@@ -240,11 +240,7 @@ export default function CropRotateFlip() {
   }
 
   return (
-    <ToolLayout
-      title="Crop / rotate / flip"
-      description="Crop precisely, straighten, and flip photos. Every export re-renders from your original in one pass, so repeated tweaks never degrade quality."
-      badge="client-side"
-    >
+    <ToolLayout>
       {!source ? (
         <FileDropzone
           key={session}

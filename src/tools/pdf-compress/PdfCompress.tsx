@@ -152,11 +152,7 @@ export default function PdfCompress() {
     'h-8 rounded-md border border-line-strong bg-card px-2 text-xs text-ink focus:border-pine focus:outline-none'
 
   return (
-    <ToolLayout
-      title="PDF compress"
-      description="Shrink scanned or image-heavy PDFs by re-rendering every page as a JPEG at a chosen resolution. Everything stays in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       {!pdf ? (
         <>
           {error && (

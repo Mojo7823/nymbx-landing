@@ -68,7 +68,7 @@ For OCR, prefetch the engine files (`worker.min.js`, the four `.wasm.js` and fou
 
 ## 6. UX specification
 
-Use `ToolLayout` (`title="OCR"`, `description="Extract text from images and scanned PDFs, in your browser"`, `badge="client-side"`) and `FileDropzone` (`accept="image/png,image/jpeg,image/webp,application/pdf"`, `multiple`). Follow the visual conventions of the existing tools (look at `src/tools/pdf-to-image-markdown/PdfToImageMarkdown.tsx` and `src/tools/background-remover/BackgroundRemover.tsx` for the closest patterns: PDF rendering and model-download UX respectively).
+Use the content-only `ToolLayout` and `FileDropzone` (`accept="image/png,image/jpeg,image/webp,application/pdf"`, `multiple`). Tool identity and server-assisted status come from the registry/shared header, not layout props. Follow the visual conventions of the existing tools (look at `src/tools/pdf-to-image-markdown/PdfToImageMarkdown.tsx` and `src/tools/background-remover/BackgroundRemover.tsx` for the closest patterns: PDF rendering and model-download UX respectively).
 
 1. **Options row** (visible before and after dropping):
    - **Languages** — checkbox chips: `English (eng)` default on, `繁體中文 (chi_tra)`, `简体中文 (chi_sim)`, `Bahasa Indonesia (ind)`. At least one must stay selected. Show the download size next to each not-yet-cached pack ("~2.5 MB"). Persist the selection with the settings store (`src/lib/settings.ts`) — that is settings, not user files, so it is allowed.

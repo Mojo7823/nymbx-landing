@@ -78,14 +78,14 @@ export function SplitPane({ first, second, label = 'Resize panels', className }:
     <div
       ref={containerRef}
       className={cx(
-        'grid grid-cols-1 gap-6 lg:gap-0 lg:[grid-template-columns:minmax(0,var(--sp-l))_auto_minmax(0,var(--sp-r))]',
+        'grid min-h-0 grid-cols-1 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] gap-3 lg:grid-rows-1 lg:gap-0 lg:[grid-template-columns:minmax(0,var(--sp-l))_auto_minmax(0,var(--sp-r))]',
         dragging && 'select-none',
         className,
       )}
       style={{ '--sp-l': `${ratio}fr`, '--sp-r': `${1 - ratio}fr` } as CSSProperties}
     >
       <div
-        className={cx('min-w-0 overflow-hidden', firstCollapsed && 'invisible')}
+        className={cx('min-h-0 min-w-0 overflow-hidden', firstCollapsed && 'invisible')}
         inert={firstCollapsed}
         aria-hidden={firstCollapsed || undefined}
       >
@@ -122,7 +122,7 @@ export function SplitPane({ first, second, label = 'Resize panels', className }:
         />
       </div>
       <div
-        className={cx('min-w-0 overflow-hidden', secondCollapsed && 'invisible')}
+        className={cx('min-h-0 min-w-0 overflow-hidden', secondCollapsed && 'invisible')}
         inert={secondCollapsed}
         aria-hidden={secondCollapsed || undefined}
       >

@@ -204,11 +204,7 @@ export default function PdfToImageMarkdown() {
     'h-8 rounded-md border border-line-strong bg-card px-2 text-xs text-ink focus:border-pine focus:outline-none'
 
   return (
-    <ToolLayout
-      title="PDF → image / markdown"
-      description="Render PDF pages as PNG or JPEG images at a chosen DPI, or extract the text layer as markdown with headings inferred from font sizes. Everything stays in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       {!pdf ? (
         <>
           {error && (

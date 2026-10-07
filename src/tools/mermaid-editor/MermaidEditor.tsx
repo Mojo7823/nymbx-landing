@@ -125,12 +125,8 @@ export default function MermaidEditor() {
   }
 
   return (
-    <ToolLayout
-      title="Mermaid editor"
-      description="Write mermaid diagram definitions and see them rendered live. Export as SVG or PNG. Everything runs in your browser."
-      badge="client-side"
-    >
-      <div className="mb-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+    <ToolLayout workspace>
+      <div className="mb-3 flex shrink-0 flex-wrap items-center gap-x-6 gap-y-3">
         <div className="flex items-center gap-3">
           <span className="text-xs font-medium text-muted">Templates</span>
           <div className="flex flex-wrap overflow-hidden rounded-md border border-line-strong">
@@ -149,10 +145,11 @@ export default function MermaidEditor() {
       </div>
 
       <SplitPane
+        className="min-h-[24rem] flex-1 lg:min-h-0"
         label="Resize editor and diagram"
         first={
-          <section aria-label="Diagram definition">
-            <div className="mb-2 flex h-8 items-center justify-between gap-2">
+          <section aria-label="Diagram definition" className="flex h-full min-h-0 flex-col">
+            <div className="mb-2 flex h-8 shrink-0 items-center justify-between gap-2">
               <h2 className="text-xs font-semibold tracking-wide text-muted uppercase">Editor</h2>
               <Button variant="ghost" size="sm" onClick={() => setEditorText('')} disabled={!code}>
                 Clear
@@ -160,13 +157,13 @@ export default function MermaidEditor() {
             </div>
             <div
               ref={editorHost}
-              className="h-[32rem] overflow-hidden rounded-lg border border-line bg-card focus-within:border-pine"
+              className="min-h-0 flex-1 overflow-hidden rounded-lg border border-line bg-card focus-within:border-pine"
             />
           </section>
         }
         second={
-          <section aria-label="Rendered diagram">
-            <div className="mb-2 flex h-8 items-center justify-between gap-2">
+          <section aria-label="Rendered diagram" className="flex h-full min-h-0 flex-col">
+            <div className="mb-2 flex h-8 shrink-0 items-center justify-between gap-2">
               <h2 className="text-xs font-semibold tracking-wide text-muted uppercase">Diagram</h2>
               <div className="flex gap-2">
                 <Button
@@ -189,7 +186,7 @@ export default function MermaidEditor() {
             {render.error && (
               <div
                 role="alert"
-                className="mb-2 flex items-start gap-2 rounded-lg border border-line bg-amber-soft px-3 py-2"
+                className="mb-2 flex max-h-24 shrink-0 items-start gap-2 overflow-auto rounded-lg border border-line bg-amber-soft px-3 py-2"
               >
                 <TriangleAlert className="mt-0.5 size-3.5 shrink-0 text-amber-badge" />
                 <pre className="font-mono text-xs whitespace-pre-wrap text-amber-badge">
@@ -199,19 +196,19 @@ export default function MermaidEditor() {
             )}
             <div
               className={cx(
-                'flex h-[32rem] items-center justify-center overflow-auto rounded-lg border border-line bg-card p-4',
+                'flex min-h-0 flex-1 overflow-auto rounded-lg border border-line bg-card p-4',
                 render.error && 'opacity-60',
               )}
             >
               {render.svg ? (
                 <div
-                  className="[&_svg]:h-auto [&_svg]:max-w-full"
+                  className="m-auto max-w-full shrink-0 [&_svg]:h-auto [&_svg]:max-w-full"
                   data-testid="diagram"
                   // Safe: renderDiagram sanitizes the SVG with DOMPurify.
                   dangerouslySetInnerHTML={{ __html: render.svg }}
                 />
               ) : (
-                <p className="text-sm text-muted">
+                <p className="m-auto text-sm text-muted">
                   {render.rendered || debouncedCode.trim() === ''
                     ? 'The rendered diagram appears here.'
                     : 'Rendering diagram…'}

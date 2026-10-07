@@ -107,11 +107,7 @@ export default function TextHasher() {
   const resultKind = mode === 'hmac' ? 'HMAC' : 'digest'
 
   return (
-    <ToolLayout
-      title="Text hasher + HMAC"
-      description="Hash text with SHA-2, SHA-3 or BLAKE3 (plus legacy MD5/SHA-1), or authenticate it with an HMAC key. Input is always encoded as UTF-8. Everything runs in your browser; nothing is sent anywhere."
-      badge="client-side"
-    >
+    <ToolLayout>
       <Tabs
         label="Algorithm"
         options={ALGORITHM_ORDER}

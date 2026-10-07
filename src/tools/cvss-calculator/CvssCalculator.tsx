@@ -289,11 +289,7 @@ export default function CvssCalculator() {
   }
 
   return (
-    <ToolLayout
-      title="CVSS calculator"
-      description="Score vulnerabilities with CVSS v3.1 and v4.0 — exact FIRST equations, shareable by link"
-      badge="client-side"
-    >
+    <ToolLayout>
       <div role="tablist" aria-label="CVSS version" className="mb-4 flex gap-1">
         {(
           [

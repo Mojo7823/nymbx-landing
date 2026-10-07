@@ -300,11 +300,7 @@ export default function ImageCompressor() {
   const totalSavings = savingsPercent(totalIn, totalOut)
 
   return (
-    <ToolLayout
-      title="Image compressor"
-      description="Shrink photos with professional encoders and compare the result side by side before downloading. Metadata such as EXIF and GPS is always removed — outputs contain only pixels."
-      badge="client-side"
-    >
+    <ToolLayout>
       <div className="mb-6 flex flex-col gap-4 rounded-lg border border-line bg-card p-4">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           <div className="flex items-center gap-2">

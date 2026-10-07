@@ -168,11 +168,7 @@ export default function FaviconGenerator() {
   const snippet = buildSnippet()
 
   return (
-    <ToolLayout
-      title="Favicon generator"
-      description="Turn one image into a complete favicon set: multi-size .ico, Apple touch icon, PWA icons, webmanifest, and the HTML snippet. Everything runs in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       {!set && !busy && (
         <FileDropzone
           key={session}

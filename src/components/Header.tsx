@@ -1,6 +1,16 @@
 import { Link } from 'react-router'
-import { Keyboard, Menu, PanelLeftClose, PanelLeftOpen, WifiOff } from 'lucide-react'
+import {
+  Keyboard,
+  Maximize,
+  Menu,
+  Minimize,
+  PanelLeftClose,
+  PanelLeftOpen,
+  WifiOff,
+} from 'lucide-react'
+import type { ToolMeta } from '../tools/registry'
 import { ThemeToggle } from './ThemeToggle'
+import { PrivacyBadge } from './PrivacyBadge'
 import { useOnline } from '../lib/useOnline'
 
 export function Header({
@@ -8,10 +18,16 @@ export function Header({
   onOpenShortcuts,
   sidebarCollapsed,
   onToggleSidebar,
+  activeTool,
+  focused,
+  onToggleFocus,
 }: {
   onOpenNav: () => void
   sidebarCollapsed: boolean
   onToggleSidebar: () => void
+  activeTool?: ToolMeta
+  focused: boolean
+  onToggleFocus: () => void
   /** Opens the keyboard-shortcuts dialog (same as pressing `?`). */
   onOpenShortcuts?: () => void
 }) {
@@ -19,46 +35,67 @@ export function Header({
   const sidebarLabel = sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-page/95 backdrop-blur-md">
+    <header className="z-40 shrink-0 border-b border-line bg-page/95 backdrop-blur-md">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:rounded-md focus:bg-card focus:p-3"
       >
         Skip to content
       </a>
-      <div className="flex h-14 w-full items-center gap-1.5 px-4 sm:gap-3 sm:px-6">
-        <button
-          type="button"
-          onClick={onOpenNav}
-          aria-label="Open category navigation"
-          className="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-md border border-line bg-card text-muted hover:text-ink lg:hidden"
-        >
-          <Menu className="size-4" />
-        </button>
-        <button
-          type="button"
-          onClick={onToggleSidebar}
-          aria-label={sidebarLabel}
-          title={sidebarLabel}
-          aria-expanded={!sidebarCollapsed}
-          aria-controls="desktop-sidebar"
-          className="hidden size-9 shrink-0 cursor-pointer items-center justify-center rounded-md border border-line bg-card text-muted transition-colors hover:text-ink lg:inline-flex"
-        >
-          {sidebarCollapsed ? (
-            <PanelLeftOpen aria-hidden="true" className="size-4" />
-          ) : (
-            <PanelLeftClose aria-hidden="true" className="size-4" />
+      <div className="flex min-h-14 w-full items-center gap-1.5 px-3 py-2 sm:gap-3 sm:px-4">
+        {!focused && (
+          <>
+            <button
+              type="button"
+              onClick={onOpenNav}
+              aria-label="Open category navigation"
+              className="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-md border border-line bg-card text-muted hover:text-ink lg:hidden"
+            >
+              <Menu className="size-4" />
+            </button>
+            <button
+              type="button"
+              onClick={onToggleSidebar}
+              aria-label={sidebarLabel}
+              title={sidebarLabel}
+              aria-expanded={!sidebarCollapsed}
+              aria-controls="desktop-sidebar"
+              className="hidden size-9 shrink-0 cursor-pointer items-center justify-center rounded-md border border-line bg-card text-muted transition-colors hover:text-ink lg:inline-flex"
+            >
+              {sidebarCollapsed ? (
+                <PanelLeftOpen aria-hidden="true" className="size-4" />
+              ) : (
+                <PanelLeftClose aria-hidden="true" className="size-4" />
+              )}
+            </button>
+          </>
+        )}
+
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-3">
+          <Link to="/tools" className="inline-flex shrink-0 items-center gap-2">
+            <img src="/nymbx-icon.svg" alt="" className="hidden size-8 sm:block" />
+            <span className="font-display text-sm font-semibold tracking-tight text-ink sm:text-lg">
+              NYMBX <span className="font-normal text-muted">Toolbox</span>
+            </span>
+          </Link>
+          {activeTool && (
+            <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+              <span aria-hidden="true" className="text-xs text-faint sm:text-sm">
+                ×
+              </span>
+              <h1
+                id="active-tool-title"
+                data-tool-title
+                className="min-w-0 truncate text-xs font-medium text-ink capitalize sm:text-sm"
+              >
+                {activeTool.name}
+              </h1>
+              {activeTool.badge === 'server-assisted' && <PrivacyBadge badge="server-assisted" />}
+            </div>
           )}
-        </button>
+        </div>
 
-        <Link to="/" className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
-          <img src="/nymbx-icon.svg" alt="" className="h-9 w-auto" />
-          <span className="font-display text-lg font-semibold tracking-tight text-ink">
-            NYMBX <span className="hidden font-normal text-muted min-[400px]:inline">Toolbox</span>
-          </span>
-        </Link>
-
-        <div className="ml-auto flex items-center gap-1.5 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
           {!online && (
             <span
               role="status"
@@ -69,7 +106,23 @@ export function Header({
               <span className="sr-only sm:not-sr-only">Offline</span>
             </span>
           )}
-          {onOpenShortcuts && (
+          {activeTool && (
+            <button
+              type="button"
+              onClick={onToggleFocus}
+              aria-pressed={focused}
+              title={focused ? 'Exit focus (Esc)' : 'Focus workspace'}
+              className={`inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors ${focused ? 'border-pine bg-mint text-pine' : 'border-line bg-card text-muted hover:text-ink'}`}
+            >
+              {focused ? (
+                <Minimize aria-hidden="true" className="size-3.5" />
+              ) : (
+                <Maximize aria-hidden="true" className="size-3.5" />
+              )}
+              Focus
+            </button>
+          )}
+          {!focused && onOpenShortcuts && (
             <button
               type="button"
               onClick={onOpenShortcuts}
@@ -80,12 +133,14 @@ export function Header({
               <Keyboard className="size-4" />
             </button>
           )}
-          <Link
-            to="/contact"
-            className="inline-flex shrink-0 items-center gap-1.5 text-xs font-medium text-muted transition-colors hover:text-pine"
-          >
-            Contact
-          </Link>
+          {!activeTool && (
+            <Link
+              to="/contact"
+              className="inline-flex shrink-0 items-center gap-1.5 text-xs font-medium text-muted transition-colors hover:text-pine"
+            >
+              Contact
+            </Link>
+          )}
           <ThemeToggle />
         </div>
       </div>

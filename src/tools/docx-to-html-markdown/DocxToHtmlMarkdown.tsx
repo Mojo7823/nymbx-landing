@@ -96,11 +96,7 @@ export default function DocxToHtmlMarkdown() {
   const copyText = result ? (view === 'markdown' ? result.markdown : result.html) : ''
 
   return (
-    <ToolLayout
-      title="DOCX → HTML / Markdown"
-      description="Convert a Word document to clean HTML or GFM markdown with mammoth. Images can be embedded as base64 or exported as separate files in a zip. Everything stays in your browser."
-      badge="client-side"
-    >
+    <ToolLayout workspace={!!doc}>
       {!doc ? (
         <>
           {error && (
@@ -116,7 +112,7 @@ export default function DocxToHtmlMarkdown() {
         </>
       ) : (
         <>
-          <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <div className="mb-4 flex shrink-0 flex-wrap items-center gap-x-4 gap-y-2">
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-ink">{doc.name}</p>
               <p className="font-mono text-[11px] text-muted tabular-nums">
@@ -129,7 +125,7 @@ export default function DocxToHtmlMarkdown() {
             </Button>
           </div>
 
-          <div className="mb-4 flex flex-col gap-2 rounded-lg border border-line bg-card p-4">
+          <div className="mb-4 flex shrink-0 flex-col gap-2 rounded-lg border border-line bg-card p-4">
             <fieldset className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <legend className="sr-only">Image handling</legend>
               <span className="text-xs font-medium text-muted">Images</span>
@@ -162,7 +158,7 @@ export default function DocxToHtmlMarkdown() {
           </div>
 
           {error && (
-            <p role="alert" className="mb-4 text-sm text-red-600 dark:text-red-400">
+            <p role="alert" className="mb-4 shrink-0 text-sm text-red-600 dark:text-red-400">
               {error}
             </p>
           )}
@@ -172,7 +168,7 @@ export default function DocxToHtmlMarkdown() {
           {result && !converting && (
             <>
               {result.warnings.length > 0 && (
-                <details className="mb-4 rounded-lg border border-line bg-card p-3 text-sm text-amber-badge">
+                <details className="mb-4 shrink-0 rounded-lg border border-line bg-card p-3 text-sm text-amber-badge">
                   <summary className="flex cursor-pointer items-center gap-1.5 font-medium">
                     <AlertTriangle className="size-4 shrink-0" />
                     {result.warnings.length} conversion{' '}
@@ -186,7 +182,7 @@ export default function DocxToHtmlMarkdown() {
                 </details>
               )}
 
-              <div className="flex flex-wrap items-center gap-2 border-t border-line pt-4">
+              <div className="flex shrink-0 flex-wrap items-center gap-2 border-t border-line pt-4">
                 <div role="tablist" aria-label="Output view" className="flex gap-1">
                   {(
                     [
@@ -233,24 +229,27 @@ export default function DocxToHtmlMarkdown() {
               </div>
 
               {imageMode === 'separate' && (
-                <p className="mt-2 font-mono text-[11px] text-muted tabular-nums" role="status">
+                <p
+                  className="mt-2 shrink-0 font-mono text-[11px] text-muted tabular-nums"
+                  role="status"
+                >
                   {result.images.length} {result.images.length === 1 ? 'image' : 'images'} extracted
                 </p>
               )}
 
-              <div className="mt-4">
+              <div className="mt-4 flex min-h-40 flex-1 flex-col">
                 {result.html === '' ? (
                   <p className="rounded-lg border border-line bg-card p-4 text-sm text-muted">
                     This document has no convertible content.
                   </p>
                 ) : view === 'preview' ? (
                   <div
-                    className="md-preview max-h-[36rem] overflow-auto rounded-lg border border-line bg-card p-4"
+                    className="md-preview min-h-0 flex-1 overflow-auto rounded-lg border border-line bg-card p-4"
                     // Sanitized by DOMPurify in convertDocx.
                     dangerouslySetInnerHTML={{ __html: result.html }}
                   />
                 ) : (
-                  <pre className="max-h-[36rem] overflow-auto rounded-lg border border-line bg-card p-4 font-mono text-xs leading-relaxed whitespace-pre-wrap text-ink">
+                  <pre className="min-h-0 flex-1 overflow-auto rounded-lg border border-line bg-card p-4 font-mono text-xs leading-relaxed whitespace-pre-wrap text-ink">
                     {view === 'html' ? result.html : result.markdown}
                   </pre>
                 )}

@@ -285,12 +285,8 @@ export default function JsonSchemaValidator() {
   const remainingErrors = result?.ok ? Math.max(0, result.totalErrors - issues.length) : 0
 
   return (
-    <ToolLayout
-      title="JSON Schema validator"
-      description="Check a JSON document against a JSON Schema, with exact error paths. Validation runs locally in a disposable worker; your schema and document never leave this browser."
-      badge="client-side"
-    >
-      <div className="mb-4 flex flex-wrap items-center gap-2">
+    <ToolLayout workspace>
+      <div className="mb-4 flex shrink-0 flex-wrap items-center gap-2">
         <label htmlFor="schema-draft" className="text-xs font-medium text-muted">
           Schema draft
         </label>
@@ -323,10 +319,14 @@ export default function JsonSchemaValidator() {
         </Button>
       </div>
 
-      <div className="grid min-w-0 gap-5 lg:grid-cols-2">
+      <div className="grid min-w-0 flex-1 auto-rows-[minmax(min-content,1fr)] gap-5 lg:grid-cols-2">
         {FIELDS.map((field) => (
-          <section key={field} aria-labelledby={`${field}-heading`} className="min-w-0 break-words">
-            <div className="mb-2 flex items-baseline justify-between gap-2">
+          <section
+            key={field}
+            aria-labelledby={`${field}-heading`}
+            className="flex min-w-0 flex-col break-words"
+          >
+            <div className="mb-2 flex shrink-0 flex-wrap items-baseline justify-between gap-2">
               <h2 id={`${field}-heading`} className="text-sm font-semibold text-ink">
                 <label htmlFor={`${field}-editor`}>{EDITORS[field].label}</label>
               </h2>
@@ -344,13 +344,13 @@ export default function JsonSchemaValidator() {
               aria-describedby={`${field}-help ${field}-status`}
               aria-invalid={bytes[field] > MAX_INPUT_BYTES || undefined}
               spellCheck={false}
-              className="h-72 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none disabled:opacity-60 lg:h-96"
+              className="h-0 min-h-32 w-full flex-1 resize-none overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none disabled:opacity-60"
             />
-            <p id={`${field}-help`} className="mt-1 text-xs leading-relaxed text-muted">
+            <p id={`${field}-help`} className="mt-1 shrink-0 text-xs leading-relaxed text-muted">
               Paste JSON or open a UTF-8 file (maximum 2 MiB). Typing replaces any pending file
               import.
             </p>
-            <div id={`${field}-status`} className="my-2" aria-live="polite">
+            <div id={`${field}-status`} className="my-2 shrink-0" aria-live="polite">
               {reading[field] && (
                 <ProgressBar label={`Reading ${EDITORS[field].label}: ${reading[field]}`} />
               )}
@@ -369,7 +369,7 @@ export default function JsonSchemaValidator() {
             <div
               inert={busy}
               aria-disabled={busy || undefined}
-              className={busy ? 'opacity-50' : undefined}
+              className={busy ? 'shrink-0 opacity-50' : 'shrink-0'}
             >
               <FileDropzone
                 key={`${field}-${dropzoneVersion}`}
@@ -384,7 +384,7 @@ export default function JsonSchemaValidator() {
         ))}
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center gap-3">
+      <div className="mt-5 flex shrink-0 flex-wrap items-center gap-3">
         <Button
           onClick={validate}
           disabled={
@@ -409,13 +409,13 @@ export default function JsonSchemaValidator() {
           </Button>
         )}
       </div>
-      <p className="mt-3 text-xs leading-relaxed text-muted">
+      <p className="mt-3 shrink-0 text-xs leading-relaxed text-muted">
         Remote references are not downloaded: inline them using $defs or definitions. Unsupported
         keywords and formats are rejected. Ordinary JavaScript number precision applies. Validation
         never changes your data and stops after 15 seconds.
       </p>
 
-      <div className="mt-5" aria-live="polite" aria-atomic="true">
+      <div className="mt-5 shrink-0" aria-live="polite" aria-atomic="true">
         {busy && <ProgressBar label="Validating schema and JSON document…" />}
         {notice && (
           <p
@@ -471,8 +471,11 @@ export default function JsonSchemaValidator() {
       </div>
 
       {result && (
-        <section aria-label="Validation report" className="mt-4 min-w-0">
-          <div className="mb-3 flex flex-wrap items-center gap-2">
+        <section
+          aria-label="Validation report"
+          className={`mt-4 flex min-w-0 flex-col ${issues.length > 0 ? 'flex-1' : 'shrink-0'}`}
+        >
+          <div className="mb-3 flex shrink-0 flex-wrap items-center gap-2">
             <CopyButton text={report} label="Copy report" />
             <Button
               variant="secondary"
@@ -489,11 +492,14 @@ export default function JsonSchemaValidator() {
           </div>
           {issues.length > 0 && (
             <>
-              <p className="mb-2 text-xs text-muted">
+              <p className="mb-2 shrink-0 text-xs text-muted">
                 Paths are JSON Pointers; <code>""</code> is the root. Schema errors refer to the
                 schema being checked.
               </p>
-              <ol className="space-y-3" aria-label="Validation errors">
+              <ol
+                className="h-0 min-h-32 flex-1 space-y-3 overflow-auto"
+                aria-label="Validation errors"
+              >
                 {issues.map((issue, index) => (
                   <li key={index} className="rounded-lg border border-line bg-card p-3">
                     <p className="text-sm font-medium break-words text-ink">
@@ -517,7 +523,7 @@ export default function JsonSchemaValidator() {
             </>
           )}
           {remainingErrors > 0 && (
-            <p className="mt-3 text-xs text-muted">
+            <p className="mt-3 shrink-0 text-xs text-muted">
               Showing the first {issues.length} errors; {remainingErrors} more are not included in
               this report. The total count includes all validation errors.
             </p>

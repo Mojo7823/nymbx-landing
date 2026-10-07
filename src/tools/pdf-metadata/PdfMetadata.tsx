@@ -251,11 +251,7 @@ export default function PdfMetadata() {
   const bullets = result ? reportBullets(result.report) : []
 
   return (
-    <ToolLayout
-      title="PDF metadata sanitizer"
-      description="See exactly what a PDF says about you — edit the Info fields, or strip Info, XMP, PieceInfo and document IDs"
-      badge="client-side"
-    >
+    <ToolLayout>
       {error && (
         <p role="alert" className="mb-4 text-sm text-red-600 dark:text-red-400">
           {error}

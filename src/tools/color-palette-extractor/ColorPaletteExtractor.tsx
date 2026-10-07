@@ -280,11 +280,7 @@ export default function ColorPaletteExtractor() {
   const allText = buildPaletteText(palette, format)
 
   return (
-    <ToolLayout
-      title="Color palette extractor"
-      description="Drop in any image to pull out its dominant colors, pick exact pixels, and find readable text/background pairs. Everything runs in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       {stage === 'idle' || stage === 'error' ? (
         <>
           <FileDropzone

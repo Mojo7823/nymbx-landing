@@ -75,14 +75,6 @@ export default function XlsxCsvViewer() {
     [],
   )
 
-  useEffect(() => {
-    const el = scrollRef.current
-    if (!el) return
-    const observer = new ResizeObserver(() => setViewportH(el.clientHeight))
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [file])
-
   function worker() {
     workerRef.current ??= wrapWorker<SheetWorkerApi>(
       new Worker(new URL('./sheet.worker.ts', import.meta.url), { type: 'module' }),
@@ -163,6 +155,19 @@ export default function XlsxCsvViewer() {
     return sortCol !== null ? sortIndices(rows, base, sortCol, sortDir) : base
   }, [rows, debouncedQuery, sortCol, sortDir])
 
+  const gridVisible = !!file && loading !== 'sheet' && !!rows && displayIndices.length > 0
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const observer = new ResizeObserver(() => {
+      setViewportH(el.clientHeight)
+      setScrollTop(el.scrollTop)
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [gridVisible])
+
   const sel = useMemo(() => {
     if (!selection) return null
     return {
@@ -239,11 +244,7 @@ export default function XlsxCsvViewer() {
     'shrink-0 truncate border-r border-b border-line px-2 leading-8 font-mono text-xs tabular-nums'
 
   return (
-    <ToolLayout
-      title="XLSX / CSV viewer"
-      description="Open spreadsheets read-only: sheet tabs, column sort, search and copy. Formulas show their last computed value. Everything stays in your browser."
-      badge="client-side"
-    >
+    <ToolLayout workspace={!!file}>
       {!file ? (
         <>
           {error && (
@@ -263,7 +264,7 @@ export default function XlsxCsvViewer() {
         </>
       ) : (
         <>
-          <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <div className="mb-3 flex shrink-0 flex-wrap items-center gap-x-4 gap-y-2">
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-ink">{file.name}</p>
               <p className="font-mono text-[11px] text-muted tabular-nums">
@@ -281,7 +282,7 @@ export default function XlsxCsvViewer() {
             <div
               role="tablist"
               aria-label="Sheets"
-              className="mb-3 flex gap-1 overflow-x-auto rounded-md border border-line bg-card p-1"
+              className="mb-3 flex shrink-0 gap-1 overflow-x-auto rounded-md border border-line bg-card p-1"
             >
               {file.sheets.map((s, i) => (
                 <button
@@ -300,7 +301,7 @@ export default function XlsxCsvViewer() {
             </div>
           )}
 
-          <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+          <div className="mb-3 flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2">
             <input
               type="search"
               value={query}
@@ -347,13 +348,13 @@ export default function XlsxCsvViewer() {
           </div>
 
           {meta && meta.cols > MAX_COLS && (
-            <p className="mb-3 text-xs text-amber-badge" role="status">
+            <p className="mb-3 shrink-0 text-xs text-amber-badge" role="status">
               Showing the first {MAX_COLS} of {meta.cols.toLocaleString()} columns.
             </p>
           )}
 
           {error && (
-            <p role="alert" className="mb-3 text-sm text-red-600 dark:text-red-400">
+            <p role="alert" className="mb-3 shrink-0 text-sm text-red-600 dark:text-red-400">
               {error}
             </p>
           )}
@@ -376,11 +377,7 @@ export default function XlsxCsvViewer() {
                   void copySelection()
                 }
               }}
-              className="relative min-h-24 overflow-auto rounded-lg border border-line bg-card outline-none focus-visible:border-pine"
-              style={{
-                // Shrink-wrap small sheets; large ones scroll inside 60vh.
-                height: `min(60vh, ${ROW_H + displayIndices.length * ROW_H + 14}px)`,
-              }}
+              className="relative min-h-40 flex-1 overflow-auto rounded-lg border border-line bg-card outline-none focus-visible:border-pine"
             >
               <div style={{ width: contentWidth, height: ROW_H + displayIndices.length * ROW_H }}>
                 {/* Header: sticky on top, gutter corner sticky both ways */}

@@ -256,11 +256,7 @@ export default function SbomViewer() {
   ]
 
   return (
-    <ToolLayout
-      title="SBOM viewer"
-      description="Inspect and validate CycloneDX and SPDX software bills of materials, in your browser"
-      badge="client-side"
-    >
+    <ToolLayout workspace={!!loaded}>
       {!loaded ? (
         <div className="mx-auto max-w-3xl">
           {busy ? (
@@ -323,7 +319,7 @@ export default function SbomViewer() {
         </div>
       ) : (
         <>
-          <section className="rounded-lg border border-line bg-card p-4 sm:p-5">
+          <section className="shrink-0 rounded-lg border border-line bg-card p-4 sm:p-5">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
               <span className="rounded-md border border-pine/30 bg-mint/40 px-2.5 py-1 text-xs font-semibold text-pine">
                 {loaded.doc.format} {loaded.doc.specVersion || '(version missing)'}
@@ -393,7 +389,7 @@ export default function SbomViewer() {
           <div
             role="tablist"
             aria-label="SBOM sections"
-            className="mt-5 mb-4 flex flex-wrap gap-1 overflow-x-auto"
+            className="mt-5 mb-4 flex shrink-0 flex-wrap gap-1 overflow-x-auto"
           >
             {tabs.map((entry) => (
               <button
@@ -428,14 +424,14 @@ export default function SbomViewer() {
           )}
 
           {tab === 'licenses' && (
-            <div>
-              <p className="mb-3 text-xs text-muted">
+            <div className="flex min-h-40 flex-1 flex-col">
+              <p className="mb-3 shrink-0 text-xs text-muted">
                 {licenses.length.toLocaleString()} distinct{' '}
                 {licenses.length === 1 ? 'license' : 'licenses'} · {withoutLicense.toLocaleString()}{' '}
                 {withoutLicense === 1 ? 'component' : 'components'} without license information.
                 Expressions are listed as written.
               </p>
-              <ul className="divide-y divide-line rounded-lg border border-line bg-card">
+              <ul className="min-h-0 flex-1 divide-y divide-line overflow-auto rounded-lg border border-line bg-card">
                 {licenses.map((entry) => (
                   <li key={entry.license}>
                     <button
@@ -471,7 +467,7 @@ export default function SbomViewer() {
           {tab === 'dependencies' && tree && <DependencyTree tree={tree} />}
 
           {tab === 'vulnerabilities' && (
-            <div className="overflow-x-auto rounded-lg border border-line bg-card">
+            <div className="min-h-40 flex-1 overflow-auto rounded-lg border border-line bg-card">
               <table className="w-full min-w-[44rem] text-left text-xs">
                 <thead className="border-b border-line bg-soft text-muted">
                   <tr>
@@ -529,8 +525,8 @@ export default function SbomViewer() {
           )}
 
           {tab === 'validation' && (
-            <div>
-              <div className="mb-3 flex flex-wrap items-center gap-3">
+            <div className="flex min-h-40 flex-1 flex-col">
+              <div className="mb-3 flex shrink-0 flex-wrap items-center gap-3">
                 <ValidationBadge validation={loaded.validation} />
                 <CopyButton label="Copy report" text={() => formatReport(loaded.validation)} />
               </div>
@@ -547,7 +543,7 @@ export default function SbomViewer() {
                 </p>
               )}
               {loaded.validation.valid === false && (
-                <ul className="divide-y divide-line rounded-lg border border-line bg-card">
+                <ul className="min-h-0 flex-1 divide-y divide-line overflow-auto rounded-lg border border-line bg-card">
                   {loaded.validation.errors.map((entry, i) => (
                     <li
                       key={`${entry.path}-${entry.keyword}-${i}`}

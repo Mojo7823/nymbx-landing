@@ -54,7 +54,7 @@ Store every object in **viewed points**: the page as the viewer shows it (honour
 
 ## 5. UX specification
 
-Use `ToolLayout` (`title="PDF sign & annotate"`, `description="Place a signature, text, dates and checkmarks on a PDF — flattened into a copy, in your browser"`, `badge="client-side"`) and `FileDropzone` (`accept="application/pdf"`, single file). Look at `src/tools/pdf-watermark/PdfWatermark.tsx` (controls layout, worker use, font fetch, download) and `src/tools/background-remover/FineTuneEditor.tsx` (pointer capture, `touch-none`, primary-pointer-only strokes) for conventions.
+Use the content-only `ToolLayout` and `FileDropzone` (`accept="application/pdf"`, single file). Tool identity and server-assisted status come from the registry/shared header, not layout props. Look at `src/tools/pdf-watermark/PdfWatermark.tsx` (controls layout, worker use, font fetch, download) and `src/tools/background-remover/FineTuneEditor.tsx` (pointer capture, `touch-none`, primary-pointer-only strokes) for conventions.
 
 1. **Empty state:** dropzone plus a one-line note: "The file stays in your browser; you download a flattened copy. The original is never changed."
 2. **Editor layout** (after a drop): a **toolbar** row, a **page canvas** (single page at a time, fit-to-width with a zoom control 50–200 % and "Fit"), a **page navigator** (Prev / `n of N` input / Next, plus a lazily rendered thumbnail strip on ≥ 1024 px; thumbnails render only when scrolled into view), and a **properties panel** for the selected object (text: content, font size, color; image: opacity is **not** required; ink: color, thickness; checkmark: color, size; date: format). On 390 px the properties panel collapses under the canvas and the thumbnail strip is hidden.
@@ -66,7 +66,7 @@ Use `ToolLayout` (`title="PDF sign & annotate"`, `description="Place a signature
 8. **Export:** button → `Preparing…` state → download `<name>.signed.pdf` (via `downloadBlob`). A toast confirms. Export runs in a Comlink worker (`sign.worker.ts`), like `watermark.worker.ts`: it receives the original bytes, the export plan, image bytes and the font bytes, returns the new bytes. The original `File` is never mutated.
 9. **Errors:** encrypted PDF → the Phase 13 wording ("This PDF is password-protected. Remove the password first; encrypted files are not supported."); unreadable → clear error; export failure → toast with the message, editor state preserved. Image over 20 MB → toast and ignore.
 10. **Performance:** only the current page is rendered at full resolution; thumbnails are lazy; a 100-page PDF must open in well under 2 s and page switches must feel instant (render on demand, keep at most 3 rendered pages cached). Never render every page up front.
-11. **Privacy:** no network requests while a file is loaded except the one-time same-origin font fetch. State in the UI footer of the tool: "Nothing is uploaded."
+11. **Privacy:** no network requests while a file is loaded except the one-time same-origin font fetch. Keep an inline tool notice: "Nothing is uploaded."
 
 ## 6. Code layout
 

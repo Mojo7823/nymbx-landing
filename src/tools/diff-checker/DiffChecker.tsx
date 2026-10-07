@@ -31,7 +31,7 @@ const unitLabel: Record<Granularity, string> = { chars: 'chars', words: 'words',
 const MAX_INLINE_ROWS = 5000
 
 const textareaClasses =
-  'h-40 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-[13px] leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none sm:h-48'
+  'min-h-0 w-full flex-1 resize-none overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-[13px] leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none'
 
 /** CodeMirror merge view (read-only) for the side-by-side display. */
 function SideBySideDiff({ a, b }: { a: string; b: string }) {
@@ -56,7 +56,7 @@ function SideBySideDiff({ a, b }: { a: string; b: string }) {
         EditorView.lineWrapping,
         EditorView.theme(
           {
-            '&': { backgroundColor: 'transparent', fontSize: '13px', maxHeight: '560px' },
+            '&': { backgroundColor: 'transparent', fontSize: '13px' },
             '.cm-content': { fontFamily: 'var(--font-mono)' },
             '.cm-scroller': { overflow: 'auto', lineHeight: '1.6' },
             '.cm-gutters': {
@@ -83,7 +83,12 @@ function SideBySideDiff({ a, b }: { a: string; b: string }) {
     }
   }, [a, b, dark])
 
-  return <div ref={ref} className="overflow-hidden rounded-lg border border-line bg-card" />
+  return (
+    <div
+      ref={ref}
+      className="h-full min-h-0 overflow-hidden rounded-lg border border-line bg-card [&>.cm-mergeView]:h-full [&>.cm-mergeView]:overflow-auto"
+    />
+  )
 }
 
 /** jsdiff-powered inline rendering honoring the granularity toggle. */
@@ -96,7 +101,7 @@ function InlineDiff({ summary }: { summary: DiffSummary }) {
     }
     const truncated = rows.length > MAX_INLINE_ROWS
     return (
-      <div className="overflow-x-auto rounded-lg border border-line bg-card py-2 font-mono text-[13px] leading-relaxed">
+      <div className="h-full min-h-0 overflow-auto rounded-lg border border-line bg-card py-2 font-mono text-[13px] leading-relaxed">
         {rows.slice(0, MAX_INLINE_ROWS).map((row, i) => (
           <div
             key={i}
@@ -123,7 +128,7 @@ function InlineDiff({ summary }: { summary: DiffSummary }) {
   }
 
   return (
-    <pre className="rounded-lg border border-line bg-card p-3 font-mono text-[13px] leading-relaxed break-words whitespace-pre-wrap">
+    <pre className="h-full min-h-0 overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-[13px] leading-relaxed break-words whitespace-pre-wrap">
       {summary.parts.map((part, i) =>
         part.added ? (
           <ins key={i} className="bg-mint text-pine-deep no-underline">
@@ -161,8 +166,8 @@ function InputPane({ id, title, value, onChange, placeholder }: InputPaneProps) 
   }
 
   return (
-    <section aria-label={title}>
-      <div className="mb-2 flex h-8 items-center justify-between gap-2">
+    <section aria-label={title} className="flex h-full min-h-0 flex-col">
+      <div className="mb-2 flex h-8 shrink-0 items-center justify-between gap-2">
         <h2 className="text-xs font-semibold tracking-wide text-muted uppercase">{title}</h2>
         <div className="flex gap-2">
           <Button variant="secondary" size="sm" onClick={paste}>
@@ -262,12 +267,9 @@ export default function DiffChecker() {
   const granularityDisabled = view === 'side-by-side'
 
   return (
-    <ToolLayout
-      title="Diff checker"
-      description="Compare two texts side by side or inline, at character, word or line granularity. Everything runs in your browser."
-      badge="client-side"
-    >
+    <ToolLayout workspace>
       <SplitPane
+        className="min-h-80 flex-1 lg:min-h-0"
         label="Resize the two inputs"
         first={
           <InputPane
@@ -289,7 +291,7 @@ export default function DiffChecker() {
         }
       />
 
-      <div className="mt-6 mb-4 flex flex-wrap items-center gap-x-6 gap-y-3">
+      <div className="my-4 flex shrink-0 flex-wrap items-center gap-x-6 gap-y-3">
         <fieldset className="flex items-center gap-3">
           <legend className="sr-only">View mode</legend>
           <span className="text-xs font-medium text-muted">View</span>
@@ -378,31 +380,33 @@ export default function DiffChecker() {
         </div>
       </div>
 
-      {empty ? (
-        <p className="rounded-lg border border-dashed border-line-strong py-12 text-center text-sm text-muted">
-          Paste text into both panes to see the differences.
-        </p>
-      ) : summary?.identical ? (
-        <p
-          role="status"
-          className="flex items-center justify-center gap-2 rounded-lg border border-line bg-mint py-12 text-sm font-medium text-pine-deep"
-        >
-          <Check className="size-4" />
-          No differences found{ignoreWhitespace ? ' (whitespace ignored)' : ''}.
-        </p>
-      ) : summary?.timedOut ? (
-        <p
-          role="alert"
-          className="rounded-lg border border-line bg-amber-soft px-4 py-6 text-center text-sm text-amber-badge"
-        >
-          These inputs are too large or too different for {summary.granularity}-level comparison.
-          Switch granularity to “Lines”.
-        </p>
-      ) : view === 'side-by-side' ? (
-        <SideBySideDiff a={aDebounced} b={bDebounced} />
-      ) : summary ? (
-        <InlineDiff summary={summary} />
-      ) : null}
+      <section aria-label="Diff result" className="min-h-64 flex-1 lg:min-h-0">
+        {empty ? (
+          <p className="flex h-full min-h-0 items-center justify-center overflow-auto rounded-lg border border-dashed border-line-strong p-4 text-center text-sm text-muted">
+            Paste text into both panes to see the differences.
+          </p>
+        ) : summary?.identical ? (
+          <p
+            role="status"
+            className="flex h-full min-h-0 items-center justify-center gap-2 overflow-auto rounded-lg border border-line bg-mint p-4 text-sm font-medium text-pine-deep"
+          >
+            <Check className="size-4" />
+            No differences found{ignoreWhitespace ? ' (whitespace ignored)' : ''}.
+          </p>
+        ) : summary?.timedOut ? (
+          <p
+            role="alert"
+            className="flex h-full min-h-0 items-center justify-center overflow-auto rounded-lg border border-line bg-amber-soft p-4 text-center text-sm text-amber-badge"
+          >
+            These inputs are too large or too different for {summary.granularity}-level comparison.
+            Switch granularity to “Lines”.
+          </p>
+        ) : view === 'side-by-side' ? (
+          <SideBySideDiff a={aDebounced} b={bDebounced} />
+        ) : summary ? (
+          <InlineDiff summary={summary} />
+        ) : null}
+      </section>
     </ToolLayout>
   )
 }

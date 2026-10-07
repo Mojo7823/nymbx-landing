@@ -283,11 +283,7 @@ export default function QrGeneratorReader() {
   }
 
   return (
-    <ToolLayout
-      title="QR generator + reader"
-      description="Create QR codes for text, links, or Wi-Fi credentials, and scan codes back from images or your camera. Everything runs in your browser; nothing is uploaded."
-      badge="client-side"
-    >
+    <ToolLayout>
       <div className="mb-6">
         <Tabs
           label="Tool mode"

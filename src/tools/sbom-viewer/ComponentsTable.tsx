@@ -74,18 +74,22 @@ export function ComponentsTable({
 
   const debouncedQuery = useDebouncedValue(query, 200)
 
-  useEffect(() => {
-    const el = scrollRef.current
-    if (!el) return
-    const observer = new ResizeObserver(() => setViewportH(el.clientHeight))
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
-
   const rows = useMemo(
     () => filterSort(components, debouncedQuery, sortCol, sortDir),
     [components, debouncedQuery, sortCol, sortDir],
   )
+  const hasRows = rows.length > 0
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const observer = new ResizeObserver(() => {
+      setViewportH(el.clientHeight)
+      setScrollTop(el.scrollTop)
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [hasRows])
 
   function onHeaderClick(key: SortColumn) {
     if (sortCol !== key) {
@@ -108,8 +112,8 @@ export function ComponentsTable({
   const cellBase = 'shrink-0 truncate border-b border-line px-3 leading-9 text-xs'
 
   return (
-    <div>
-      <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+    <div className="flex min-h-48 flex-1 flex-col">
+      <div className="mb-3 flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2">
         <input
           type="search"
           value={query}
@@ -149,8 +153,7 @@ export function ComponentsTable({
         <div
           ref={scrollRef}
           onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}
-          className="relative overflow-auto rounded-lg border border-line bg-card"
-          style={{ height: `min(60vh, ${ROW_H * (rows.length + 1) + 2}px)` }}
+          className="relative min-h-32 flex-1 overflow-auto rounded-lg border border-line bg-card"
         >
           <div style={{ width: TABLE_WIDTH, height: ROW_H * (rows.length + 1) }}>
             <div
@@ -232,7 +235,7 @@ export function ComponentsTable({
       )}
 
       {detail && (
-        <section className="mt-3 rounded-lg border border-line bg-card p-4">
+        <section className="mt-3 min-h-32 flex-1 overflow-auto rounded-lg border border-line bg-card p-4">
           <div className="flex items-start justify-between gap-3">
             <h3 className="font-display text-sm font-semibold text-ink">
               {componentLabel(detail)}

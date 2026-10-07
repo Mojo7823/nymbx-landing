@@ -621,11 +621,7 @@ export default function ZipUnzip() {
   }
 
   return (
-    <ToolLayout
-      title="Zip / unzip"
-      description="Pack files and folders into a compressed archive, or pull the files back out — selectively. Everything runs in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       <div role="radiogroup" aria-label="Tool mode" className="mb-6 flex flex-wrap gap-1">
         {(Object.keys(MODE_LABELS) as Mode[]).map((id) => (
           <button

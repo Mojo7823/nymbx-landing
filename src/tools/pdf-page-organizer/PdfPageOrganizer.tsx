@@ -308,11 +308,7 @@ export default function PdfPageOrganizer() {
   const changed = history.length > 0
 
   return (
-    <ToolLayout
-      title="Page reorder / rotate / delete"
-      description="Rearrange a PDF visually: drag page thumbnails into a new order, rotate or delete pages, undo any step, then save a new file. Everything stays in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       {!pdf ? (
         <>
           {error && (

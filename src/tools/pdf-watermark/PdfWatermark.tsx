@@ -255,11 +255,7 @@ export default function PdfWatermark() {
     controls.pageMode === 'range' && (!!parsed.error || parsed.pages.length === 0)
 
   return (
-    <ToolLayout
-      title="PDF watermark"
-      description="Stamp text or an image across the pages of a PDF: set opacity, size, rotation and position, with a live preview. Everything stays in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       {!pdf ? (
         <>
           {error && (

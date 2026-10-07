@@ -79,13 +79,9 @@ export default function WordCounter() {
   }, [text])
 
   return (
-    <ToolLayout
-      title="Word & character counter"
-      description="Live counts of characters, words, sentences, lines and paragraphs (CJK-aware via Intl.Segmenter, emoji counted as single characters), plus rough token and reading-time estimates. Everything runs in your browser."
-      badge="client-side"
-    >
-      <div className="grid gap-4 lg:grid-cols-[1fr_minmax(16rem,0.6fr)]">
-        <div className="flex min-w-0 flex-col gap-3">
+    <ToolLayout workspace>
+      <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-[1fr_minmax(16rem,0.6fr)] lg:grid-rows-[minmax(0,1fr)]">
+        <div className="flex min-h-64 min-w-0 flex-col gap-3">
           <textarea
             name="text"
             value={text}
@@ -93,9 +89,9 @@ export default function WordCounter() {
             placeholder="Type or paste text to count…"
             aria-label="Text input"
             spellCheck={false}
-            className="h-80 w-full resize-y rounded-lg border border-line bg-card p-3 text-sm leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
+            className="min-h-48 w-full flex-1 resize-none overflow-auto rounded-lg border border-line bg-card p-3 text-sm leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
           />
-          <div>
+          <div className="shrink-0">
             <Button variant="ghost" size="sm" onClick={() => setText(SAMPLE)}>
               <Sparkles className="size-3.5" />
               Load sample
@@ -103,7 +99,7 @@ export default function WordCounter() {
           </div>
         </div>
 
-        <aside aria-label="Counts" aria-busy={busy}>
+        <aside className="min-h-0 lg:overflow-auto" aria-label="Counts" aria-busy={busy}>
           <dl className="grid grid-cols-2 gap-2">
             {TILES.map((tile) => (
               <div

@@ -25,12 +25,12 @@
    - Since no tools exist yet, **every card renders in a "coming soon" state**: visible but non-clickable, visually muted, clearly intentional (not broken-looking).
    - A client-side text filter/search box over the cards.
 4. **App shell:**
-   - Header: site name ("NYMBX Toolbox"), theme toggle (light/dark, persisted, no flash-of-wrong-theme on reload).
+   - Header: site name ("NYMBX Toolbox"), active-tool name (`NYMBX Toolbox × <tool>`), Focus button and theme toggle (light/dark, persisted, no flash-of-wrong-theme on reload). Server-assisted tools retain their warning badge.
    - Category navigation: collapsible desktop sidebar (header toggle, preference persisted), independent native-dialog drawer on mobile.
-   - Footer with the privacy statement: *"Your files never leave this device — all processing happens in your browser."*
+   - No toolbox footer or repeated tool introductions. Focus hides sidebar/menu/shortcut chrome without changing the saved sidebar preference; the same button or Escape exits. Workspaces fill the available viewport height.
    - 404 page for unknown routes.
 5. **Shared components** in `src/components/` (future tools will consume these — design the APIs for reuse, add basic Vitest coverage):
-   - `ToolLayout` — consistent tool-page frame: title, description, privacy badge (client-side / server-assisted), back-to-dashboard link. Takes children for the tool body.
+   - `ToolLayout` — content-only tool-page frame, labeled by the shared active-tool header. Takes children and an optional `workspace` boolean for full-height editor/viewer panes; no title, description or badge props. The shared shell owns document titles and server-assisted status.
    - `FileDropzone` — drag-and-drop + click-to-pick; props for `accept`, `multiple`, max size; shows file names/sizes once selected; keyboard accessible.
    - `Button`, `Toast` (imperative `toast()` helper), `ProgressBar` (determinate + indeterminate), `CopyButton` (copies text, flashes confirmation).
 6. **Shared utilities** in `src/lib/` (with unit tests):

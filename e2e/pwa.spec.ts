@@ -28,7 +28,7 @@ test.describe('PWA and offline', () => {
 
     // Visiting a tool pulls its chunk into the runtime asset cache.
     await page.goto('/tools/diff-checker')
-    await expect(page.locator('[data-tool-title]')).toHaveText('Diff checker')
+    await expect(page.locator('article textarea').first()).toBeVisible()
     await page.waitForTimeout(1000)
 
     await context.setOffline(true)
@@ -39,7 +39,7 @@ test.describe('PWA and offline', () => {
     expect(await page.evaluate(() => crossOriginIsolated)).toBe(true)
 
     await page.goto('/tools/diff-checker')
-    await expect(page.locator('[data-tool-title]')).toHaveText('Diff checker')
+    await expect(page.locator('article textarea').first()).toBeVisible()
 
     // A tool that was never opened has no cached chunk: the boundary must show
     // a friendly message instead of a blank screen. Which of the two messages

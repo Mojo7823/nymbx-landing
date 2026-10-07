@@ -96,9 +96,9 @@ test.describe('dashboard', () => {
 
   test('Ctrl+K focuses the search from a tool page', async ({ page }) => {
     await page.goto('/tools/diff-checker')
-    await expect(page.locator('[data-tool-title]')).toBeVisible()
+    await expect(page.getByRole('article')).toBeVisible()
     await page.keyboard.press('ControlOrMeta+KeyK')
-    await expect(page).toHaveURL(/\/$/)
+    await expect(page).toHaveURL(/\/tools$/)
     await expect(page.locator('#tool-search')).toBeFocused()
   })
 
@@ -147,15 +147,12 @@ async function sweep(page: Page, shard: number): Promise<void> {
   const links = all.filter((_, index) => index % SHARDS === shard)
   const failures: string[] = []
 
-  for (const { slug } of links) {
+  for (const { slug, name } of links) {
     const errors = watchErrors(page)
     try {
       await page.goto(`/tools/${slug}`, { timeout: 15_000 })
-      // ToolLayout's own <h1> — a few tools render user content that contains
-      // further h1s (the markdown preview), and several page titles are longer
-      // than the dashboard card label, so this asserts the frame rendered
-      // rather than comparing against the card text.
-      await expect(page.locator('[data-tool-title]')).not.toBeEmpty({ timeout: 15_000 })
+      await expect(page.locator('#active-tool-title')).toHaveText(name)
+      await expect(page.getByRole('article')).toBeVisible({ timeout: 15_000 })
       // Let effects, workers and lazy imports settle before reading errors and
       // before navigating away: a dynamic import that is still in flight when
       // the next navigation starts is aborted, and Firefox reports the aborted

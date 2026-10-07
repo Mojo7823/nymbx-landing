@@ -91,11 +91,7 @@ export default function BulkFileRenamer() {
   }
 
   return (
-    <ToolLayout
-      title="Bulk file renamer"
-      description="Rename many files at once with find & replace, prefixes, numbering and case transforms, then download them as a zip. Your original files are never modified."
-      badge="client-side"
-    >
+    <ToolLayout>
       {/* Rename options */}
       <div className="mb-6 flex flex-col gap-4 rounded-lg border border-line bg-card p-4">
         <div className="flex flex-wrap items-end gap-x-4 gap-y-3">

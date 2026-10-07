@@ -114,7 +114,7 @@ Required tests (`legacyEncoder.test.ts`): every `samples.json` entry with `rever
 
 ## 7. UX specification
 
-Use `ToolLayout` (`title="Text encoding converter"`, `description="Detect Big5, GBK, Shift_JIS, EUC-KR and other legacy encodings, convert to UTF-8, or undo mojibake"`, `badge="client-side"`). Conventions to copy: `src/tools/hex-viewer/HexViewer.tsx` (file drop → `arrayBuffer` → worker, summary cards), `src/tools/cvss-calculator/CvssCalculator.tsx` (tablist), `src/tools/diff-checker/DiffChecker.tsx` (textareas), `src/components/CopyButton.tsx`, `src/lib/download.ts` (`downloadBlob`), `src/lib/format.ts` (`formatBytes`), `src/lib/worker.ts` (`wrapWorker`), Comlink `transfer()` as in `src/tools/xlsx-csv-viewer/XlsxCsvViewer.tsx`.
+Use the content-only `ToolLayout`; tool identity and server-assisted status come from the registry/shared header, not layout props. Conventions to copy: `src/tools/hex-viewer/HexViewer.tsx` (file drop → `arrayBuffer` → worker, summary cards), `src/tools/cvss-calculator/CvssCalculator.tsx` (tablist), `src/tools/diff-checker/DiffChecker.tsx` (textareas), `src/components/CopyButton.tsx`, `src/lib/download.ts` (`downloadBlob`), `src/lib/format.ts` (`formatBytes`), `src/lib/worker.ts` (`wrapWorker`), Comlink `transfer()` as in `src/tools/xlsx-csv-viewer/XlsxCsvViewer.tsx`.
 
 **Mode tabs** (role=tablist): `Convert a file` (default) · `Repair mojibake`.
 

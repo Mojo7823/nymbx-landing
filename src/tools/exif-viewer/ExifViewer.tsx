@@ -235,11 +235,7 @@ export default function ExifViewer() {
   const busy = phase === 'reading' || phase === 'working'
 
   return (
-    <ToolLayout
-      title="EXIF viewer & stripper"
-      description="See everything your camera embedded — including GPS location — then strip it before sharing. All parsing and stripping happens in your browser."
-      badge="client-side"
-    >
+    <ToolLayout>
       <div
         className="mb-6 flex items-start gap-2.5 rounded-lg border border-pine/25 bg-mint/30 px-3 py-2.5 text-xs text-pine"
         role="note"

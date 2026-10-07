@@ -107,12 +107,8 @@ ${html}
   }
 
   return (
-    <ToolLayout
-      title="Markdown renderer"
-      description="Live GFM preview with syntax-highlighted code blocks. The rendered HTML is sanitized and everything runs in your browser."
-      badge="client-side"
-    >
-      <div className="mb-4 flex flex-wrap items-center justify-end gap-2">
+    <ToolLayout workspace>
+      <div className="mb-4 flex shrink-0 flex-wrap items-center justify-end gap-2">
         <CopyButton text={html} label="Copy HTML" disabled={!html} />
         <Button variant="secondary" size="sm" onClick={exportHtml} disabled={!html}>
           <Download className="size-3.5" />
@@ -125,9 +121,10 @@ ${html}
       </div>
       <SplitPane
         label="Resize editor and preview"
+        className="min-h-0 flex-1"
         first={
-          <section aria-label="Markdown input">
-            <div className="mb-3 flex min-h-8 flex-wrap items-center justify-between gap-2">
+          <section aria-label="Markdown input" className="flex h-full min-h-0 flex-col">
+            <div className="mb-3 flex min-h-8 shrink-0 flex-wrap items-center justify-between gap-2">
               <h2 className="text-xs font-semibold tracking-wide text-muted uppercase">Markdown</h2>
               <div className="flex gap-2">
                 <Button variant="secondary" size="sm" onClick={pasteFromClipboard}>
@@ -147,14 +144,14 @@ ${html}
               placeholder="Type or paste markdown here…"
               aria-label="Markdown source"
               spellCheck={false}
-              className="h-[36rem] w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-[13px] leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
+              className="min-h-0 w-full flex-1 resize-none overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-[13px] leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
             />
           </section>
         }
         second={<MarkdownPreview html={html} />}
       />
 
-      <p aria-live="polite" className="mt-4 font-mono text-xs text-muted tabular-nums">
+      <p aria-live="polite" className="mt-4 shrink-0 font-mono text-xs text-muted tabular-nums">
         {languages && highlighter === null ? 'Loading syntax highlighter…' : ''}
       </p>
     </ToolLayout>

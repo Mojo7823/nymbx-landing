@@ -140,11 +140,7 @@ export default function JwtDecoder() {
   }
 
   return (
-    <ToolLayout
-      title="JWT decoder"
-      description="Paste a JSON Web Token to inspect its header and payload locally. Optional signature verification uses Web Crypto with your HS* secret or RS/PS/ES public key. Nothing leaves this device; tokens are never uploaded."
-      badge="client-side"
-    >
+    <ToolLayout>
       <div
         role="note"
         className="mb-4 flex items-start gap-2 rounded-lg border border-pine/25 bg-mint/30 px-3 py-2.5 text-xs text-pine"

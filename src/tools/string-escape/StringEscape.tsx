@@ -44,12 +44,8 @@ export default function StringEscape() {
   }
 
   return (
-    <ToolLayout
-      title="String escape / unescape"
-      description="Escape text for embedding in JSON strings, HTML, URLs, shell quotes or regex literals, or peel the escaping back off. Edit either side; the other follows. Everything runs in your browser."
-      badge="client-side"
-    >
-      <div role="tablist" aria-label="Mode" className="mb-2 flex flex-wrap gap-1">
+    <ToolLayout workspace>
+      <div role="tablist" aria-label="Mode" className="mb-2 flex shrink-0 flex-wrap gap-1">
         {MODES.map((value) => (
           <button
             key={value}
@@ -68,13 +64,13 @@ export default function StringEscape() {
           </button>
         ))}
       </div>
-      <p className="mb-4 rounded-lg border border-line bg-soft p-3 text-xs text-muted">
+      <p className="mb-4 shrink-0 rounded-lg border border-line bg-soft p-3 text-xs text-muted">
         {MODE_HINTS[mode]}
       </p>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid flex-1 auto-rows-[minmax(min-content,1fr)] gap-4 lg:grid-cols-2">
         <div className="flex min-w-0 flex-col gap-2">
-          <div className="flex items-center justify-between">
+          <div className="flex shrink-0 flex-wrap items-center justify-between gap-2">
             <label htmlFor="raw" className="text-xs font-semibold text-muted">
               Raw text
             </label>
@@ -87,9 +83,9 @@ export default function StringEscape() {
             onChange={(event) => updateRaw(event.target.value)}
             placeholder="Type or paste plain text. The escaped form appears on the right…"
             spellCheck={false}
-            className="h-64 w-full resize-y rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
+            className="h-0 min-h-32 w-full flex-1 resize-none overflow-auto rounded-lg border border-line bg-card p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:border-pine focus:outline-none"
           />
-          <div>
+          <div className="shrink-0">
             <Button variant="ghost" size="sm" onClick={() => updateRaw(SAMPLE)}>
               <Sparkles className="size-3.5" />
               Load sample
@@ -98,7 +94,7 @@ export default function StringEscape() {
         </div>
 
         <div className="flex min-w-0 flex-col gap-2">
-          <div className="flex items-center justify-between">
+          <div className="flex shrink-0 flex-wrap items-center justify-between gap-2">
             <label htmlFor="escaped" className="text-xs font-semibold text-muted">
               Escaped ({MODE_LABELS[mode]})
             </label>
@@ -112,21 +108,21 @@ export default function StringEscape() {
             placeholder="…or paste escaped text here to decode it on the left."
             spellCheck={false}
             className={cx(
-              'h-64 w-full resize-y rounded-lg border p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:outline-none',
+              'h-0 min-h-32 w-full flex-1 resize-none overflow-auto rounded-lg border p-3 font-mono text-xs leading-relaxed text-ink placeholder:text-faint focus:outline-none',
               error
                 ? 'border-rose bg-rose-soft focus:border-rose'
                 : 'border-line bg-card focus:border-pine',
             )}
           />
           {error && (
-            <p role="alert" className="text-xs text-rose">
+            <p role="alert" className="shrink-0 text-xs text-rose">
               {error} The raw side keeps its last good value.
             </p>
           )}
         </div>
       </div>
 
-      <p className="mt-4 text-xs text-faint">
+      <p className="mt-4 shrink-0 text-xs text-faint">
         Nested escaping (e.g. JSON inside JSON) peels one layer per pass, so paste the result back
         into the escaped side to peel the next layer.
       </p>

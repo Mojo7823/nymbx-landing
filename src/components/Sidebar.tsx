@@ -12,7 +12,7 @@ function CategoryList({ onNavigate }: { onNavigate?: () => void }) {
         return (
           <Link
             key={cat.id}
-            to={`/#${cat.id}`}
+            to={`/tools#${cat.id}`}
             onClick={onNavigate}
             className="flex items-center gap-2.5 rounded-md px-2 py-2.5 text-sm text-muted transition-colors hover:bg-mint hover:text-ink"
           >
@@ -64,7 +64,7 @@ export function Sidebar({
       {/* Desktop: static column */}
       <aside
         id="desktop-sidebar"
-        className={`sticky top-14 hidden h-[calc(100dvh-3.5rem)] w-52 shrink-0 overflow-y-auto border-r border-line bg-soft/40 px-3 py-6 ${collapsed ? '' : 'lg:block'}`}
+        className={`hidden h-full w-52 shrink-0 overflow-y-auto border-r border-line bg-soft/40 px-3 py-4 ${collapsed ? '' : 'lg:block'}`}
       >
         <CategoryList />
       </aside>
