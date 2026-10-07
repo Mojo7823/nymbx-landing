@@ -75,6 +75,7 @@
     "perfect-freehand": "^1.2.3",
     "pica": "^10.0.2",
     "piexifjs": "^1.0.6",
+    "qpdf-wasm": "file:vendor/qpdf-wasm-0.1.0-nymbx.1.tgz",
     "qrcode": "^1.5.4",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",

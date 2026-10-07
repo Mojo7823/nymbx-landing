@@ -141,18 +141,8 @@ export function Dashboard() {
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-12" onKeyDown={onGridKeyDown}>
       <section className="mb-10 rounded-2xl border border-line bg-soft/50 p-5 sm:p-8">
-        <p className="mb-3 text-xs font-semibold tracking-[0.16em] text-pine uppercase">
-          Your everyday toolbox
-        </p>
-        <h1 className="font-display text-3xl leading-tight font-semibold tracking-tight text-ink sm:text-4xl">
-          Every tool. One tab.
-        </h1>
-
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
-          Simple tools for documents, images, code, and everyday work. Files stay on your device,
-          except in tools clearly labeled server-assisted.
-        </p>
-        <div className="relative mt-6 max-w-2xl">
+        <h1 className="sr-only">NYMBX Toolbox</h1>
+        <div className="relative mx-auto max-w-2xl">
           <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-faint" />
           <input
             id="tool-search"
@@ -186,7 +176,11 @@ export function Dashboard() {
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter by category">
+        <div
+          className="mt-4 flex flex-wrap justify-center gap-2"
+          role="group"
+          aria-label="Filter by category"
+        >
           <FilterChip
             label="All"
             active={category === ''}

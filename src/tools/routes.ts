@@ -45,6 +45,8 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'pdf-metadata': lazy(() => import('./pdf-metadata/PdfMetadata')),
   // React.lazy requires a deferred import to keep PDF dependencies out of the dashboard.
   'pdf-form-filler': lazy(() => import('./pdf-form-filler/PdfFormFiller')),
+  // React.lazy defers the security workspace and its worker assets until this route opens.
+  'pdf-security': lazy(() => import('./pdf-security/PdfSecurity')),
   'xlsx-csv-viewer': lazy(() => import('./xlsx-csv-viewer/XlsxCsvViewer')),
   'markdown-to-docx': lazy(() => import('./markdown-to-docx/MarkdownToDocx')),
   'html-to-markdown': lazy(() => import('./html-to-markdown/HtmlToMarkdown')),

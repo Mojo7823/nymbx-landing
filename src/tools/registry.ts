@@ -102,7 +102,7 @@ export const categories: ToolCategory[] = [
   { id: 'security', name: 'Security & Inspection', icon: Shield },
 ]
 
-// Every registry entry is built as of Phase 58; a future unbuilt tool would
+// Every registry entry is built as of Phase 64; a future unbuilt tool would
 // re-introduce a `coming-soon` status here.
 const client = 'client-side' as const
 
@@ -465,6 +465,17 @@ export const tools: ToolMeta[] = [
     status: 'available',
     phase: 63,
     icon: FileSignature,
+  },
+  {
+    slug: 'pdf-security',
+    name: 'PDF unlock & protect',
+    description: 'Remove known passwords or protect PDFs with AES-256',
+    keywords: ['password', 'encrypt', 'decrypt', 'permissions', 'owner', 'aes-256'],
+    category: 'pdf-office',
+    badge: client,
+    status: 'available',
+    phase: 64,
+    icon: KeyRound,
   },
 
   // ── Converters ────────────────────────────────────────────────────────
