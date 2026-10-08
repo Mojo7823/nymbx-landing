@@ -38,27 +38,6 @@ const MAX_FILE_SIZE = 20 * 1024 * 1024
 const ACCEPT = '.html,.htm,.xhtml,text/html,application/xhtml+xml'
 
 /**
- * The preview must not reach the network: an `<img src="https://…">` from the
- * converted page would tell that host the user is looking at it (and is blocked
- * by COEP in production anyway). Replace every non-`data:` image with a chip
- * naming it. Input is DOMPurify output; re-serializing it introduces nothing.
- */
-function neutralizeImages(sanitized: string): string {
-  const doc = new DOMParser().parseFromString(sanitized, 'text/html')
-  for (const img of doc.querySelectorAll('img')) {
-    const src = img.getAttribute('src') ?? ''
-    if (src.startsWith('data:')) continue
-    const chip = doc.createElement('span')
-    chip.className =
-      'inline-flex max-w-full items-baseline gap-1 truncate rounded border border-line-strong bg-soft px-1.5 py-0.5 font-mono text-[11px] text-muted'
-    chip.textContent = `image: ${img.getAttribute('alt') || src}`
-    chip.title = src
-    img.replaceWith(chip)
-  }
-  return doc.body.innerHTML
-}
-
-/**
  * Identifies one conversion run. Results, failures and progress carry the run
  * they belong to, so "is a conversion in flight?" is derived from state rather
  * than tracked by a setState inside the effect (which would cascade renders).
@@ -220,10 +199,7 @@ export default function HtmlToMarkdown() {
 
   const md = useMemo(() => createRenderer(), [])
   const previewHtml = useMemo(
-    () =>
-      view === 'preview' && shownResult
-        ? neutralizeImages(renderMarkdown(md, shownResult.markdown))
-        : '',
+    () => (view === 'preview' && shownResult ? renderMarkdown(md, shownResult.markdown) : ''),
     [md, view, shownResult],
   )
 
