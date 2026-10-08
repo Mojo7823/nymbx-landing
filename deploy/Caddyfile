@@ -12,6 +12,12 @@
 		Cross-Origin-Opener-Policy "same-origin"
 		Cross-Origin-Embedder-Policy "require-corp"
 		X-Content-Type-Options "nosniff"
+		# CSP. All runtime resources are same-origin (no CDN). The only inline script is the
+		# theme bootstrap in index.html, pinned by hash. 'unsafe-eval' is required by the ONNX
+		# runtime (Background Remover) and by ajv (JSON Schema tools); it is the one deliberate
+		# weakening. 'blob:' in script-src lets the ONNX worker importScripts its own blob.
+		# connect-src 'self' still blocks sending data to other origins.
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-eval' blob: 'sha256-GdroxiQLdbFK+NF5ikTwW6bY3eXy6AC9957BY1Cy8FM='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' blob: data:; worker-src 'self' blob:; media-src 'self' blob: data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
 		-Server
 	}
 
