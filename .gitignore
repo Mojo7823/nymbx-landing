@@ -11,3 +11,6 @@ public/zxing
 public/ocr/engine
 test-results
 playwright-report
+
+# Wrangler (Cloudflare CLI) local state
+.wrangler/

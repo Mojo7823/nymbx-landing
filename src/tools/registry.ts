@@ -491,17 +491,6 @@ export const tools: ToolMeta[] = [
     icon: FileCode,
   },
   {
-    slug: 'docx-pdf',
-    name: 'DOCX → PDF',
-    description: 'High-fidelity conversion via our server',
-    keywords: ['word', 'docx', 'convert', 'libreoffice', 'office'],
-    category: 'converters',
-    badge: 'server-assisted',
-    status: 'available',
-    phase: 15,
-    icon: Repeat2,
-  },
-  {
     slug: 'markdown-to-docx',
     name: 'Markdown → DOCX',
     description: 'Markdown to Word',

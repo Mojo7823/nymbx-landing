@@ -147,16 +147,3 @@ test('workspace focus preserves edits and restores the sidebar preference', asyn
   await expect(focus).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Open category navigation' })).toBeVisible()
 })
-
-test('focus never hides the server-assisted upload warning', async ({ page }) => {
-  await page.goto('/tools/docx-pdf')
-  await expect(page.getByLabel('Server-assisted')).toBeVisible()
-  await expect(
-    page.getByText('This tool uploads your file to our server', { exact: true }),
-  ).toBeVisible()
-  await page.getByRole('button', { name: 'Focus', exact: true }).click()
-  await expect(page.getByLabel('Server-assisted')).toBeVisible()
-  await expect(
-    page.getByText('This tool uploads your file to our server', { exact: true }),
-  ).toBeVisible()
-})

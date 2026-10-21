@@ -1,0 +1,18 @@
+// Cloudflare static hosting (Workers static assets, the successor to Pages). No Worker script:
+// every response is a file from dist, with headers from public/_headers.
+{
+  "name": "nymbx",
+  "compatibility_date": "2026-10-19",
+  // nymbx.dev is the public site; www is attached too so it gets a certificate.
+  "routes": [
+    { "pattern": "nymbx.dev", "custom_domain": true },
+    { "pattern": "www.nymbx.dev", "custom_domain": true },
+  ],
+  "workers_dev": false,
+  "assets": {
+    "directory": "./dist",
+    // Serve /index.html as-is (the PWA precaches it) instead of 307-redirecting it to /.
+    "html_handling": "none",
+    "not_found_handling": "single-page-application",
+  },
+}

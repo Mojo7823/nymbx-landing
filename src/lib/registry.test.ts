@@ -7,10 +7,8 @@ describe('tool registry', () => {
     expect(slugs.size).toBe(tools.length)
   })
 
-  it('marks exactly one tool as server-assisted (DOCX ↔ PDF)', () => {
-    const serverAssisted = tools.filter((t) => t.badge === 'server-assisted')
-    expect(serverAssisted).toHaveLength(1)
-    expect(serverAssisted[0]!.slug).toBe('docx-pdf')
+  it('has no server-assisted tools (static hosting has no backend)', () => {
+    expect(tools.filter((t) => t.badge === 'server-assisted')).toHaveLength(0)
   })
 
   it('only references declared categories', () => {

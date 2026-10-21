@@ -1,11 +1,12 @@
 # NYMBX Toolbox — Implementation Plan
 
-A privacy-first, browser-based all-in-one toolbox. **All processing happens client-side** — user files never leave the device, except for explicitly labeled "server-assisted" tools (currently only DOCX → PDF conversion).
+A privacy-first, browser-based all-in-one toolbox. **All processing happens client-side** — user files never leave the device. The site is static files with no backend (Cloudflare), so there are no server-assisted tools.
 
 ## Current status and next task — 2026-10-07
 
 ### Completed in the current code
 
+- **Cloudflare Pages migration (2026-10-21, in progress):** the site becomes static-only. DOCX → PDF (Phase 15, the only tool that needed a server) was removed with its Gotenberg proxy, mock and Zeabur files. Hosting is Cloudflare Workers static assets (`wrangler.jsonc`, no Worker script; `wrangler pages` now delegates there). Production headers moved from `deploy/Caddyfile` to `public/_headers`. Deployed to https://nymbx.bagusatmaja80.workers.dev: headers match Caddy (COOP/COEP/CSP everywhere, immutable hashed/model/OCR files, revalidated shell and catalogs, `/itsme` noindex); Chromium smoke at 1280px light/390px dark had no console/CSP errors or off-origin requests, `crossOriginIsolated` everywhere, OCR and background removal worked, service worker took control. The Dockerfile and Caddyfile remain until nymbx.dev DNS is cut over; the private Gotenberg service on Zeabur can then be deleted.
 - The homepage `/` renders the tools catalog directly, without a React or Caddy redirect. Search/category parameters and bookmarked hashes work on the root route. Internal toolbox home/category links and the global search shortcut target `/tools`; individual tools remain at `/tools/<slug>`.
 - `/tools` still renders the catalog for existing bookmarks, with `/` as its canonical URL. The PWA launches at `/`; its existing manifest `id: '/tools'` stays unchanged to preserve installed-app identity.
 - All **57 tools across 7 categories** are marked available and have a matching lazy-loaded implementation; there are no missing or unregistered tool implementations. Phases 59 and 60 are shipped extensions, not additional tools. Phases 62–64 add JSON Schema validation, PDF form filling/flattening and PDF unlocking/protection.
@@ -52,7 +53,7 @@ Phase 15's production deployment is closed. Phases 62–64 are separate, explici
 | Routing | React Router, one lazy-loaded route per tool |
 | Heavy work | Web Workers (Comlink), WASM where needed |
 | Local persistence | IndexedDB via `idb` (drafts, settings — never user files) |
-| Hosting | Zeabur, Dockerfile-based. Web service: multi-stage image (Node build → Caddy serving `dist` with COOP/COEP headers + SPA fallback). Gotenberg runs as a second private-only Zeabur service, reached via `gotenberg.zeabur.internal` |
+| Hosting | Cloudflare Workers static assets (`wrangler.jsonc`), static `dist` only. Headers (COOP/COEP, CSP, cache) in `public/_headers`; SPA fallback via `not_found_handling`. No backend |
 | Testing | Vitest (unit), Playwright via webapp-testing (visual/E2E) |
 
 ## Working rules (apply to every phase)
@@ -191,6 +192,8 @@ The capstone of the markdown group — reuses Phases 4–5 components.
 - **Change (2026-09-05, Phase 53 refactor):** the turndown setup and table fix-ups moved to the shared `src/lib/htmlToMarkdown.ts`. Two output changes: strikethrough is now `~~text~~` (the GFM plugin's single tilde is not rendered by markdown-it, which this tool's preview uses) and a literal `<` in text is escaped as `\<` so it is not read as HTML downstream.
 
 ### Phase 15 — DOCX → PDF (server-assisted)
+**Removed 2026-10-21** with the move to static Cloudflare hosting (no backend). The record below is historical.
+
 The only server-assisted tool. **Clearly labeled in the UI.**
 - **Infra:** the official `gotenberg/gotenberg:8.36.0` image runs as a second service in the same Zeabur project, **private networking only — no public domain or port forwarding**. Caddy proxies `/api/convert/*` to `gotenberg.zeabur.internal:3000` with a request size limit. `deploy/docker-compose.yml` mirrors this exact version locally; `deploy/zeabur-gotenberg.yaml` bootstraps the private production service.
 - **Build:** dropzone → upload with progress → converted file download; the explicit privacy banner states that temporary conversion files are removed after processing. Client cap: 25 MiB. DOCX → PDF only; the UI explicitly says PDF → DOCX is not offered because the conversion quality is unacceptable.
@@ -524,7 +527,7 @@ Add future tool ideas here; promote to a numbered extension phase when scheduled
 
 ### Tier 3 — larger bets or conditional
 - **Video / audio trim & convert** (new "Media" category or Files). Trim, mute, convert MP4/WebM/MP3/WAV, extract audio, GIF from clip. Libraries: `ffmpeg.wasm` (~30 MB, lazy, multithreaded; COOP/COEP headers are already in place). Why: the strongest privacy story on the site (people upload personal videos to random converters), but a big phase — model-download UX from Phase 8 applies.
-- **PPTX / XLSX → PDF (server-assisted)** (Converters). Same Gotenberg LibreOffice route and UI as Phase 15 with a different accept list. The production Gotenberg prerequisite is now satisfied, but these formats remain unscheduled and unimplemented.
+- **PPTX / XLSX → PDF (server-assisted)** (Converters). Blocked: needs a backend, which static Cloudflare hosting does not have. Was: same Gotenberg LibreOffice route and UI as Phase 15 with a different accept list. The production Gotenberg prerequisite is now satisfied, but these formats remain unscheduled and unimplemented.
 - **Unicode inspector** (Text & Developer). Per-character code points, UTF-8/16 bytes, NFC/NFD/NFKC/NFKD normalization, and a warning list for invisible / bidi-control / mixed-script (homoglyph) characters. Libraries: none. Why: homoglyph and invisible-character checks have a security angle; character names table is large, so ship without names or load lazily.
 - **CIDR / subnet calculator** (Text & Developer). IPv4/IPv6 CIDR → network, broadcast, range, host count, split/merge. Libraries: none. Why: common network-assessment utility, trivial to build.
 - **Number base converter** (Text & Developer). Bin/oct/dec/hex with two's-complement width and byte view; pairs with the hex viewer. Libraries: none. Small but frequently used.
