@@ -1,8 +1,8 @@
-# Cloudflare Pages response headers (https://developers.cloudflare.com/pages/configuration/headers/).
+# Response headers for Cloudflare Workers static assets (https://developers.cloudflare.com/workers/static-assets/headers/).
 # A path matching several rules gets all their headers; a repeated header name is comma-joined.
 # Cloudflare sends Cache-Control: public, max-age=0, must-revalidate by default — the always-revalidate policy that
 # index.html, sw.js, the manifest, offline-assets.json and the asset catalogs need — so only
-# the immutable exceptions are listed below. No 404.html in dist = Pages' built-in SPA fallback.
+# the immutable exceptions are listed below. SPA fallback is not_found_handling in wrangler.jsonc.
 
 # Required for WASM libraries that use SharedArrayBuffer (crossOriginIsolated).
 # CSP: all runtime resources are same-origin. The only inline script is the theme bootstrap in
