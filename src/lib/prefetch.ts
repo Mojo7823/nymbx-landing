@@ -74,7 +74,7 @@ async function fetchOne(
   // A content-encoded response is decompressed transparently by the browser,
   // so what we read is not what the file on disk weighs and the size check
   // below would always fail. Vite's preview server does exactly this for the
-  // pre-gzipped OCR language packs (`.gz` → `Content-Encoding: gzip`); Caddy
+  // pre-gzipped OCR language packs (`.gz` → `Content-Encoding: gzip`); Cloudflare
   // serves them raw. Trust the declared size for progress either way, and only
   // assert it when the bytes really are the file's bytes.
   const encoded = (response.headers.get('content-encoding') ?? 'identity') !== 'identity'

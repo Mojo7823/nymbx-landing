@@ -16,7 +16,7 @@ import type { PrefetchItem } from '../../lib/prefetch'
  * `cacheMethod: 'none'` keeps the language data out of IndexedDB — that store
  * is for settings and drafts only. Repeat visits are covered by the HTTP cache
  * instead: both directories are versioned and served `immutable` by
- * deploy/Caddyfile.
+ * public/_headers.
  */
 
 /** Directory name under `public/ocr/lang/`. Bump together with SOURCES.md. */

@@ -21,8 +21,8 @@ const isolationHeaders = {
 const DAY = 60 * 60 * 24
 
 // These caches hold content-addressed (or version-stamped) files whose bytes do
-// not depend on any request header, but the server answers with `Vary: Origin`
-// (Vite preview) / `Vary: Accept-Encoding` (Caddy's `encode`). Cache Storage
+// not depend on any request header, but Vite preview answers with `Vary: Origin`
+// (production on Cloudflare sends no Vary; this keeps preview/E2E honest). Cache Storage
 // honours Vary by default, and a module-script request carries an `Origin`
 // header that a plain `fetch()` for the same URL does not — so an entry warmed
 // by the "download all tools" prefetch would never be found again by the

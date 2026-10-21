@@ -27,7 +27,7 @@ This repository is owned and managed by GitHub user `Mojo7823`.
 - IndexedDB (`idb`) for drafts/settings only — never user files
 - Vitest for unit tests; Playwright (webapp-testing skill) for visual/E2E
 - Deployed as static files (`dist`) on Cloudflare Workers static assets (the successor to Pages), configured in `wrangler.jsonc` with no Worker script. Response headers (COOP/COEP, CSP, cache rules) live in `public/_headers`; SPA fallback is `not_found_handling`. Every file must stay under the 25 MiB per-file limit
-- Migration in progress: the root `Dockerfile` + `deploy/Caddyfile` (Zeabur) stay only until nymbx.dev DNS points at Cloudflare; then delete them
+- `nymbx.dev` and `www.nymbx.dev` are Workers custom domains (`routes` in `wrangler.jsonc`); pushes to `main` build and deploy through Cloudflare Workers Builds (`npm run build`, then `npx wrangler deploy`)
 
 ## Commands
 
@@ -37,7 +37,7 @@ This repository is owned and managed by GitHub user `Mojo7823`.
 - `npm run lint` — ESLint + Prettier check
 - `npm run typecheck` — `tsc --noEmit`
 - `npm run test` — Vitest
-- `npx --yes wrangler@4 deploy` — upload `dist` to Cloudflare (run `npm run build` first)
+- `npx --yes wrangler@4 deploy` — manual upload of `dist` to Cloudflare (run `npm run build` first; normally Workers Builds does this on push)
 
 ## Hard rules for agents
 

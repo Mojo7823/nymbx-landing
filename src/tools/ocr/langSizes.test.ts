@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { LANGUAGES, LANG_VERSION } from './ocrEngine'
 
 /**
- * Caddy serves the language packs raw, so `prefetchUrls` asserts each body is
+ * Production serves the language packs raw, so `prefetchUrls` asserts each body is
  * exactly the catalog size. A drifted `bytes` value would fail OCR in
  * production for that language while passing every other test — pin the
  * catalog to the committed files.
