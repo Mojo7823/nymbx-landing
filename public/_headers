@@ -1,7 +1,6 @@
 # Cloudflare Pages response headers (https://developers.cloudflare.com/pages/configuration/headers/).
 # A path matching several rules gets all their headers; a repeated header name is comma-joined.
-# Pages itself adds X-Content-Type-Options: nosniff and, by default,
-# Cache-Control: public, max-age=0, must-revalidate — the always-revalidate policy that
+# Cloudflare sends Cache-Control: public, max-age=0, must-revalidate by default — the always-revalidate policy that
 # index.html, sw.js, the manifest, offline-assets.json and the asset catalogs need — so only
 # the immutable exceptions are listed below. No 404.html in dist = Pages' built-in SPA fallback.
 
@@ -10,6 +9,7 @@
 # index.html, pinned by hash. 'unsafe-eval' is required by the ONNX runtime (Background Remover)
 # and by ajv (JSON Schema tools). 'blob:' in script-src lets the ONNX worker importScripts its blob.
 /*
+  X-Content-Type-Options: nosniff
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Embedder-Policy: require-corp
   Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-eval' blob: 'sha256-GdroxiQLdbFK+NF5ikTwW6bY3eXy6AC9957BY1Cy8FM='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' blob: data:; worker-src 'self' blob:; media-src 'self' blob: data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
