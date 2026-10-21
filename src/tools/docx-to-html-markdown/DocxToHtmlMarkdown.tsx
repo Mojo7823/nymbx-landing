@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AlertTriangle, Download, FolderArchive, Trash2 } from 'lucide-react'
 import { ToolLayout } from '../../components/ToolLayout'
 import { FileDropzone } from '../../components/FileDropzone'
@@ -21,6 +21,37 @@ interface LoadedDoc {
 type View = 'preview' | 'html' | 'markdown'
 
 const DOCX_MIME = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+
+function DocxPreview({ result }: { result: DocxConversion }) {
+  const previewRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const preview = previewRef.current
+    if (!preview) return
+    const template = document.createElement('template')
+    // convertDocx sanitized this HTML; the inert template prevents image fetches
+    // before portable export paths are replaced with local, temporary URLs.
+    template.innerHTML = result.html
+    const urls = new Map(
+      result.images.map((image) => [image.name, URL.createObjectURL(image.blob)]),
+    )
+    for (const image of template.content.querySelectorAll<HTMLImageElement>('img[src]')) {
+      const url = urls.get(image.getAttribute('src') ?? '')
+      if (url) image.src = url
+    }
+    preview.replaceChildren(template.content)
+    return () => {
+      for (const url of urls.values()) URL.revokeObjectURL(url)
+    }
+  }, [result])
+
+  return (
+    <div
+      ref={previewRef}
+      className="md-preview min-h-0 flex-1 overflow-auto rounded-lg border border-line bg-card p-4"
+    />
+  )
+}
 
 export default function DocxToHtmlMarkdown() {
   const [doc, setDoc] = useState<LoadedDoc | null>(null)
@@ -85,7 +116,7 @@ export default function DocxToHtmlMarkdown() {
     if (zipped) {
       const entries: ZipInput[] = [
         { name: `${base}.${kind}`, blob: new Blob([content], { type }) },
-        ...result.images.map((img) => ({ name: img.name, blob: new Blob([img.data]) })),
+        ...result.images.map((img) => ({ name: img.name, blob: img.blob })),
       ]
       downloadBlob(await streamZip(entries), `${base}-${kind}.zip`)
     } else {
@@ -243,11 +274,7 @@ export default function DocxToHtmlMarkdown() {
                     This document has no convertible content.
                   </p>
                 ) : view === 'preview' ? (
-                  <div
-                    className="md-preview min-h-0 flex-1 overflow-auto rounded-lg border border-line bg-card p-4"
-                    // Sanitized by DOMPurify in convertDocx.
-                    dangerouslySetInnerHTML={{ __html: result.html }}
-                  />
+                  <DocxPreview result={result} />
                 ) : (
                   <pre className="min-h-0 flex-1 overflow-auto rounded-lg border border-line bg-card p-4 font-mono text-xs leading-relaxed whitespace-pre-wrap text-ink">
                     {view === 'html' ? result.html : result.markdown}

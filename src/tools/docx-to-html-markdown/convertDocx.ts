@@ -6,7 +6,7 @@ export type ImageMode = 'embed' | 'separate'
 export interface DocxImage {
   /** Path referenced from the converted document, e.g. `images/image-01.png`. */
   name: string
-  data: Uint8Array<ArrayBuffer>
+  blob: Blob
 }
 
 export interface DocxConversion {
@@ -48,10 +48,10 @@ export async function convertDocx(
   const convertImage =
     imageMode === 'separate'
       ? mammoth.images.imgElement(async (image) => {
-          const data = new Uint8Array(await image.readAsArrayBuffer())
+          const blob = new Blob([await image.readAsArrayBuffer()], { type: image.contentType })
           const ext = EXT_BY_TYPE[image.contentType] ?? 'bin'
           const name = `images/image-${String(images.length + 1).padStart(2, '0')}.${ext}`
-          images.push({ name, data })
+          images.push({ name, blob })
           return { src: name }
         })
       : undefined // mammoth's default inlines images as base64 data URIs
