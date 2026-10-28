@@ -5,14 +5,17 @@
 // One ordinary GET per check, like a browser visit: it reads only what the site
 // sends to every visitor, never sends an attack payload, and stores nothing.
 // Abuse limits: ports 80/443 only (no port scanning), same-host redirects only,
-// no localhost/private/IP-literal targets, and a per-client rate limit.
+// no localhost/private/IP-literal targets, and 10 checks per minute per client
+// IP (worker/rateLimiter.ts).
 // Workers subrequests cannot reach private networks; global_fetch_strictly_public
 // keeps requests for nymbx.dev itself on the public front door.
 
 import { ADVICE, REPO_URL, analyze, parseTarget, type ScanResult } from '../src/tools/phptest/scan'
 
+export { ScanRateLimiter } from './rateLimiter'
+
 export interface Env {
-  PHPSCAN_LIMITER: RateLimit
+  PHPSCAN_RATE_LIMIT: DurableObjectNamespace
 }
 
 const MAX_REQUESTS = 5 // the first request plus up to four same-host redirects
@@ -37,8 +40,11 @@ export default {
     }
 
     const client = request.headers.get('CF-Connecting-IP') ?? 'unknown'
-    const { success } = await env.PHPSCAN_LIMITER.limit({ key: client })
-    if (!success) return error(429, 'Too many checks right now. Please try again in a minute.')
+    const limiter = env.PHPSCAN_RATE_LIMIT.get(env.PHPSCAN_RATE_LIMIT.idFromName(client))
+    const verdict = await limiter.fetch('https://rate-limit.internal/')
+    if (verdict.status === 429) {
+      return error(429, 'Too many checks right now. Please try again in a minute.')
+    }
 
     return json(200, await scan(target))
   },

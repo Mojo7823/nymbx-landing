@@ -97,11 +97,15 @@ describe('assertPublicHost', () => {
 })
 
 describe('fetch handler', () => {
-  function env(success = true): Env {
-    return { PHPSCAN_LIMITER: { limit: vi.fn(async () => ({ success })) } }
+  function env(limiterStatus = 204) {
+    const namespace = {
+      idFromName: vi.fn((name: string) => name),
+      get: vi.fn(() => ({ fetch: async () => new Response(null, { status: limiterStatus }) })),
+    }
+    return { PHPSCAN_RATE_LIMIT: namespace as unknown as DurableObjectNamespace, namespace }
   }
 
-  async function call(path: string, environment = env()) {
+  async function call(path: string, environment: Env = env()) {
     const request = new Request(`https://nymbx.dev${path}`, {
       headers: { 'CF-Connecting-IP': '203.0.113.9' },
     })
@@ -117,13 +121,13 @@ describe('fetch handler', () => {
       body: { error: 'Only standard web ports (80 and 443) can be checked' },
     })
     expect((await call('/api/phpscan?url=192.168.1.1', environment)).status).toBe(400)
-    expect(environment.PHPSCAN_LIMITER.limit).not.toHaveBeenCalled()
+    expect(environment.namespace.get).not.toHaveBeenCalled()
   })
 
-  it('returns 429 when the client is over its limit', async () => {
-    const environment = env(false)
+  it("returns 429 when the client's limiter refuses, keyed by client IP", async () => {
+    const environment = env(429)
     expect((await call('/api/phpscan?url=example.com', environment)).status).toBe(429)
-    expect(environment.PHPSCAN_LIMITER.limit).toHaveBeenCalledWith({ key: '203.0.113.9' })
+    expect(environment.namespace.idFromName).toHaveBeenCalledWith('203.0.113.9')
   })
 
   it('answers unknown API paths with 404', async () => {
