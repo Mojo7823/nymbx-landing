@@ -61,6 +61,14 @@ export async function scan(target: URL, fetcher: Fetch = fetch): Promise<ScanRes
         current = next
         continue
       }
+      // Cloudflare answers failed origin connections (down, timeout, TLS handshake or
+      // certificate errors) with its own 520–530 page instead of throwing.
+      if (response.status >= 520 && response.status <= 530) {
+        await response.body?.cancel()
+        throw new Error(
+          `Could not connect (HTTP ${response.status}). The site may be down, block this scanner, or use an invalid TLS certificate.`,
+        )
+      }
       const headers = new Map<string, string>()
       for (const name of ['server', 'x-powered-by']) {
         const value = response.headers.get(name)

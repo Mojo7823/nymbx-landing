@@ -52,6 +52,13 @@ describe('scan', () => {
     })
     expect(result).toMatchObject({ status: 'unreachable', error: 'Network connection lost.' })
   })
+
+  it("reports Cloudflare's origin-error page as unreachable, not as the site", async () => {
+    const page = '<title>Invalid SSL certificate</title><a href="/cdn-cgi/x.php">'
+    const result = await scan(new URL('https://example.com/'), async () => reply(526, {}, page))
+    expect(result.status).toBe('unreachable')
+    expect(result.error).toMatch(/^Could not connect \(HTTP 526\)/)
+  })
 })
 
 describe('assertPublicHost', () => {
