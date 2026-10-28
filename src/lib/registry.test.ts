@@ -7,8 +7,10 @@ describe('tool registry', () => {
     expect(slugs.size).toBe(tools.length)
   })
 
-  it('has no server-assisted tools (static hosting has no backend)', () => {
-    expect(tools.filter((t) => t.badge === 'server-assisted')).toHaveLength(0)
+  it('limits server-assisted tools to the ones backed by worker/index.ts', () => {
+    expect(tools.filter((t) => t.badge === 'server-assisted').map((t) => t.slug)).toEqual([
+      'phptest',
+    ])
   })
 
   it('only references declared categories', () => {

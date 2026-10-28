@@ -10,7 +10,7 @@ const labels: Record<ToolBadge, string> = {
 /**
  * Privacy badge shown on tool cards and tool pages. Icon-only:
  * computer (green) = processing stays in the browser;
- * computer + globe (amber) = uses our conversion server.
+ * computer + globe (amber) = sends input to our /api Worker.
  */
 export function PrivacyBadge({ badge, className }: { badge: ToolBadge; className?: string }) {
   const clientSide = badge === 'client-side'

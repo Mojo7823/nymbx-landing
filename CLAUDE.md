@@ -1,6 +1,6 @@
 # NYMBX Toolbox
 
-Privacy-first, browser-based all-in-one toolbox. All file processing happens **client-side in the browser** — user files must never leave the device. The site is static files with no backend, so there are no server-assisted tools.
+Privacy-first, browser-based all-in-one toolbox. All file processing happens **client-side in the browser** — user files must never leave the device. The site is static files plus one small Cloudflare Worker endpoint, `/api/phpscan`, used only by the server-assisted PHP2Shell checker (`/tools/phptest`); every other tool runs entirely in the browser.
 
 The full roadmap lives in [PLAN.md](PLAN.md). Work proceeds one phase (= one tool) at a time; do not start a new phase while the current one has open defects.
 
@@ -26,16 +26,18 @@ This repository is owned and managed by GitHub user `Mojo7823`.
 - Web Workers (Comlink) for heavy work; WASM libraries where needed
 - IndexedDB (`idb`) for drafts/settings only — never user files
 - Vitest for unit tests; Playwright (webapp-testing skill) for visual/E2E
-- Deployed as static files (`dist`) on Cloudflare Workers static assets (the successor to Pages), configured in `wrangler.jsonc` with no Worker script. Response headers (COOP/COEP, CSP, cache rules) live in `public/_headers`; SPA fallback is `not_found_handling`. Every file must stay under the 25 MiB per-file limit
+- Deployed as static files (`dist`) on Cloudflare Workers static assets (the successor to Pages), configured in `wrangler.jsonc`. Response headers (COOP/COEP, CSP, cache rules) live in `public/_headers`; SPA fallback is `not_found_handling`. Every file must stay under the 25 MiB per-file limit
+- `worker/index.ts` is the only server code: `assets.run_worker_first: ["/api/*"]` sends `/api/*` to it, and every asset request bypasses it. It serves `GET /api/phpscan` (one GET to a public site on port 80/443, same-host redirects only, per-client `ratelimits` binding, nothing stored). Shared check logic lives in `src/tools/phptest/scan.ts`; type-checked by `tsconfig.worker.json`. Server-assisted tools carry the `server-assisted` registry badge; add one only when its input is never file content
 - `nymbx.dev` and `www.nymbx.dev` are Workers custom domains (`routes` in `wrangler.jsonc`); pushes to `main` build and deploy through Cloudflare Workers Builds (`npm run build`, then `npx wrangler deploy`)
 
 ## Commands
 
-- `npm run dev` — dev server
+- `npm run dev` — dev server (proxies `/api` to `127.0.0.1:8787`)
+- `npm run dev:api` — run `worker/index.ts` locally with Wrangler on port 8787 (serves `dist`, so run `npm run build` first)
 - `npm run build` — production build
 - `npm run preview` — serve the production build
 - `npm run lint` — ESLint + Prettier check
-- `npm run typecheck` — `tsc --noEmit`
+- `npm run typecheck` — `tsc --noEmit` for the app and the Worker
 - `npm run test` — Vitest
 - `npx --yes wrangler@4 deploy` — manual upload of `dist` to Cloudflare (run `npm run build` first; normally Workers Builds does this on push)
 
@@ -55,6 +57,6 @@ This repository is owned and managed by GitHub user `Mojo7823`.
 - `src/tools/<tool-name>/` — one directory per tool (component, worker, tests)
 - `src/components/` — shared UI (ToolLayout, FileDropzone, Button, Toast, …)
 - `src/lib/` — shared utilities (download, zip, worker helper, settings store)
-- `wrangler.jsonc` + `public/_headers` — Cloudflare hosting config and production response headers
+- `wrangler.jsonc` + `public/_headers` — Cloudflare hosting config and production response headers; `worker/` — the `/api/*` Worker
 - `docs/handouts/` — self-contained per-phase briefs for delegated agents (e.g. `phase-0-foundation.md`)
 - Route slug = directory name (e.g. `/tools/diff-checker` ↔ `src/tools/diff-checker/`)

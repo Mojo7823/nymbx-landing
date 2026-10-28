@@ -41,6 +41,7 @@ import {
   PenTool,
   QrCode,
   Quote,
+  Radar,
   Regex,
   RemoveFormatting,
   Repeat,
@@ -62,6 +63,7 @@ import {
   WrapText,
 } from 'lucide-react'
 
+/** `server-assisted`: the tool sends the user's input (never file content) to our /api Worker. */
 export type ToolBadge = 'client-side' | 'server-assisted'
 export type ToolStatus = 'available' | 'coming-soon'
 
@@ -734,6 +736,17 @@ export const tools: ToolMeta[] = [
     status: 'available',
     phase: 56,
     icon: Gauge,
+  },
+  {
+    slug: 'phptest',
+    name: 'PHP2Shell checker',
+    description: "Check a site's PHP for CVE-2026-109618/9",
+    keywords: ['php', 'cve', 'rce', 'phpscan', 'x-powered-by', 'vulnerability'],
+    category: 'security',
+    badge: 'server-assisted',
+    status: 'available',
+    phase: 65,
+    icon: Radar,
   },
 ]
 

@@ -18,6 +18,9 @@ const isolationHeaders = {
   'Cross-Origin-Embedder-Policy': 'require-corp',
 }
 
+// worker/index.ts serves /api/* in production; locally run it with `npm run dev:api`.
+const apiProxy = { '/api': 'http://127.0.0.1:8787' }
+
 const DAY = 60 * 60 * 24
 
 // These caches hold content-addressed (or version-stamped) files whose bytes do
@@ -202,8 +205,8 @@ export default defineConfig({
   // would inline the SBOM viewer's ~690 KB of bundled JSON schemas into its
   // worker chunk; 'es' keeps each dynamic import a separate, cacheable chunk.
   worker: { format: 'es' },
-  server: { headers: isolationHeaders },
-  preview: { headers: isolationHeaders },
+  server: { headers: isolationHeaders, proxy: apiProxy },
+  preview: { headers: isolationHeaders, proxy: apiProxy },
   test: {
     globals: true,
     environment: 'jsdom',

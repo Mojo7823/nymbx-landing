@@ -69,4 +69,5 @@ export const toolComponents: Partial<Record<string, LazyExoticComponent<Componen
   'qr-generator-reader': lazy(() => import('./qr-generator-reader/QrGeneratorReader')),
   'sbom-viewer': lazy(() => import('./sbom-viewer/SbomViewer')),
   'cvss-calculator': lazy(() => import('./cvss-calculator/CvssCalculator')),
+  phptest: lazy(() => import('./phptest/Phptest')),
 }

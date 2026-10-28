@@ -1,8 +1,12 @@
-// Cloudflare static hosting (Workers static assets, the successor to Pages). No Worker script:
-// every response is a file from dist, with headers from public/_headers.
+// Cloudflare Workers static assets (the successor to Pages). Every response is a file from dist,
+// with headers from public/_headers, except /api/*, which runs worker/index.ts (the PHP2Shell
+// checker's scan endpoint). Asset requests never invoke the Worker.
 {
   "name": "nymbx",
   "compatibility_date": "2026-10-19",
+  // Subrequests for nymbx.dev itself go through the public front door, not straight to an origin.
+  "compatibility_flags": ["global_fetch_strictly_public"],
+  "main": "./worker/index.ts",
   // nymbx.dev is the public site; www is attached too so it gets a certificate.
   "routes": [
     { "pattern": "nymbx.dev", "custom_domain": true },
@@ -14,5 +18,11 @@
     // Serve /index.html as-is (the PWA precaches it) instead of 307-redirecting it to /.
     "html_handling": "none",
     "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"],
   },
+  // Per-client limit on /api/phpscan, counted per Cloudflare location. namespace_id is any
+  // account-unique integer; period must be 10 or 60 seconds.
+  "ratelimits": [
+    { "name": "PHPSCAN_LIMITER", "namespace_id": "6501", "simple": { "limit": 10, "period": 60 } },
+  ],
 }
